@@ -33,7 +33,7 @@ Estado atual:
 
 - regra de negocio centralizada em `Services`
 - acesso a dados centralizado em `Repositories`
-- bindings registrados em [BindsRepositorios.php](/var/www/html/food99/app/Services/Extensions/BindsRepositorios.php)
+- bindings registrados em [BindsRepositorios.php](app/Services/Extensions/BindsRepositorios.php)
 
 Observacao:
 
@@ -45,7 +45,7 @@ Observacao:
 
 Referencia:
 
-- [routes/api.php](/var/www/html/food99/routes/api.php)
+- [routes/api.php](routes/api.php)
 
 ### 3.1 Publicas
 
@@ -101,8 +101,8 @@ Referencia:
 
 Implementacao:
 
-- [Food99CatalogController.php](/var/www/html/food99/app/Http/Controllers/Food99/Catalog/Food99CatalogController.php)
-- [Food99CatalogManagementService.php](/var/www/html/food99/app/Services/Food99/Catalog/Food99CatalogManagementService.php)
+- [Food99CatalogController.php](app/Http/Controllers/Food99/Catalog/Food99CatalogController.php)
+- [Food99CatalogManagementService.php](app/Services/Food99/Catalog/Food99CatalogManagementService.php)
 
 ---
 
@@ -119,8 +119,8 @@ Implementacao:
 1. 99Food chama `POST /api/v1/99food/webhook`
 2. payload e headers sao gravados em `food99_webhook_inbound_logs`
 3. pedido e itens sao persistidos em `food99_orders` e `food99_order_items`
-4. `orderNew` enfileira [SyncFood99OrderToErpJob.php](/var/www/html/food99/app/Jobs/Food99/SyncFood99OrderToErpJob.php)
-5. job executa [Food99OrderErpSyncService.php](/var/www/html/food99/app/Services/Food99/Orders/Food99OrderErpSyncService.php)
+4. `orderNew` enfileira [SyncFood99OrderToErpJob.php](app/Jobs/Food99/SyncFood99OrderToErpJob.php)
+5. job executa [Food99OrderErpSyncService.php](app/Services/Food99/Orders/Food99OrderErpSyncService.php)
 6. venda ERP e criada e `food99_orders.id_venda` e preenchido
 7. `orderFinish` marca situacao da venda para `C`
 8. `orderCancel` marca situacao da venda para `E`
@@ -197,11 +197,11 @@ Usado na sincronizacao de venda/pedido:
 
 Aplicacao configurada para:
 
-- `America/Sao_Paulo` em [config/app.php](/var/www/html/food99/config/app.php)
+- `America/Sao_Paulo` em [config/app.php](config/app.php)
 
 No webhook, timestamps unix sao convertidos de UTC para timezone da app:
 
-- [Food99WebhookService.php](/var/www/html/food99/app/Services/Food99/Webhook/Food99WebhookService.php)
+- [Food99WebhookService.php](app/Services/Food99/Webhook/Food99WebhookService.php)
 
 ---
 
@@ -209,7 +209,7 @@ No webhook, timestamps unix sao convertidos de UTC para timezone da app:
 
 Arquivo:
 
-- [config/services.php](/var/www/html/food99/config/services.php)
+- [config/services.php](config/services.php)
 
 Variaveis:
 
@@ -221,12 +221,7 @@ FOOD99_TIMEOUT=20
 FOOD99_WEBHOOK_VERIFY_SIGNATURE=false
 ```
 
----
 
-## 10. Pendencias tecnicas mapeadas
-
-1. adicionar `origem_venda = 99FOOD` no enum da tabela `venda` e remover workaround `B2W`
-2. decidir estrategia final de `app_item_id` para longo prazo (sem quebrar IDs ja publicados)
 
 ---
 

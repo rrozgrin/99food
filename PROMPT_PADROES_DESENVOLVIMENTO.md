@@ -109,7 +109,7 @@ php artisan make:dto Produto
 ### O que cada comando faz
 
 **`make:domain Produto --table=webc_produto`:**
-1. Cria `app/Models/Produto/Produto.php` com `$table = 'webc_produto'`
+1. Cria `app/Models/Produto.php` com `$table = 'webc_produto'`
 2. Cria `app/DTO/Produto/ProdutoDTO.php` com `OA\Schema`
 3. Cria `app/Repository/Contracts/Models/Produto/ProdutoRepositoryInterface.php`
 4. Cria `app/Repository/Eloquent/Models/Produto/ProdutoEloquentRepository.php`
