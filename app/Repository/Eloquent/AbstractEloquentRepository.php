@@ -2,6 +2,7 @@
 
 namespace App\Repository\Eloquent;
 
+use App\Exceptions\ApiException;
 use Illuminate\Database\Eloquent\Model;
 use App\Services\Auth\UsuarioLogadoService;
 use App\Repository\Contracts\RepositoryInterface;
@@ -121,7 +122,7 @@ abstract class AbstractEloquentRepository implements RepositoryInterface
      */
     public function update(array $data, mixed $id): bool
     {
-        return $this->model->find($id)->update($data);
+        return $this->findOrFail($id)->update($data);
     }
 
     /**
@@ -155,6 +156,27 @@ abstract class AbstractEloquentRepository implements RepositoryInterface
      */
     public function delete(mixed $id): bool
     {
-        return $this->model->find($id)->delete();
+        return $this->findOrFail($id)->delete();
+    }
+
+    /**
+     * Busca entidade por ID ou lança exceção de negócio quando não encontrada.
+     *
+     * @param mixed $id Identificador da entidade
+     *
+     * @return Model Entidade encontrada
+     */
+    protected function findOrFail(mixed $id): Model
+    {
+        $entity = $this->model->find($id);
+
+        if (! $entity instanceof Model) {
+            throw new ApiException(
+                msg: sprintf('Registro nao encontrado para o ID informado: %s', (string) $id),
+                code: 404,
+            );
+        }
+
+        return $entity;
     }
 }
