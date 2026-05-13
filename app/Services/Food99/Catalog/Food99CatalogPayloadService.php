@@ -262,20 +262,6 @@ class Food99CatalogPayloadService
             $payload['auth_token'] = $authToken;
         }
 
-        // dd([
-        //     'app_shop_id' => $appShopId,
-        //     'food99_shop_id' => $food99ShopId,
-        //     'token_found' => $authToken !== '',
-        //     'is_selective_publish' => $isSelectivePublish,
-        //     'requested_app_item_ids' => $normalizedAppItemIdsFilter,
-        //     'payload' => $payload,
-        //     'stats' => [
-        //         'menus' => count($menusPayload),
-        //         'categories' => count($categoriesPayload),
-        //         'items' => count($itemsPayload),
-        //     ],
-        // ]);
-
         return [
             'app_shop_id' => $appShopId,
             'food99_shop_id' => $food99ShopId,

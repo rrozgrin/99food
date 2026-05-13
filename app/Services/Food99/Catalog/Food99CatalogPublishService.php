@@ -78,7 +78,7 @@ class Food99CatalogPublishService
      * 6. Em falha: marca itens como failed, finaliza job e relanca excecao
      *
      * @param string             $appShopId          app_shop_id da loja
-     * @param int|null           $triggeredByUserId  ID do usuario ERP Hub que disparou a publicacao
+     * @param int|null           $triggeredByUserId  ID do usuario interno que disparou a publicacao
      * @param array<int, string> $appItemIds         Filtro opcional de itens para publicar
      *
      * @return array<string, mixed> Resultado da publicacao
