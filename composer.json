@@ -1,9 +1,9 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "rafaelrozgrin/integration-hub-api",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "description": "API de integracao entre ERP legado e marketplace, com JWT, webhooks, filas e documentacao OpenAPI.",
+    "keywords": ["laravel", "api", "integration", "erp", "marketplace", "webhook", "jwt"],
     "license": "MIT",
     "require": {
         "php": "^8.5",

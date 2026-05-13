@@ -1,170 +1,79 @@
-# food99 — Hub de Integracao 99Food (ERP Hub)
+# Integration Hub API
 
-> Stack: Laravel 13 · PHP 8.5+ · MySQL 8.4 · Redis  
-> API interna: `/api/v1/...`
+API de integração entre um ERP legado e a 99Food, construída em Laravel 13. O projeto cobre autenticação por loja, publicação de catálogo, ingestão de webhooks, persistência local e sincronização assíncrona de pedidos com o ERP.
 
----
+> Stack: PHP 8.5+, Laravel 13, MySQL 8.4, Redis, JWT, OpenAPI/Swagger
 
-## 1. Objetivo
+## Visão Geral
 
-Este projeto integra o ERP ERP Hub com a 99Food, cobrindo:
+Este projeto foi desenhado para resolver um problema real de integração:
 
-- autenticacao por loja (escopo por `id_cadastro`)
-- catalogo local simples (`menu`, `category`, `item`)
-- preview e publicacao de catalogo
-- leitura do catalogo publicado na 99Food
-- recebimento de webhooks de pedido
-- persistencia de pedidos em `mysql_marketplace`
-- sincronizacao de pedido para venda no ERP (fila + reprocessamento manual)
+- autenticar lojas individualmente na 99Food
+- manter um catálogo local simplificado (`menu`, `category`, `item`)
+- gerar preview e publicar catálogo na API externa
+- receber webhooks de pedidos com persistência e rastreabilidade
+- sincronizar pedidos com o ERP via fila, com reprocessamento manual e foco em idempotência
 
-Escopo ainda nao implementado:
-
-- catalogo v3 com `modifier_groups` (variacoes complexas)
-
----
-
-## 2. Arquitetura (estado atual)
+## Arquitetura
 
 Fluxo principal:
 
 `Request -> Route -> Controller -> Service -> Repository -> Model -> MySQL`
 
-Estado atual:
+Decisões de estrutura:
 
-- regra de negocio centralizada em `Services`
-- acesso a dados centralizado em `Repositories`
-- bindings registrados em [BindsRepositorios.php](app/Services/Extensions/BindsRepositorios.php)
+- controllers enxutos, com validação de entrada e delegação para services
+- regra de negócio concentrada em `app/Services`
+- acesso a dados encapsulado em `Repositories`
+- separação por domínio em `Food99` e `BaseErp`
+- respostas padronizadas e tratamento global de exceções
+- documentação OpenAPI disponível em rota própria
 
-Observacao:
+Referências úteis:
 
-- o reprocessamento manual de pedido roda via `Service`, com validacao de ownership por `id_cadastro`
+- [Rotas da API](routes/api.php)
+- [Bindings de repositórios](app/Services/Extensions/BindsRepositorios.php)
+- [Especificação OpenAPI](app/OpenApi/OpenApiSpec.php)
 
----
+## Fluxos Principais
 
-## 3. Rotas
+### Catálogo
 
-Referencia:
+1. `POST /api/v1/food99/catalog/menus/upsert`
+2. `POST /api/v1/food99/catalog/categories/upsert`
+3. `POST /api/v1/food99/catalog/items/upsert`
+4. `POST /api/v1/food99/catalog/categories/link-items`
+5. `POST /api/v1/food99/catalog/payload/preview`
+6. `POST /api/v1/food99/catalog/publish`
 
-- [routes/api.php](routes/api.php)
+Destaques:
 
-### 3.1 Publicas
+- geração automática de `app_item_id` estável
+- validação de colisão por loja
+- suporte a sincronização remota do catálogo já publicado
 
-- `POST /api/v1/login`
-- `POST /api/v1/99food/webhook`
+### Pedidos
 
-### 3.2 Protegidas (JWT)
+1. 99Food envia `POST /api/v1/99food/webhook`
+2. o payload é gravado em `food99_webhook_inbound_logs`
+3. pedido e itens são persistidos localmente
+4. `orderNew` dispara [SyncFood99OrderToErpJob.php](app/Jobs/Food99/SyncFood99OrderToErpJob.php)
+5. a fila executa [Food99OrderErpSyncService.php](app/Services/Food99/Orders/Food99OrderErpSyncService.php)
+6. o pedido é convertido em venda no ERP
+7. eventos posteriores atualizam o status operacional da venda
 
-#### Auth 99Food
+## Diferenciais Técnicos
 
-- `GET /api/v1/food99/auth/shops`
-- `POST /api/v1/food99/auth/authorization-url`
-- `POST /api/v1/food99/auth/token/get`
-- `POST /api/v1/food99/auth/token/refresh`
-- `GET /api/v1/food99/auth/token/local/{appShopId}`
+- autenticação JWT para rotas internas
+- autenticação por loja para integração com terceiro
+- fila para processamento assíncrono
+- cenários de idempotência cobertos por testes
+- documentação OpenAPI + página interativa
+- suporte a legado com tabelas e convenções antigas do ERP
 
-#### Catalogo 99Food
+## Estrutura de Dados
 
-- `POST /api/v1/food99/catalog/menus/upsert`
-- `GET /api/v1/food99/catalog/menus/{appShopId}`
-- `POST /api/v1/food99/catalog/categories/upsert`
-- `GET /api/v1/food99/catalog/categories/{appShopId}`
-- `POST /api/v1/food99/catalog/items/upsert`
-- `GET /api/v1/food99/catalog/items/{appShopId}`
-- `POST /api/v1/food99/catalog/categories/link-items`
-- `POST /api/v1/food99/catalog/payload/preview`
-- `POST /api/v1/food99/catalog/publish`
-- `POST /api/v1/food99/catalog/sync-remote`
-- `GET /api/v1/food99/catalog/publish/jobs/{appShopId}`
-
-#### Pedidos 99Food
-
-- `GET /api/v1/food99/orders/sync-queue`
-- `POST /api/v1/food99/orders/{food99OrderId}/sync-erp`
-
----
-
-## 4. Fluxo de catalogo (simples)
-
-1. `menus/upsert`
-2. `categories/upsert`
-3. `items/upsert`
-4. `categories/link-items` (quando necessario)
-5. `payload/preview`
-6. `publish`
-
-### Regras de `app_item_id` (atual)
-
-- no `create`, `app_item_id` pode vir vazio
-- o backend gera automaticamente um ID estavel (`p{id_produto}_g{id_grade}`, com sufixo se colidir)
-- no `update`, se ja existir item para o mesmo `id_produto/id_grade`, o `app_item_id` persistido e preservado
-- se `app_item_id` informado ja pertencer a outro produto/grade da mesma loja, retorna `422`
-
-Implementacao:
-
-- [Food99CatalogController.php](app/Http/Controllers/Food99/Catalog/Food99CatalogController.php)
-- [Food99CatalogManagementService.php](app/Services/Food99/Catalog/Food99CatalogManagementService.php)
-
----
-
-## 5. Fluxo de pedidos (webhook -> ERP)
-
-### Eventos suportados
-
-- `orderNew`
-- `orderFinish`
-- `orderCancel`
-
-### Pipeline
-
-1. 99Food chama `POST /api/v1/99food/webhook`
-2. payload e headers sao gravados em `food99_webhook_inbound_logs`
-3. pedido e itens sao persistidos em `food99_orders` e `food99_order_items`
-4. `orderNew` enfileira [SyncFood99OrderToErpJob.php](app/Jobs/Food99/SyncFood99OrderToErpJob.php)
-5. job executa [Food99OrderErpSyncService.php](app/Services/Food99/Orders/Food99OrderErpSyncService.php)
-6. venda ERP e criada e `food99_orders.id_venda` e preenchido
-7. `orderFinish` marca situacao da venda para `C`
-8. `orderCancel` marca situacao da venda para `E`
-
-### Status de sincronizacao (`food99_orders.sync_status`)
-
-- `pending_erp`
-- `processing_erp`
-- `synced_erp`
-- `failed_erp`
-- `pending_finish_erp`
-- `finished_erp`
-- `pending_cancel_erp`
-- `canceled_erp`
-
-### Observacao operacional
-
-- `origem_venda` esta temporariamente como `B2W` (enum legado da tabela `venda`)
-- ao adicionar `99FOOD` no enum, trocar no service de sync
-
----
-
-## 6. Sync remoto do catalogo
-
-Endpoint interno:
-
-- `POST /api/v1/food99/catalog/sync-remote`
-
-Endpoints 99Food usados:
-
-- `/v1/item/item/list`
-
-Comportamento:
-
-- consulta o catalogo publicado da loja na 99Food
-- persiste/atualiza menu, categoria e item no `marketplace`
-- quando item remoto nao tiver mapeamento ERP (`id_produto`/`id_grade`), cria produto no ERP
-- busca grade criada automaticamente (trigger de `produto`) e salva o vinculo
-
----
-
-## 7. Banco de dados
-
-### 7.1 `mysql_marketplace`
+Banco `mysql_marketplace`:
 
 - `food99_app_credentials`
 - `food99_shops`
@@ -178,9 +87,7 @@ Comportamento:
 - `food99_orders`
 - `food99_order_items`
 
-### 7.2 `base_erp`
-
-Usado na sincronizacao de venda/pedido:
+Banco `base_erp`:
 
 - `cliente`
 - `produto`
@@ -191,38 +98,61 @@ Usado na sincronizacao de venda/pedido:
 - `venda_informacoes`
 - `webc_usuario`
 
----
+## Execução Local
 
-## 8. Timezone
+Pré-requisitos:
 
-Aplicacao configurada para:
+- PHP 8.5+
+- Composer
+- Node.js
+- acesso aos bancos usados pela integração
+- Redis para fila/cache
 
-- `America/Sao_Paulo` em [config/app.php](config/app.php)
+Comandos principais:
 
-No webhook, timestamps unix sao convertidos de UTC para timezone da app:
-
-- [Food99WebhookService.php](app/Services/Food99/Webhook/Food99WebhookService.php)
-
----
-
-## 9. Configuracao 99Food
-
-Arquivo:
-
-- [config/services.php](config/services.php)
-
-Variaveis:
-
-```env
-FOOD99_BASE_URL=https://openapi.99food.com
-FOOD99_APP_ID=...
-FOOD99_APP_SECRET=...
-FOOD99_TIMEOUT=20
-FOOD99_WEBHOOK_VERIFY_SIGNATURE=false
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+npm install
+npm run build
 ```
 
+Para desenvolvimento:
 
+```bash
+composer run dev
+```
 
----
+## Testes
 
-API ERP Hub — Integracao 99Food
+Suite disponível em `tests/` com cobertura para:
+
+- autenticação
+- publicação de catálogo
+- sincronização de pedidos
+- idempotência
+- value objects
+
+Execução:
+
+```bash
+composer test
+```
+
+## Documentação
+
+- API interativa: `/docs/api`
+- Guia técnico do ecossistema: `/docs/ecossistema`
+- JSON OpenAPI: `/docs/openapi.json`
+
+## Limitações Conhecidas
+
+- parte do domínio depende de estruturas legadas do ERP
+- ainda existe compatibilidade com dados antigos, como nomes de tabela `webc_`
+- o escopo atual não cobre catálogo avançado com `modifier_groups`
+
+## Objetivo do Projeto
+
+Este repositório demonstra arquitetura de API, integração com sistema externo, convivência com legado, uso de filas, documentação e testes em um cenário de negócio menos trivial que um CRUD comum.

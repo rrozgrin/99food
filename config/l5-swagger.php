@@ -5,13 +5,13 @@ return [
     'documentations' => [
         'default' => [
             'api' => [
-                'title' => 'API ERP Hub — Documentação OpenAPI',
+                'title' => 'Integration Hub API — Documentação OpenAPI',
             ],
 
             'routes' => [
                 /*
                  * Rota para acessar a interface Swagger UI.
-                 * Acesse: https://api-erp-hub.test/api/documentation
+                 * Acesse: https://integration-hub-api.test/api/documentation
                  */
                 'api' => 'api/documentation',
             ],
@@ -150,7 +150,7 @@ return [
             'securitySchemes' => [
                 /*
                 |--------------------------------------------------------------
-                | JWT Bearer Token — Autenticação padrão da API ERP Hub
+                | JWT Bearer Token — Autenticação padrão da Integration Hub API
                 |--------------------------------------------------------------
                 |
                 | Após fazer login em POST /api/v1/login, copie o access_token

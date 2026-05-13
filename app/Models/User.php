@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Cache;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 
 /**
- * Model do Usuário ERP Hub.
+ * Model do usuário interno da aplicação.
  *
  * Mapeia para a tabela 'webc_usuario' no banco 'base_erp'.
  * Implementa JWTSubject para suporte à autenticação via JWT.
@@ -167,4 +167,3 @@ class User extends Authenticatable implements JWTSubject
         return "usuario:{$this->getKey()}:permissoes";
     }
 }
-

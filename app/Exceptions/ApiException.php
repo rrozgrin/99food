@@ -5,7 +5,7 @@ namespace App\Exceptions;
 use Exception;
 
 /**
- * Exceção de negócio da API ERP Hub.
+ * Exceção de negócio da Integration Hub API.
  *
  * Utilizada para erros de regra de negócio que devem ser comunicados
  * ao consumidor da API de forma clara e controlada.

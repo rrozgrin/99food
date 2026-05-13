@@ -31,7 +31,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use App\Services\ResponseApi\ResponseApi;
 use App\Services\ResponseApi\ResponseApiDev;
-use App\xceptions\ApiException;
+use App\Exceptions\ApiException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;

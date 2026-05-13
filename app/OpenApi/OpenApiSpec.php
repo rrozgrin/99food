@@ -5,7 +5,7 @@ namespace App\OpenApi;
 use OpenApi\Attributes as OA;
 
 /**
- * Especificação OpenAPI principal da API ERP Hub.
+ * Especificação OpenAPI principal da Integration Hub API.
  *
  * Este arquivo define os metadados globais da documentação Swagger:
  * - Informações do projeto (título, versão, contato)
@@ -14,15 +14,15 @@ use OpenApi\Attributes as OA;
  * - Schemas reutilizáveis de resposta padrão
  *
  * 📌 Acesse a documentação interativa em:
- *    https://api-erp-hub.test/api/documentation
+ *    https://integration-hub-api.test/api/documentation
  *
  * @author Rafael Rozgrin <rrozgrin@gmail.com>
  */
 #[OA\Info(
     version: '1.0.0',
-    title: 'API ERP Hub',
+    title: 'Integration Hub API',
     description: <<<'DESC'
-    API RESTful do sistema ERP Hub.
+    API RESTful para integração entre ERP legado e 99Food.
 
     ## Autenticação
     A API utiliza **JWT Bearer Token**. Para autenticar:
@@ -31,7 +31,7 @@ use OpenApi\Attributes as OA;
     3. Clique em **Authorize** (🔒) e cole: `Bearer {seu_token}`
 
     ## Padrão de Resposta
-    Todas as respostas seguem o formato:
+    A maior parte das respostas segue o formato:
     ```json
     {
         "conteudo": "...",
@@ -39,6 +39,9 @@ use OpenApi\Attributes as OA;
         "code": 200
     }
     ```
+
+    Exceção:
+    - os endpoints de autenticação que retornam token (`/login` e `/refresh`) respondem com o payload JWT direto
 
     ## Códigos de Status
     | Código | Significado |
@@ -59,7 +62,7 @@ use OpenApi\Attributes as OA;
 )]
 #[OA\Server(
     url: '/api/v1',
-    description: 'API ERP Hub v1',
+    description: 'Integration Hub API v1',
 )]
 
 // =========================================================================
@@ -84,7 +87,7 @@ use OpenApi\Attributes as OA;
 #[OA\Schema(
     schema: 'RespostaPadrao',
     title: 'Resposta Padrão',
-    description: 'Formato padrão de todas as respostas da API ERP Hub.',
+    description: 'Formato padrão de todas as respostas da Integration Hub API.',
     required: ['conteudo', 'msg', 'code'],
     properties: [
         new OA\Property(
@@ -151,20 +154,15 @@ use OpenApi\Attributes as OA;
     schema: 'TokenJWT',
     title: 'Token JWT',
     description: 'Resposta contendo o token JWT de autenticação.',
-    required: ['conteudo', 'msg', 'code'],
+    required: ['access_token', 'token_type', 'expires_in'],
     properties: [
         new OA\Property(
-            property: 'conteudo',
-            type: 'object',
-            required: ['access_token', 'token_type', 'expires_in'],
-            properties: [
-                new OA\Property(property: 'access_token', type: 'string', example: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...'),
-                new OA\Property(property: 'token_type', type: 'string', example: 'bearer'),
-                new OA\Property(property: 'expires_in', type: 'integer', example: 3600, description: 'Tempo de expiração em segundos'),
-            ],
+            property: 'access_token',
+            type: 'string',
+            example: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...',
         ),
-        new OA\Property(property: 'msg', type: 'string', example: ''),
-        new OA\Property(property: 'code', type: 'integer', example: 200),
+        new OA\Property(property: 'token_type', type: 'string', example: 'bearer'),
+        new OA\Property(property: 'expires_in', type: 'integer', example: 3600, description: 'Tempo de expiração em segundos'),
     ],
 )]
 

@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API ERP Hub — Documentação</title>
-    <meta name="description" content="Documentação interativa da API ERP Hub com layout moderno de 3 colunas.">
+    <title>Integration Hub API — Documentação</title>
+    <meta name="description" content="Documentação interativa da Integration Hub API com layout moderno de 3 colunas.">
 
     <style>
-        /* Customizações de branding ERP Hub */
+        /* Customizações de branding da Integration Hub API */
         body {
             margin: 0;
             padding: 0;
@@ -43,8 +43,8 @@
             },
             "hiddenClients": ["c", "clojure", "ocaml", "powershell", "objc", "r"],
             "metaData": {
-                "title": "API ERP Hub — Documentação",
-                "description": "Documentação interativa da API RESTful ERP Hub"
+                "title": "Integration Hub API — Documentação",
+                "description": "Documentação interativa da API RESTful de integração"
             },
             "authentication": {
                 "preferredSecurityScheme": "bearerAuth"

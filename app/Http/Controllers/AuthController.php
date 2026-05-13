@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use App\Exceptions\ApiException;
 use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
 use OpenApi\Attributes as OA;
@@ -21,9 +22,10 @@ use OpenApi\Attributes as OA;
  *  - GET    /api/v1/me      — Retorna os dados do usuário autenticado
  *  - POST   /api/v1/refresh — Renova o token JWT antes de expirar
  *
- * NOTA IMPORTANTE: A API legada armazena senhas em texto plano no banco.
- * O método attempt() faz a verificação comparando diretamente o campo 'senha'.
- * Isto deve ser migrado para bcrypt/argon2 no futuro.
+ * NOTA IMPORTANTE: A base legada pode conter senhas em texto plano.
+ * O método attempt() faz validação híbrida:
+ * - usa Hash::check() para registros já migrados
+ * - faz upgrade automático para hash quando encontra senha legada válida
  *
  * @see \App\Http\Middleware\ApiJwtMiddleware — Middleware que valida JWT nas rotas protegidas
  *
@@ -73,11 +75,7 @@ class AuthController extends Controller
             new OA\Response(
                 response: 401,
                 description: 'Credenciais inválidas',
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: 'error', type: 'string', example: 'Login inválido'),
-                    ],
-                ),
+                content: new OA\JsonContent(ref: '#/components/schemas/RespostaErro'),
             ),
         ],
     )]
@@ -91,7 +89,11 @@ class AuthController extends Controller
         }
 
         return response()->json(
-            data: ['error' => 'Login inválido'],
+            data: $this->send(
+                conteudo: '',
+                code: 401,
+                msg: 'Login inválido',
+            ),
             status: 401,
         );
     }
@@ -173,8 +175,9 @@ class AuthController extends Controller
     /**
      * Tenta autenticar o usuário com as credenciais informadas.
      *
-     * NOTA: Senhas são verificadas em texto plano (compatibilidade com API legada).
-     * Migrar para Hash::check() quando o banco suportar senhas hasheadas.
+     * Estratégia de compatibilidade:
+     *  - Se a senha já estiver hasheada, valida com Hash::check().
+     *  - Se estiver em texto plano legado e bater, faz upgrade automático para hash.
      *
      * @param array{login: string, senha: string} $credentials Credenciais do usuário
      * @param bool                                 $login       Se true, gera o token JWT
@@ -193,15 +196,37 @@ class AuthController extends Controller
         }
 
         $user = User::where('login', $credentials['login'])
-            ->where('senha', $credentials['senha'])
             ->where('ativo', 'A')
             ->first();
 
-        if ($user) {
-            return $login ? $this->guard()->login($user) : true;
+        if (! $user) {
+            return false;
         }
 
-        return false;
+        $rawPassword = (string) $credentials['senha'];
+        $storedPassword = (string) ($user->senha ?? '');
+
+        if ($storedPassword === '') {
+            return false;
+        }
+
+        $passwordInfo = password_get_info($storedPassword);
+        $isStoredHashed = $passwordInfo['algo'] !== null;
+
+        if ($isStoredHashed && ! Hash::check($rawPassword, $storedPassword)) {
+            return false;
+        }
+
+        if (! $isStoredHashed) {
+            if (! hash_equals($storedPassword, $rawPassword)) {
+                return false;
+            }
+
+            $user->senha = Hash::make($rawPassword);
+            $user->save();
+        }
+
+        return $login ? $this->guard()->login($user) : true;
     }
 
     /**
@@ -216,7 +241,7 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type'   => 'bearer',
-            'expires_in'   => $this->guard()->factory()->getTTL() * 120,
+            'expires_in'   => $this->guard()->factory()->getTTL() * 60,
         ]);
     }
 
