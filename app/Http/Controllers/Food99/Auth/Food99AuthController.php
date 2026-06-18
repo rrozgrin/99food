@@ -198,7 +198,7 @@ class Food99AuthController extends Controller
         if ($conteudo === null) {
             return response()->json(
                 data: $this->send(
-                    conteudo: '',
+                    conteudo: null,
                     code: 404,
                     msg: 'Token local nao encontrado para o app_shop_id informado.',
                 ),

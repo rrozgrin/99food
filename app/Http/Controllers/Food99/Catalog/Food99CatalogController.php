@@ -124,10 +124,33 @@ class Food99CatalogController extends Controller
             'is_active' => ['nullable', 'boolean'],
             'publish_status' => ['nullable', 'in:draft,queued,published,failed'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
-            'payload_snapshot' => ['nullable', 'array'],
         ]);
 
         $conteudo = $service->upsertItem($validated);
+
+        return response()->json(
+            data: $this->send(conteudo: $conteudo),
+        );
+    }
+
+    /**
+     * Configura item local previamente criado pelo ERP.
+     */
+    public function configureItem(Request $request, Food99CatalogManagementService $service): JsonResponse
+    {
+        $validated = $request->validate([
+            'app_shop_id' => ['required', 'string', 'max:255'],
+            'app_item_id' => ['required', 'string', 'max:120'],
+            'app_menu_id' => ['nullable', 'string', 'max:100'],
+            'app_category_id' => ['required', 'string', 'max:100'],
+            'item_name' => ['nullable', 'string', 'max:50'],
+            'short_desc' => ['nullable', 'string', 'max:300'],
+            'price_cents' => ['nullable', 'integer', 'min:0'],
+            'price_amount' => ['nullable', 'numeric', 'min:0'],
+            'is_active' => ['nullable', 'boolean'],
+        ]);
+
+        $conteudo = $service->configureItem($validated);
 
         return response()->json(
             data: $this->send(conteudo: $conteudo),
@@ -230,6 +253,7 @@ class Food99CatalogController extends Controller
         $conteudo = $service->buildUploadPayloadPreview(
             appShopId: (string) $validated['app_shop_id'],
         );
+        unset($conteudo['payload']['auth_token']);
 
         return response()->json(
             data: $this->send(conteudo: $conteudo),

@@ -95,34 +95,34 @@ $app = Application::configure(basePath: dirname(__DIR__))
                 $response = match (true) {
                     $exception instanceof ApiException
                         => new ResponseApi(
-                            conteudo: '',
+                            conteudo: null,
                             msg: $exception->getMessage(),
                             code: $exception->getCode() ?: 400,
                         ),
 
                     $exception instanceof MethodNotAllowedHttpException
                         => new ResponseApi(
-                            conteudo: '',
+                            conteudo: null,
                             msg: 'Verbo HTTP inválido. Utilize apenas GET, POST, PUT ou DELETE.',
                             code: 405,
                         ),
 
                     $exception instanceof ModelNotFoundException
                         => new ResponseApi(
-                            conteudo: '',
+                            conteudo: null,
                             msg: 'Item não encontrado.',
                             code: 404,
                         ),
 
                     $exception instanceof NotFoundHttpException
                         => new ResponseApi(
-                            conteudo: '',
+                            conteudo: null,
                             msg: 'Rota não encontrada.',
                             code: 404,
                         ),
 
                     default => new ResponseApi(
-                        conteudo: '',
+                        conteudo: null,
                         msg: 'Ocorreu um erro inesperado. Nossa equipe já foi notificada.',
                         code: 500,
                     ),

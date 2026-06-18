@@ -8,7 +8,6 @@ use Throwable;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use App\Exceptions\ApiException;
-use App\Jobs\Food99\SyncFood99OrderToErpJob;
 use App\Services\Traits\WithTransaction;
 use App\Services\Food99\Orders\Food99OrderErpSyncService;
 use App\Repository\Contracts\Models\Food99\Auth\Food99ShopRepositoryInterface;
@@ -254,15 +253,13 @@ class Food99WebhookService
         int $webhookLogId,
     ): void {
         if ($eventType === 'orderNew') {
-            $food99OrderId = $this->persistOrderNew(
+            $this->persistOrderNew(
                 payload: $payload,
                 credentialId: $credentialId,
                 food99ShopId: $food99ShopId,
                 appShopId: $appShopId,
                 webhookLogId: $webhookLogId,
             );
-
-            $this->processOrderNewSync($food99OrderId);
 
             return;
         }
@@ -314,20 +311,6 @@ class Food99WebhookService
             'food99_shop_id' => $food99ShopId,
             'webhook_log_id' => $webhookLogId,
         ]);
-    }
-
-    private function processOrderNewSync(int $food99OrderId): void
-    {
-        $mode = mb_strtolower(trim((string) config('services.food99.order_new_sync_mode', 'sync')));
-
-        if ($mode === 'queue') {
-            SyncFood99OrderToErpJob::dispatch($food99OrderId);
-
-            return;
-        }
-
-        // Modo padrao para webhook: sincronizacao imediata para nao depender de worker.
-        $this->orderErpSyncService->syncOrderById($food99OrderId);
     }
 
     /**
@@ -382,7 +365,7 @@ class Food99WebhookService
                 'pay_time' => $this->toDateTimeOrNull(data_get($orderInfo, 'pay_time')),
                 'complete_time' => $this->toDateTimeOrNull(data_get($orderInfo, 'complete_time')),
                 'cancel_time' => $this->toDateTimeOrNull(data_get($orderInfo, 'cancel_time')),
-                'sync_status' => 'pending_erp',
+                'sync_status' => 'new_order',
                 'payload' => $payload,
                 'error_message' => null,
             ],
@@ -422,12 +405,12 @@ class Food99WebhookService
 
         if ($eventType === 'orderFinish') {
             $statusUpdates['complete_time'] = $this->toDateTimeOrNull(data_get($payload, 'timestamp'));
-            $statusUpdates['sync_status'] = 'pending_finish_erp';
+            $statusUpdates['sync_status'] = 'pending_sync';
         }
 
         if ($eventType === 'orderCancel') {
             $statusUpdates['cancel_time'] = $this->toDateTimeOrNull(data_get($payload, 'timestamp'));
-            $statusUpdates['sync_status'] = 'pending_cancel_erp';
+            $statusUpdates['sync_status'] = 'canceled';
         }
 
         $this->orderRepository->updateOrCreate(

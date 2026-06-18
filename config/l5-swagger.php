@@ -5,13 +5,13 @@ return [
     'documentations' => [
         'default' => [
             'api' => [
-                'title' => 'Integration Hub API — Documentação OpenAPI',
+                'title' => 'API Generica — Documentação OpenAPI',
             ],
 
             'routes' => [
                 /*
                  * Rota para acessar a interface Swagger UI.
-                 * Acesse: https://integration-hub-api.test/api/documentation
+                 * Acesse: https://api-generica.test/api/documentation
                  */
                 'api' => 'api/documentation',
             ],
@@ -150,7 +150,7 @@ return [
             'securitySchemes' => [
                 /*
                 |--------------------------------------------------------------
-                | JWT Bearer Token — Autenticação padrão da Integration Hub API
+                | JWT Bearer Token — Autenticação padrão da API Generica
                 |--------------------------------------------------------------
                 |
                 | Após fazer login em POST /api/v1/login, copie o access_token

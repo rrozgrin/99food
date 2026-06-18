@@ -64,7 +64,7 @@ class ResponseApiDev extends ResponseApi implements JsonSerializable
     ) {
         if ($throwable !== null) {
             parent::__construct(
-                conteudo: '',
+                conteudo: null,
                 msg: $throwable->getMessage(),
                 code: is_int($throwable->getCode()) ? $throwable->getCode() : 0,
             );

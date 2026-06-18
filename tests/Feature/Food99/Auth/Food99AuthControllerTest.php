@@ -37,7 +37,8 @@ class Food99AuthControllerTest extends TestCase
             ->with('shop_123')
             ->andReturn([
                 'app_shop_id' => 'shop_123',
-                'auth_token' => 'token-abc',
+                'token_found' => true,
+                'token_expires_at' => '2026-12-06 10:13:20',
             ]);
 
         $this->app->instance(Food99AuthService::class, $service);
@@ -49,7 +50,8 @@ class Food99AuthControllerTest extends TestCase
         $response->assertOk();
         $response->assertJsonPath('code', 200);
         $response->assertJsonPath('conteudo.app_shop_id', 'shop_123');
-        $response->assertJsonPath('conteudo.auth_token', 'token-abc');
+        $response->assertJsonPath('conteudo.token_found', true);
+        $response->assertJsonMissingPath('conteudo.auth_token');
     }
 
     #[Test]
@@ -67,6 +69,7 @@ class Food99AuthControllerTest extends TestCase
 
         $response->assertStatus(404);
         $response->assertJsonPath('code', 404);
+        $response->assertJsonPath('conteudo', null);
         $response->assertJsonPath('msg', 'Token local nao encontrado para o app_shop_id informado.');
     }
 }

@@ -75,7 +75,6 @@ class Food99AuthService
             'app_shop_id' => $appShopId,
             'shop' => $this->shopService()->mapOwnedShop($shop),
             'authorization_url' => $authorizationUrl,
-            'response' => $response,
         ];
     }
 
@@ -94,14 +93,16 @@ class Food99AuthService
      *
      * @param string $appShopId ID externo da loja na 99Food
      *
-     * @return array<string, mixed> Token e metadados retornados pela API externa
+     * @return array<string, mixed> Metadados do token sem expor auth_token
      */
     public function getTokenByStore(string $appShopId): array
     {
         $shop = $this->shopService()->resolveOwnedShopByAppShopId($appShopId);
         $tokenData = $this->tokenService()->retrieveTokenWithFallback(appShopId: $appShopId);
 
-        return $this->attachShopSyncData(shop: $shop, tokenData: $tokenData);
+        return $this->sanitizeTokenResponse(
+            $this->attachShopSyncData(shop: $shop, tokenData: $tokenData),
+        );
     }
 
     /**
@@ -109,14 +110,16 @@ class Food99AuthService
      *
      * @param string $appShopId ID externo da loja na 99Food
      *
-     * @return array<string, mixed> Token renovado e metadados retornados pela API externa
+     * @return array<string, mixed> Metadados do token renovado sem expor auth_token
      */
     public function refreshTokenByStore(string $appShopId): array
     {
         $shop = $this->shopService()->resolveOwnedShopByAppShopId($appShopId);
         $tokenData = $this->tokenService()->refreshAndPersistToken(appShopId: $appShopId);
 
-        return $this->attachShopSyncData(shop: $shop, tokenData: $tokenData);
+        return $this->sanitizeTokenResponse(
+            $this->attachShopSyncData(shop: $shop, tokenData: $tokenData),
+        );
     }
 
     /**
@@ -124,13 +127,14 @@ class Food99AuthService
      *
      * @param string $appShopId ID externo da loja na 99Food
      *
-     * @return object|null Registro local do token
+     * @return array<string, mixed>|null Metadados do token local
      */
-    public function getStoredTokenByStore(string $appShopId): ?object
+    public function getStoredTokenByStore(string $appShopId): ?array
     {
         $this->shopService()->resolveOwnedShopByAppShopId($appShopId);
+        $token = $this->storeTokenRepository->findByAppShopId($appShopId);
 
-        return $this->storeTokenRepository->findByAppShopId($appShopId);
+        return is_object($token) ? $this->mapStoredTokenMetadata($token) : null;
     }
 
     /**
@@ -149,6 +153,43 @@ class Food99AuthService
         );
 
         return $tokenData;
+    }
+
+    /**
+     * @param array<string, mixed> $tokenData
+     *
+     * @return array<string, mixed>
+     */
+    private function sanitizeTokenResponse(array $tokenData): array
+    {
+        $tokenData['token_found'] = trim((string) ($tokenData['auth_token'] ?? '')) !== '';
+        $tokenData['token_expires_at'] = $tokenData['expires_at'] ?? null;
+
+        unset(
+            $tokenData['auth_token'],
+            $tokenData['response'],
+            $tokenData['refresh_response'],
+        );
+
+        return $tokenData;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function mapStoredTokenMetadata(object $token): array
+    {
+        return [
+            'id' => data_get($token, 'id'),
+            'app_shop_id' => (string) data_get($token, 'app_shop_id'),
+            'token_found' => trim((string) data_get($token, 'auth_token')) !== '',
+            'expires_at' => data_get($token, 'expires_at'),
+            'token_expires_at' => data_get($token, 'expires_at'),
+            'last_retrieved_at' => data_get($token, 'last_retrieved_at'),
+            'last_refreshed_at' => data_get($token, 'last_refreshed_at'),
+            'created_at' => data_get($token, 'created_at'),
+            'updated_at' => data_get($token, 'updated_at'),
+        ];
     }
 
     private function shopService(): Food99AuthShopService

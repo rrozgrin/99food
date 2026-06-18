@@ -206,7 +206,7 @@ class Food99AuthShopService
         $existing = $this->appCredentialRepository->findLatestByAppId($credentials['app_id']);
 
         $payload = $this->filterByExistingColumns('food99_app_credentials', [
-            'name' => config('app.name', 'Integration Hub API'),
+            'name' => config('app.name', 'ERP'),
             'environment' => $this->detectConfiguredEnvironment(),
             'app_id' => $credentials['app_id'],
             'app_secret' => $credentials['app_secret'],

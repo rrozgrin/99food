@@ -107,7 +107,7 @@ class Food99OrderErpSyncServiceIdempotencyTest extends TestCase
                 Mockery::on(static function (array $data): bool {
                     return ($data['id_venda'] ?? null) === 256467477
                         && ($data['erp_sale_id'] ?? null) === '256467477'
-                        && ($data['sync_status'] ?? null) === 'synced_erp'
+                        && ($data['sync_status'] ?? null) === 'synced'
                         && array_key_exists('erp_synced_at', $data)
                         && array_key_exists('error_message', $data)
                         && $data['error_message'] === null;
@@ -167,7 +167,7 @@ class Food99OrderErpSyncServiceIdempotencyTest extends TestCase
             ->with(
                 22,
                 Mockery::on(static function (array $data): bool {
-                    return ($data['sync_status'] ?? null) === 'finished_erp'
+                    return ($data['sync_status'] ?? null) === 'synced'
                         && ($data['id_venda'] ?? null) === 300
                         && ($data['erp_sale_id'] ?? null) === '300'
                         && array_key_exists('error_message', $data)
@@ -279,7 +279,7 @@ class Food99OrderErpSyncServiceIdempotencyTest extends TestCase
             ->with(
                 99,
                 Mockery::on(static function (array $data): bool {
-                    return ($data['sync_status'] ?? null) === 'finished_erp'
+                    return ($data['sync_status'] ?? null) === 'synced'
                         && ($data['id_venda'] ?? null) === 501
                         && ($data['erp_sale_id'] ?? null) === '501'
                         && array_key_exists('error_message', $data)

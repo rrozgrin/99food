@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Cache;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 
 /**
- * Model do usuário interno da aplicação.
+ * Model do Usuário ERP.
  *
  * Mapeia para a tabela 'webc_usuario' no banco 'base_erp'.
  * Implementa JWTSubject para suporte à autenticação via JWT.

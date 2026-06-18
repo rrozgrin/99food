@@ -1,8 +1,8 @@
-# 📋 PROMPT — Padrões de Desenvolvimento da API ERP Hub
+# 📋 PROMPT — Padrões de Desenvolvimento da API Generica
 
-> **Versão:** 3.1  
-> **Autor:** Rafael Rozgrin <rrozgrin@gmail.com>  
-> **Stack:** Laravel 13 • PHP 8.5+ • MySQL 8.4  
+> **Versão:** 3.1
+> **Autor:** Rafael Rozgrin <rrozgrin@gmail.com>
+> **Stack:** Laravel 13 • PHP 8.5+ • MySQL 8.4
 > **Objetivo:** Guia definitivo de padrões para que qualquer programador entenda e siga a arquitetura do projeto.
 
 > **Nota de estado atual (99Food):**
@@ -17,7 +17,7 @@
 ## Sumário
 
 1. [Arquitetura em Camadas](#1-arquitetura-em-camadas)
-2. [Comparativo apidefault vs api-erp-hub](#2-comparativo-apidefault-vs-api-erp-hub)
+2. [Comparativo apidefault vs api-generica](#2-comparativo-apidefault-vs-api-generica)
 3. [Estrutura de Diretórios](#3-estrutura-de-diretrios)
 4. [Value Objects — Precisão Fiscal](#4-value-objects--preciso-fiscal)
 5. [Eloquent Casts para Value Objects](#5-eloquent-casts-para-value-objects)
@@ -72,7 +72,7 @@ Request HTTP → Route → Controller → Service → Repository → Model → M
 
 ---
 
-## 2. Comparativo apidefault vs api-erp-hub
+## 2. Comparativo apidefault vs api-generica
 
 | Comando                          | Gera                                                       |
 |----------------------------------|-------------------------------------------------------------|
@@ -109,7 +109,7 @@ php artisan make:dto Produto
 ### O que cada comando faz
 
 **`make:domain Produto --table=webc_produto`:**
-1. Cria `app/Models/Produto.php` com `$table = 'webc_produto'`
+1. Cria `app/Models/Produto/Produto.php` com `$table = 'webc_produto'`
 2. Cria `app/DTO/Produto/ProdutoDTO.php` com `OA\Schema`
 3. Cria `app/Repository/Contracts/Models/Produto/ProdutoRepositoryInterface.php`
 4. Cria `app/Repository/Eloquent/Models/Produto/ProdutoEloquentRepository.php`
@@ -217,7 +217,7 @@ app/Http/Controllers/BaseErp/Cadastros/ClienteController.php
 
 ---
 
-> **API ERP Hub v3** — Laravel 13 / PHP 8.5+  
+> **API Generica v3** — Laravel 13 / PHP 8.5+
 > Arquitetura idealizada por **Rafael Rozgrin** <rrozgrin@gmail.com>
 ## 6. Model
 
@@ -565,7 +565,7 @@ $produto->save();                       // salva '59.90000000' no banco
 
 ## 11. DTO — Data Transfer Object
 
-| Aspecto               | apidefault (Laravel 8)              | api-erp-hub (Laravel 13)                     |
+| Aspecto               | apidefault (Laravel 8)              | api-generica (Laravel 13)                     |
 |------------------------|--------------------------------------|------------------------------------------------|
 | PHP                    | 7.3 / 8.0                           | 8.5+                                            |
 | CORS                   | `fruitcake/laravel-cors` (abandonado)| Nativo em `bootstrap/app.php`                   |
@@ -1407,7 +1407,7 @@ As tags são registradas automaticamente pelo `make:domain` em `OpenApiSpec.php`
 ---
 
 
-> **API ERP Hub v3** — Laravel 13 / PHP 8.5+  
+> **API Generica v3** — Laravel 13 / PHP 8.5+
 > Arquitetura idealizada por **Rafael Rozgrin** <rrozgrin@gmail.com>
 ## 21. Audit Trail
 
@@ -1535,7 +1535,7 @@ Trait que detecta exceções críticas e envia notificações com **throttle de 
 ---
 
 
-> **API ERP Hub v3** — Laravel 13 / PHP 8.5+  
+> **API Generica v3** — Laravel 13 / PHP 8.5+
 > Arquitetura idealizada por **Rafael Rozgrin** <rrozgrin@gmail.com>
 ## 24. Comandos Artisan Customizados
 
@@ -1764,7 +1764,7 @@ Services são o **coração da aplicação**. TODA regra de negócio fica aqui. 
 namespace App\Services\Produto;
 
 use App\DTO\Produto\ProdutoDTO;
-use App\xceptions\ApiException;
+use App\Exceptions\ApiException;
 use App\Services\Auth\UsuarioLogadoService;
 use App\Services\Extensions\RequestBodyConverter;
 use App\Services\Traits\WithTransaction;
@@ -1882,5 +1882,5 @@ class ProdutoService
 ---
 
 
-> **API ERP Hub v3** — Laravel 13 / PHP 8.5+  
+> **API Generica v3** — Laravel 13 / PHP 8.5+
 > Arquitetura idealizada por **Rafael Rozgrin** <rrozgrin@gmail.com>

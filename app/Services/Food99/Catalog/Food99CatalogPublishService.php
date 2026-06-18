@@ -78,7 +78,7 @@ class Food99CatalogPublishService
      * 6. Em falha: marca itens como failed, finaliza job e relanca excecao
      *
      * @param string             $appShopId          app_shop_id da loja
-     * @param int|null           $triggeredByUserId  ID do usuario interno que disparou a publicacao
+     * @param int|null           $triggeredByUserId  ID do usuario ERP que disparou a publicacao
      * @param array<int, string> $appItemIds         Filtro opcional de itens para publicar
      *
      * @return array<string, mixed> Resultado da publicacao
@@ -161,7 +161,6 @@ class Food99CatalogPublishService
                 'published_items' => count($publishedAppItemIds),
                 'published_app_item_ids' => $publishedAppItemIds,
                 'stats' => $preview['stats'],
-                'response' => $response,
             ];
         } catch (Throwable $e) {
             // 6. Finaliza job como falha
@@ -201,7 +200,23 @@ class Food99CatalogPublishService
 
         $jobs = $this->publishJobRepository
             ->findLatestByShopId($food99ShopId, $limit)
-            ->map(static fn (object $row): array => (array) $row)
+            ->map(static function (object $row): array {
+                return [
+                    'id' => (int) data_get($row, 'id'),
+                    'food99_shop_id' => (int) data_get($row, 'food99_shop_id'),
+                    'event_type' => (string) data_get($row, 'event_type'),
+                    'status' => (string) data_get($row, 'status'),
+                    'task_id' => data_get($row, 'task_id'),
+                    'triggered_by_user_id' => is_numeric(data_get($row, 'triggered_by_user_id'))
+                        ? (int) data_get($row, 'triggered_by_user_id')
+                        : null,
+                    'started_at' => data_get($row, 'started_at'),
+                    'finished_at' => data_get($row, 'finished_at'),
+                    'error_message' => data_get($row, 'error_message'),
+                    'created_at' => data_get($row, 'created_at'),
+                    'updated_at' => data_get($row, 'updated_at'),
+                ];
+            })
             ->values()
             ->all();
 

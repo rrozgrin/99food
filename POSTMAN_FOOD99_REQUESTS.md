@@ -373,7 +373,7 @@ food99_order_id=1
 
 #### Com filtros
 
-`{{base_url}}/api/v1/food99/orders/sync-queue?statuses[]=pending_erp&statuses[]=failed_erp&limit=50&app_shop_id={{app_shop_id}}`
+`{{base_url}}/api/v1/food99/orders/sync-queue?statuses[]=pending_sync&limit=50&app_shop_id={{app_shop_id}}`
 
 ### 7.2 Detalhe de pedido
 

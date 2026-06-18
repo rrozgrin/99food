@@ -90,7 +90,7 @@ class Food99CatalogSampleSeeder extends Seeder
             'country_code' => 'BR',
             'app_id' => $appId !== '' ? $appId : 'sample-app-id',
             'app_secret' => 'sample-app-secret',
-            'base_url' => 'https://openapi.didi-food.com',
+            'base_url' => 'https://openapi.99food.com',
             'status' => 'active',
             'metadata' => json_encode(['seed' => true], JSON_UNESCAPED_UNICODE),
             'created_at' => now(),

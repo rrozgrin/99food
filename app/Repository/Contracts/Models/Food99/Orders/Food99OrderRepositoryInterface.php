@@ -16,7 +16,7 @@ interface Food99OrderRepositoryInterface extends RepositoryInterface
 
     public function updateById(int $food99OrderId, array $data): bool;
 
-    public function listByShopIdsAndStatuses(array $shopIds, array $statuses, int $limit): ?object;
+    public function listByShopIds(array $shopIds, int $limit): ?object;
 
     public function upsertOrderWithItems(
         array $orderAttributes,

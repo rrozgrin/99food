@@ -59,16 +59,14 @@ class Food99WebhookServiceIdempotencyTest extends TestCase
                 Mockery::on(static fn (array $attributes): bool => ($attributes['food99_shop_id'] ?? null) === 1
                     && ($attributes['order_id'] ?? null) === '5764607775769495278'),
                 Mockery::on(static fn (array $values): bool => ($values['event_type'] ?? null) === 'orderNew'
-                    && ($values['sync_status'] ?? null) === 'pending_erp'),
+                    && ($values['sync_status'] ?? null) === 'new_order'),
                 Mockery::type('array'),
             )
             ->andReturn(55, 55);
 
         $orderErpSyncService
             ->shouldReceive('syncOrderById')
-            ->twice()
-            ->with(55)
-            ->andReturnNull();
+            ->never();
 
         $service = new Food99WebhookService(
             $appCredentialRepository,
@@ -166,7 +164,7 @@ class Food99WebhookServiceIdempotencyTest extends TestCase
             ->with(
                 ['food99_shop_id' => 1, 'order_id' => '5764607523553412691'],
                 Mockery::on(static fn (array $values): bool => ($values['event_type'] ?? null) === 'orderFinish'
-                    && ($values['sync_status'] ?? null) === 'pending_finish_erp'),
+                    && ($values['sync_status'] ?? null) === 'pending_sync'),
             )
             ->andReturn((object) ['id' => 99]);
 

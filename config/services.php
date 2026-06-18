@@ -36,7 +36,7 @@ return [
     ],
 
     'food99' => [
-        'base_url' => env('FOOD99_BASE_URL', 'https://openapi.didi-food.com'),
+        'base_url' => env('FOOD99_BASE_URL', 'https://openapi.99food.com'),
         'app_id' => env('FOOD99_APP_ID'),
         'app_secret' => env('FOOD99_APP_SECRET'),
         'timeout' => (int) env('FOOD99_TIMEOUT', 20),

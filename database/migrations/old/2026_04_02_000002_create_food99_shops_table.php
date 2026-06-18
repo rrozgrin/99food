@@ -7,7 +7,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Cria vinculo entre lojas do ERP Hub e 99Food.
+ * Cria vinculo entre lojas do ERP e 99Food.
  *
  * Tabela no banco mysql_marketplace por representar mapeamento de integracao.
  */
@@ -21,7 +21,7 @@ return new class extends Migration
         Schema::connection('mysql_marketplace')->create('food99_shops', function (Blueprint $table): void {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('food99_app_credential_id');
-            $table->unsignedBigInteger('id_cadastro')->comment('ID da loja/cadastro no ERP Hub');
+            $table->unsignedBigInteger('id_cadastro')->comment('ID da loja/cadastro no ERP');
             $table->string('app_shop_id');
             $table->string('food99_shop_id')->nullable();
             $table->string('name')->nullable();

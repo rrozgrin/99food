@@ -6,6 +6,7 @@ namespace App\Services\Food99\Orders;
 
 use Throwable;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 use App\Jobs\Food99\SyncFood99OrderToErpJob;
 use App\Models\Food99\Orders\Food99Order;
 use App\Models\Food99\Orders\Food99OrderItem;
@@ -45,12 +46,17 @@ class Food99OrderErpSyncService
 
     public function syncOrderById(int $food99OrderId): void
     {
-        $order = $this->orderRepository->markAsProcessing($food99OrderId);
-        if (! is_object($order)) {
+        $lockKey = sprintf('food99:order-sync:%d', $food99OrderId);
+        if (! Cache::add($lockKey, true, now()->addMinutes(2))) {
             return;
         }
 
+        $order = $this->orderRepository->markAsProcessing($food99OrderId);
         try {
+            if (! is_object($order)) {
+                return;
+            }
+
             $result = $this->transaction(function () use ($order): array {
                 $shop = $this->shopRepository->find(id: (int) $order->food99_shop_id);
 
@@ -153,7 +159,7 @@ class Food99OrderErpSyncService
                     'id_venda' => (int) $result['id_venda'],
                     'erp_sale_id' => (string) $result['id_venda'],
                     'erp_synced_at' => now(),
-                    'sync_status' => 'synced_erp',
+                    'sync_status' => 'synced',
                     'error_message' => null,
                 ],
             );
@@ -161,12 +167,14 @@ class Food99OrderErpSyncService
             $this->orderRepository->updateById(
                 food99OrderId: $food99OrderId,
                 data: [
-                    'sync_status' => 'failed_erp',
+                    'sync_status' => 'pending_sync',
                     'error_message' => mb_substr($throwable->getMessage(), 0, 1000),
                 ],
             );
 
             throw $throwable;
+        } finally {
+            Cache::forget($lockKey);
         }
     }
 
@@ -176,7 +184,7 @@ class Food99OrderErpSyncService
             food99ShopId: $food99ShopId,
             orderId: $orderId,
             situacao: 'C',
-            syncStatus: 'finished_erp',
+            syncStatus: 'synced',
             createSaleWhenMissing: true,
         );
     }
@@ -187,7 +195,7 @@ class Food99OrderErpSyncService
             food99ShopId: $food99ShopId,
             orderId: $orderId,
             situacao: 'E',
-            syncStatus: 'canceled_erp',
+            syncStatus: 'canceled',
         );
     }
 
@@ -198,7 +206,6 @@ class Food99OrderErpSyncService
      */
     public function listSyncQueue(
         int $idCadastro,
-        array $statuses = ['pending_erp', 'failed_erp'],
         int $limit = 50,
         ?string $appShopId = null,
     ): array {
@@ -218,15 +225,13 @@ class Food99OrderErpSyncService
             return [
                 'id_cadastro' => $idCadastro,
                 'app_shop_id' => $appShopId,
-                'statuses' => array_values($statuses),
                 'orders' => [],
                 'total' => 0,
             ];
         }
 
-        $ordersCollection = $this->orderRepository->listByShopIdsAndStatuses(
+        $ordersCollection = $this->orderRepository->listByShopIds(
             shopIds: $shopIds,
-            statuses: $statuses,
             limit: $limit,
         );
         $orders = collect($ordersCollection ?? [])
@@ -267,7 +272,6 @@ class Food99OrderErpSyncService
         return [
             'id_cadastro' => $idCadastro,
             'app_shop_id' => $appShopId,
-            'statuses' => array_values($statuses),
             'total' => count($orders),
             'orders' => $orders,
         ];
@@ -420,7 +424,7 @@ class Food99OrderErpSyncService
 
         $resolvedSyncStatus = $syncStatus;
         if (($vendaId === null || $vendaId <= 0) && $createSaleWhenMissing) {
-            $resolvedSyncStatus = 'pending_finish_erp';
+            $resolvedSyncStatus = 'pending_sync';
         }
 
         $updates = [

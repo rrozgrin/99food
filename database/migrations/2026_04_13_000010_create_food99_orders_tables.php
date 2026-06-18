@@ -35,7 +35,7 @@ return new class extends Migration
             $table->timestamp('pay_time')->nullable();
             $table->timestamp('complete_time')->nullable();
             $table->timestamp('cancel_time')->nullable();
-            $table->string('sync_status', 30)->default('pending_erp');
+            $table->string('sync_status', 30)->default('new_order');
             $table->unsignedBigInteger('id_venda')->nullable();
             $table->string('erp_sale_id', 64)->nullable();
             $table->timestamp('erp_synced_at')->nullable();

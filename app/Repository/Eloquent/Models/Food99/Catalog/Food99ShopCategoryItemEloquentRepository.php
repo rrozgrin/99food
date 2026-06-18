@@ -69,6 +69,14 @@ class Food99ShopCategoryItemEloquentRepository extends EloquentRepository implem
             ->delete();
     }
 
+    public function deleteByItemId(int $itemId): int
+    {
+        return $this->model
+            ->newQuery()
+            ->where('food99_shop_item_id', $itemId)
+            ->delete();
+    }
+
     public function replaceLinksByCategory(int $categoryId, array $shopItemIds): void
     {
         DB::connection('mysql_marketplace')->transaction(function () use ($categoryId, $shopItemIds): void {

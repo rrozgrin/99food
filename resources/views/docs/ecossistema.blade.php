@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Integration Hub API — Guia do Desenvolvedor</title>
+    <title>API Generica — Guia do Desenvolvedor</title>
     <style>
         /* ===================================================================
          * RESET & BASE
@@ -292,7 +292,7 @@
      SIDEBAR
      ====================================================================== -->
 <nav class="sidebar">
-    <div class="sidebar-logo">🏗️ Integration Hub API</div>
+    <div class="sidebar-logo">🏗️ API Generica</div>
     <div class="sidebar-sub">Laravel 13 • PHP 8.5+ • MySQL 8.4</div>
 
     <div class="sidebar-section">Fundamentos</div>
@@ -347,12 +347,12 @@
 
 
 <h1>
-    Integration Hub API — Guia do Desenvolvedor
+    API Generica — Guia do Desenvolvedor
     <small>Arquitetura idealizada por <strong>Rafael Rozgrin</strong> • Laravel 13 • PHP 8.5+ • MySQL 8.4</small>
 </h1>
 
 <div class="callout callout-info">
-    <strong>📖 Objetivo deste guia:</strong> Documentar a arquitetura, padrões e convenções da Integration Hub API
+    <strong>📖 Objetivo deste guia:</strong> Documentar a arquitetura, padrões e convenções da API Generica
     para que qualquer desenvolvedor consiga entender, contribuir e criar novos domínios seguindo os padrões do projeto.
 </div>
 
@@ -416,12 +416,12 @@
 </div>
 
 <!-- ==================================================================== -->
-<h2 id="comparativo">2. Comparativo — base legada vs Integration Hub API</h2>
+<h2 id="comparativo">2. Comparativo — apidefault vs api-generica</h2>
 
 <p>Entender <em>por que</em> cada padrão existe evita regressões ao código legado. A tabela abaixo documenta as diferenças arquiteturais entre as duas APIs.</p>
 
 <table>
-    <thead><tr><th>Aspecto</th><th>base legada (Laravel 8)</th><th>Integration Hub API (Laravel 13)</th></tr></thead>
+    <thead><tr><th>Aspecto</th><th>apidefault (Laravel 8 — legado)</th><th>api-generica (Laravel 13 — novo)</th></tr></thead>
     <tbody>
         <tr><td>PHP</td><td>7.3 / 8.0</td><td>8.5+ (strict types, readonly, match)</td></tr>
         <tr><td>JWT</td><td><code>tymon/jwt-auth</code> (sem manutenção)</td><td><code>php-open-source-saver/jwt-auth</code> v2</td></tr>
@@ -921,7 +921,7 @@ Cpf::<span class="fn">of</span>(<span class="str">'111.111.111-11'</span>); <spa
 <span class="kw">namespace</span> <span class="tp">App\Services\Produto</span>;
 
 <span class="kw">use</span> <span class="tp">App\DTO\Produto\ProdutoDTO</span>;
-<span class="kw">use</span> <span class="tp">App\xceptions\ApiException</span>;
+<span class="kw">use</span> <span class="tp">App\Exceptions\ApiException</span>;
 <span class="kw">use</span> <span class="tp">App\Services\Auth\UsuarioLogadoService</span>;
 <span class="kw">use</span> <span class="tp">App\Services\Extensions\RequestBodyConverter</span>;
 <span class="kw">use</span> <span class="tp">App\Services\Traits\WithTransaction</span>;
@@ -1707,7 +1707,7 @@ app/Http/Controllers/BaseErp/Cadastros/ClienteController.php</code></pre>
 
 <!-- ==================================================================== -->
 <div class="footer">
-    Integration Hub API — Laravel 13 / PHP 8.5+ — {{ date('Y') }}<br>
+    API Generica v3 — Laravel 13 / PHP 8.5+ — {{ date('Y') }}<br>
     Arquitetura idealizada por <strong>Rafael Rozgrin</strong>
 </div>
 

@@ -120,6 +120,64 @@ class Food99CatalogPublishServiceTest extends TestCase
         $this->assertSame(88, $response['job_id']);
         $this->assertSame('shop_002', $response['app_shop_id']);
         $this->assertSame(0, $response['published_items']);
+        $this->assertArrayNotHasKey('response', $response);
+    }
+
+    #[Test]
+    public function deve_manter_publicacao_seletiva_com_app_item_ids(): void
+    {
+        Http::fake([
+            'https://food99.test/v1/item/item/upload' => Http::response([
+                'errno' => 0,
+                'data' => ['task_id' => 'task-456'],
+            ], 200),
+        ]);
+
+        $payloadService = Mockery::mock(Food99CatalogPayloadService::class);
+        $payloadService->shouldReceive('buildUploadPayloadPreview')
+            ->once()
+            ->with('shop_004', ['p123_g456'])
+            ->andReturn([
+                'food99_shop_id' => 40,
+                'token_found' => true,
+                'payload' => [
+                    'menus' => [],
+                    'categories' => [],
+                    'items' => [
+                        ['app_item_id' => 'p123_g456'],
+                    ],
+                    'auth_token' => 'token-z',
+                ],
+                'stats' => ['menus' => 0, 'categories' => 0, 'items' => 1],
+            ]);
+
+        $publishJobRepository = Mockery::mock(Food99PublishJobRepositoryInterface::class);
+        $publishJobRepository->shouldReceive('create')
+            ->once()
+            ->andReturn((object) ['id' => 90]);
+        $publishJobRepository->shouldReceive('update')
+            ->once()
+            ->with(Mockery::on(static fn (array $data): bool => ($data['status'] ?? null) === 'success'), 90)
+            ->andReturn(true);
+
+        $shopItemRepository = Mockery::mock(Food99ShopItemRepositoryInterface::class);
+        $shopItemRepository->shouldReceive('markPublishedByShopAndAppItemIds')
+            ->once()
+            ->with(40, ['p123_g456'], ['p123_g456' => ['app_item_id' => 'p123_g456']])
+            ->andReturnNull();
+
+        $service = new Food99CatalogPublishService(
+            $payloadService,
+            $publishJobRepository,
+            Mockery::mock(UsuarioLogadoService::class),
+            Mockery::mock(Food99ShopRepositoryInterface::class),
+            $shopItemRepository,
+        );
+
+        $response = $service->publishCatalog('shop_004', 30, ['p123_g456']);
+
+        $this->assertSame(1, $response['published_items']);
+        $this->assertSame(['p123_g456'], $response['published_app_item_ids']);
     }
 
     #[Test]

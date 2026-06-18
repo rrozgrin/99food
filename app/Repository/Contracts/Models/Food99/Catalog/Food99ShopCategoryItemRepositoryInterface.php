@@ -39,5 +39,7 @@ interface Food99ShopCategoryItemRepositoryInterface extends RepositoryInterface
      */
     public function deleteByCategoryId(int $categoryId): int;
 
+    public function deleteByItemId(int $itemId): int;
+
     public function replaceLinksByCategory(int $categoryId, array $shopItemIds): void;
 }

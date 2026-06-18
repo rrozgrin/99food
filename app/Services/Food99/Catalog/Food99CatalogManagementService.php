@@ -133,7 +133,10 @@ class Food99CatalogManagementService
             ],
         );
 
-        return $category->toArray();
+        return $this->enrichCategoryForResponse(
+            category: $category->toArray(),
+            menuById: [(int) $menu->id => $menu->toArray()],
+        );
     }
 
     /**
@@ -163,7 +166,12 @@ class Food99CatalogManagementService
             ];
         }
 
-        $categories = $this->shopCategoryRepository->findByShopId((int) $shop->id)?->toArray() ?? [];
+        $menus = $this->shopMenuRepository->findByShopId((int) $shop->id)?->toArray() ?? [];
+        $menuById = collect($menus)->keyBy('id')->all();
+        $categories = array_map(
+            fn (array $category): array => $this->enrichCategoryForResponse($category, $menuById),
+            $this->shopCategoryRepository->findByShopId((int) $shop->id)?->toArray() ?? [],
+        );
 
         return [
             'app_shop_id' => $appShopId,
@@ -222,7 +230,6 @@ class Food99CatalogManagementService
                     : null,
                 'is_active' => (bool) ($input['is_active'] ?? true),
                 'publish_status' => (string) ($input['publish_status'] ?? 'draft'),
-                'payload_snapshot' => $input['payload_snapshot'] ?? null,
             ],
         );
 
@@ -240,7 +247,116 @@ class Food99CatalogManagementService
         $result = $item->toArray();
         $result['app_item_id'] = $appItemId;
 
-        return $result;
+        return $this->enrichItemForResponse(
+            item: $this->sanitizeCatalogItem($result),
+            categoryById: [(int) $category->id => $category->toArray()],
+            menuById: [],
+        );
+    }
+
+    /**
+     * Configura item local previamente criado pelo ERP.
+     *
+     * @param array<string, mixed> $input Dados parciais do item
+     *
+     * @return array<string, mixed> Item salvo
+     */
+    public function configureItem(array $input): array
+    {
+        return $this->transaction(function () use ($input): array {
+            $shop = $this->resolveShopByAppShopId((string) $input['app_shop_id']);
+            $food99ShopId = (int) $shop->id;
+
+            $category = $this->resolveCategoryByAppCategoryId(
+                food99ShopId: $food99ShopId,
+                appCategoryId: (string) $input['app_category_id'],
+            );
+
+            $appMenuId = trim((string) ($input['app_menu_id'] ?? ''));
+            if ($appMenuId !== '') {
+                $menu = $this->resolveMenuByAppMenuId(
+                    food99ShopId: $food99ShopId,
+                    appMenuId: $appMenuId,
+                );
+
+                if ((int) data_get($category, 'food99_shop_menu_id') !== (int) data_get($menu, 'id')) {
+                    throw new ApiException(
+                        msg: 'A categoria informada nao pertence ao menu informado.',
+                        code: 422,
+                    );
+                }
+            }
+
+            $item = $this->shopItemRepository->findByShopIdAndAppItemId(
+                food99ShopId: $food99ShopId,
+                appItemId: (string) $input['app_item_id'],
+            );
+
+            if (! is_object($item)) {
+                throw new ApiException(
+                    msg: 'Item local nao encontrado para o app_item_id informado. O ERP ainda nao criou o draft deste item.',
+                    code: 404,
+                );
+            }
+
+            $values = [
+                'food99_shop_category_id' => (int) $category->id,
+            ];
+
+            if (array_key_exists('item_name', $input) && $input['item_name'] !== null) {
+                $values['item_name'] = (string) $input['item_name'];
+            }
+
+            if (array_key_exists('short_desc', $input)) {
+                $values['short_desc'] = $input['short_desc'];
+            }
+
+            if (array_key_exists('is_active', $input) && $input['is_active'] !== null) {
+                $values['is_active'] = (bool) $input['is_active'];
+            }
+
+            $hasPriceCents = array_key_exists('price_cents', $input) && $input['price_cents'] !== null;
+            $hasPriceAmount = array_key_exists('price_amount', $input) && $input['price_amount'] !== null;
+            if ($hasPriceCents || $hasPriceAmount) {
+                [$priceAmount, $priceCents] = $this->resolvePriceValues($input);
+                $values['price_amount'] = $priceAmount;
+                $values['price_cents'] = $priceCents;
+            }
+
+            $this->shopItemRepository->update(
+                data: $values,
+                id: (int) data_get($item, 'id'),
+            );
+
+            $this->shopCategoryItemRepository->deleteByItemId((int) data_get($item, 'id'));
+            $this->shopCategoryItemRepository->updateOrCreate(
+                attributes: [
+                    'food99_shop_category_id' => (int) $category->id,
+                    'food99_shop_item_id' => (int) data_get($item, 'id'),
+                ],
+                values: [
+                    'sort_order' => 0,
+                ],
+            );
+
+            $savedItem = $this->shopItemRepository->findByShopIdAndAppItemId(
+                food99ShopId: $food99ShopId,
+                appItemId: (string) $input['app_item_id'],
+            );
+
+            if (! is_object($savedItem)) {
+                throw new ApiException(
+                    msg: 'Falha ao recarregar item configurado.',
+                    code: 500,
+                );
+            }
+
+            return $this->enrichItemForResponse(
+                item: $this->sanitizeCatalogItem($savedItem->toArray()),
+                categoryById: [(int) $category->id => $category->toArray()],
+                menuById: [],
+            );
+        });
     }
 
     /**
@@ -270,7 +386,18 @@ class Food99CatalogManagementService
             ];
         }
 
-        $items = $this->shopItemRepository->findByShopId((int) $shop->id)?->toArray() ?? [];
+        $menus = $this->shopMenuRepository->findByShopId((int) $shop->id)?->toArray() ?? [];
+        $categories = $this->shopCategoryRepository->findByShopId((int) $shop->id)?->toArray() ?? [];
+        $menuById = collect($menus)->keyBy('id')->all();
+        $categoryById = collect($categories)->keyBy('id')->all();
+        $items = array_map(
+            fn (array $item): array => $this->enrichItemForResponse(
+                item: $this->sanitizeCatalogItem($item),
+                categoryById: $categoryById,
+                menuById: $menuById,
+            ),
+            $this->shopItemRepository->findByShopId((int) $shop->id)?->toArray() ?? [],
+        );
 
         return [
             'app_shop_id' => $appShopId,
@@ -645,6 +772,57 @@ class Food99CatalogManagementService
         }
 
         return $menu;
+    }
+
+    /**
+     * @param array<string, mixed> $item
+     *
+     * @return array<string, mixed>
+     */
+    private function sanitizeCatalogItem(array $item): array
+    {
+        unset($item['payload_snapshot']);
+
+        return $item;
+    }
+
+    /**
+     * @param array<string, mixed> $category
+     * @param array<int|string, array<string, mixed>> $menuById
+     *
+     * @return array<string, mixed>
+     */
+    private function enrichCategoryForResponse(array $category, array $menuById): array
+    {
+        $menuId = (int) ($category['food99_shop_menu_id'] ?? 0);
+        $menu = $menuById[$menuId] ?? null;
+
+        $category['app_menu_id'] = is_array($menu) ? ($menu['app_menu_id'] ?? null) : null;
+        $category['menu_name'] = is_array($menu) ? ($menu['menu_name'] ?? null) : null;
+
+        return $category;
+    }
+
+    /**
+     * @param array<string, mixed> $item
+     * @param array<int|string, array<string, mixed>> $categoryById
+     * @param array<int|string, array<string, mixed>> $menuById
+     *
+     * @return array<string, mixed>
+     */
+    private function enrichItemForResponse(array $item, array $categoryById, array $menuById): array
+    {
+        $categoryId = (int) ($item['food99_shop_category_id'] ?? 0);
+        $category = $categoryById[$categoryId] ?? null;
+        $menuId = is_array($category) ? (int) ($category['food99_shop_menu_id'] ?? 0) : 0;
+        $menu = $menuById[$menuId] ?? null;
+
+        $item['app_category_id'] = is_array($category) ? ($category['app_category_id'] ?? null) : null;
+        $item['category_name'] = is_array($category) ? ($category['category_name'] ?? null) : null;
+        $item['app_menu_id'] = is_array($menu) ? ($menu['app_menu_id'] ?? null) : null;
+        $item['menu_name'] = is_array($menu) ? ($menu['menu_name'] ?? null) : null;
+
+        return $item;
     }
 
     /**

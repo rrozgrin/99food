@@ -92,7 +92,7 @@ class Food99AuthServiceTest extends TestCase
             'https://auth.food99.test/authorize?state=abc',
             $response['authorization_url'],
         );
-        $this->assertSame(0, $response['response']['errno']);
+        $this->assertArrayNotHasKey('response', $response);
     }
 
     #[Test]
@@ -169,8 +169,10 @@ class Food99AuthServiceTest extends TestCase
         $response = $service->getTokenByStore('shop_123');
 
         $this->assertSame('shop_123', $response['app_shop_id']);
-        $this->assertSame('token-renovado', $response['auth_token']);
+        $this->assertTrue($response['token_found']);
+        $this->assertArrayNotHasKey('auth_token', $response);
+        $this->assertArrayNotHasKey('response', $response);
+        $this->assertArrayNotHasKey('refresh_response', $response);
         $this->assertSame(99, $response['persisted_id']);
-        $this->assertIsArray($response['refresh_response']);
     }
 }

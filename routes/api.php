@@ -109,6 +109,10 @@ Route::group(['prefix' => 'v1'], function (): void {
             Route::post('/items/upsert', [Food99CatalogController::class, 'upsertItem'])
                 ->name('api.v1.food99.catalog.items.upsert');
 
+            // Configura item local ja criado pelo ERP para futura publicacao
+            Route::post('/items/configure', [Food99CatalogController::class, 'configureItem'])
+                ->name('api.v1.food99.catalog.items.configure');
+
             // Lista itens da loja no catalogo local
             Route::get('/items/{appShopId}', [Food99CatalogController::class, 'listItems'])
                 ->name('api.v1.food99.catalog.items.list');

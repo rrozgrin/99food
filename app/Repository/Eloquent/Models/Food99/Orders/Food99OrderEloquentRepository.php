@@ -50,15 +50,16 @@ class Food99OrderEloquentRepository extends EloquentRepository implements Food99
                 return null;
             }
 
-            // Evita corrida entre jobs duplicadas: se ja entrou em processamento,
-            // nao deixa um segundo worker seguir com o mesmo pedido.
-            if ((string) data_get($order, 'sync_status') === 'processing_erp') {
+            $syncStatus = (string) data_get($order, 'sync_status');
+
+            // Pedido novo ainda nao pode gerar venda; a criacao fica para o fluxo de finalizacao.
+            if ($syncStatus === 'new_order') {
                 return null;
             }
 
-            $order->sync_status = 'processing_erp';
-            $order->error_message = null;
-            $order->save();
+            if ($syncStatus === 'canceled') {
+                return null;
+            }
 
             return $order;
         });
@@ -72,7 +73,7 @@ class Food99OrderEloquentRepository extends EloquentRepository implements Food99
             ->update($data);
     }
 
-    public function listByShopIdsAndStatuses(array $shopIds, array $statuses, int $limit): ?object
+    public function listByShopIds(array $shopIds, int $limit): ?object
     {
         if ($shopIds === []) {
             return $this->model->newCollection();
@@ -81,7 +82,6 @@ class Food99OrderEloquentRepository extends EloquentRepository implements Food99
         return $this->model
             ->newQuery()
             ->whereIn('food99_shop_id', $shopIds)
-            ->whereIn('sync_status', $statuses)
             ->with([
                 'items' => static function ($query): void {
                     $query->orderBy('id');
