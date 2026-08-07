@@ -24,8 +24,7 @@ use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
  *  - data_criacao  → CREATED_AT
  *  - data_alteracao → UPDATED_AT
  *
- * NOTA: A coluna 'senha' armazena a senha em texto plano (legado).
- * Deve ser migrada para bcrypt/argon2 no futuro.
+ * A coluna 'senha' armazena o hash da senha gerado pelo ERP legado.
  *
  * @see \App\Http\Controllers\AuthController — Controller de autenticação
  */
