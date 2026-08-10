@@ -14,8 +14,7 @@ interface Food99ShopMenuRepositoryInterface extends RepositoryInterface
     /**
      * Retorna menus da loja.
      *
-     * @param int $food99ShopId ID interno da loja em mysql_marketplace
-     *
+     * @param  int  $food99ShopId  ID interno da loja em mysql_marketplace
      * @return object|null Colecao de menus
      */
     public function findByShopId(int $food99ShopId): ?object;
@@ -23,9 +22,8 @@ interface Food99ShopMenuRepositoryInterface extends RepositoryInterface
     /**
      * Busca um menu por loja e app_menu_id.
      *
-     * @param int    $food99ShopId ID interno da loja
-     * @param string $appMenuId    ID externo do menu
-     *
+     * @param  int  $food99ShopId  ID interno da loja
+     * @param  string  $appMenuId  ID externo do menu
      * @return object|null Menu encontrado
      */
     public function findByShopIdAndAppMenuId(int $food99ShopId, string $appMenuId): ?object;
@@ -33,8 +31,7 @@ interface Food99ShopMenuRepositoryInterface extends RepositoryInterface
     /**
      * Retorna menus ativos por loja.
      *
-     * @param int $food99ShopId ID interno da loja em mysql_marketplace
-     *
+     * @param  int  $food99ShopId  ID interno da loja em mysql_marketplace
      * @return object|null Colecao de menus
      */
     public function findActiveByShopId(int $food99ShopId): ?object;

@@ -14,8 +14,7 @@ interface Food99ShopItemRepositoryInterface extends RepositoryInterface
     /**
      * Retorna itens da loja.
      *
-     * @param int $food99ShopId ID interno da loja em mysql_marketplace
-     *
+     * @param  int  $food99ShopId  ID interno da loja em mysql_marketplace
      * @return object|null Colecao de itens
      */
     public function findByShopId(int $food99ShopId): ?object;
@@ -23,9 +22,8 @@ interface Food99ShopItemRepositoryInterface extends RepositoryInterface
     /**
      * Busca item por loja e app_item_id.
      *
-     * @param int    $food99ShopId ID interno da loja
-     * @param string $appItemId    ID externo do item
-     *
+     * @param  int  $food99ShopId  ID interno da loja
+     * @param  string  $appItemId  ID externo do item
      * @return object|null Item encontrado
      */
     public function findByShopIdAndAppItemId(int $food99ShopId, string $appItemId): ?object;
@@ -33,9 +31,8 @@ interface Food99ShopItemRepositoryInterface extends RepositoryInterface
     /**
      * Busca itens da loja por lista de app_item_id.
      *
-     * @param int                $food99ShopId ID interno da loja
-     * @param array<int, string> $appItemIds   IDs externos dos itens
-     *
+     * @param  int  $food99ShopId  ID interno da loja
+     * @param  array<int, string>  $appItemIds  IDs externos dos itens
      * @return object|null Colecao de itens
      */
     public function findByShopIdAndAppItemIds(int $food99ShopId, array $appItemIds): ?object;
@@ -43,10 +40,9 @@ interface Food99ShopItemRepositoryInterface extends RepositoryInterface
     /**
      * Busca item por loja e par ERP (produto/grade).
      *
-     * @param int      $food99ShopId ID interno da loja
-     * @param int      $idProduto    ID do produto no ERP
-     * @param int|null $idGrade      ID da grade no ERP (quando houver)
-     *
+     * @param  int  $food99ShopId  ID interno da loja
+     * @param  int  $idProduto  ID do produto no ERP
+     * @param  int|null  $idGrade  ID da grade no ERP (quando houver)
      * @return object|null Item encontrado
      */
     public function findByShopIdAndProdutoGrade(int $food99ShopId, int $idProduto, ?int $idGrade): ?object;
@@ -54,8 +50,7 @@ interface Food99ShopItemRepositoryInterface extends RepositoryInterface
     /**
      * Retorna itens ativos por loja.
      *
-     * @param int $food99ShopId ID interno da loja em mysql_marketplace
-     *
+     * @param  int  $food99ShopId  ID interno da loja em mysql_marketplace
      * @return object|null Colecao de itens
      */
     public function findActiveByShopId(int $food99ShopId): ?object;
@@ -63,9 +58,9 @@ interface Food99ShopItemRepositoryInterface extends RepositoryInterface
     /**
      * Marca itens como publicados.
      *
-     * @param int                  $food99ShopId            ID interno da loja
-     * @param array<int, string>   $appItemIds              IDs externos dos itens
-     * @param array<string, array> $itemPayloadByAppItemId  Payload enviado por item
+     * @param  int  $food99ShopId  ID interno da loja
+     * @param  array<int, string>  $appItemIds  IDs externos dos itens
+     * @param  array<string, array>  $itemPayloadByAppItemId  Payload enviado por item
      */
     public function markPublishedByShopAndAppItemIds(
         int $food99ShopId,
@@ -76,9 +71,9 @@ interface Food99ShopItemRepositoryInterface extends RepositoryInterface
     /**
      * Marca itens como falhos.
      *
-     * @param int                $food99ShopId ID interno da loja
-     * @param array<int, string> $appItemIds   IDs externos dos itens
-     * @param string             $errorMessage Mensagem de erro
+     * @param  int  $food99ShopId  ID interno da loja
+     * @param  array<int, string>  $appItemIds  IDs externos dos itens
+     * @param  string  $errorMessage  Mensagem de erro
      */
     public function markFailedByShopAndAppItemIds(int $food99ShopId, array $appItemIds, string $errorMessage): void;
 

@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use Illuminate\Console\ContainerCommandLoader;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\CommandLoader\CommandLoaderInterface;
 
@@ -18,7 +19,7 @@ use Symfony\Component\Console\CommandLoader\CommandLoaderInterface;
  * são carregados via deferred providers (lazy loading), portanto
  * não estão disponíveis nos callbacks Artisan::starting().
  *
- * @see \Illuminate\Console\ContainerCommandLoader — Loader original do Laravel
+ * @see ContainerCommandLoader — Loader original do Laravel
  * @see Kernel — Registra este decorator em getArtisan()
  *
  * @author Rafael Rozgrin <rrozgrin@gmail.com>
@@ -26,8 +27,8 @@ use Symfony\Component\Console\CommandLoader\CommandLoaderInterface;
 class TranslatingCommandLoader implements CommandLoaderInterface
 {
     /**
-     * @param CommandLoaderInterface $inner       Loader original a ser decorado
-     * @param array<string, string>  $translations Mapa [nome_comando => descrição_ptBR]
+     * @param  CommandLoaderInterface  $inner  Loader original a ser decorado
+     * @param  array<string, string>  $translations  Mapa [nome_comando => descrição_ptBR]
      */
     public function __construct(
         private readonly CommandLoaderInterface $inner,
@@ -37,7 +38,7 @@ class TranslatingCommandLoader implements CommandLoaderInterface
     /**
      * Carrega um comando pelo nome e aplica tradução se disponível.
      *
-     * @param string $name Nome do comando (ex: 'make:model')
+     * @param  string  $name  Nome do comando (ex: 'make:model')
      * @return Command Instância do comando com descrição traduzida
      */
     public function get(string $name): Command
@@ -56,8 +57,7 @@ class TranslatingCommandLoader implements CommandLoaderInterface
      *
      * Delega diretamente ao loader original.
      *
-     * @param string $name Nome do comando
-     * @return bool
+     * @param  string  $name  Nome do comando
      */
     public function has(string $name): bool
     {

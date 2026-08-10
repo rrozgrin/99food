@@ -57,4 +57,3 @@ return new class extends Migration
         Schema::connection('mysql_marketplace')->dropIfExists('food99_publish_jobs');
     }
 };
-

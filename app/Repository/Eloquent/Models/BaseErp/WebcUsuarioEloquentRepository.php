@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Repository\Eloquent\Models\BaseErp;
 
 use App\Models\BaseErp\WebcUsuario;
-use App\Repository\Eloquent\EloquentRepository;
 use App\Repository\Contracts\Models\BaseErp\WebcUsuarioRepositoryInterface;
+use App\Repository\Eloquent\EloquentRepository;
 
 class WebcUsuarioEloquentRepository extends EloquentRepository implements WebcUsuarioRepositoryInterface
 {

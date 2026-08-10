@@ -46,9 +46,9 @@ trait CacheableRepository
     /**
      * Executa um callback com cache aplicado.
      *
-     * @param  string   $key      Chave única dentro do domínio.
-     * @param  Closure  $callback Função que retorna os dados do banco.
-     * @param  int|null $ttl      TTL em segundos; usa o padrão do domínio se null.
+     * @param  string  $key  Chave única dentro do domínio.
+     * @param  Closure  $callback  Função que retorna os dados do banco.
+     * @param  int|null  $ttl  TTL em segundos; usa o padrão do domínio se null.
      */
     protected function cached(string $key, Closure $callback, ?int $ttl = null): mixed
     {
@@ -79,7 +79,7 @@ trait CacheableRepository
      * Invalida o cache de múltiplos domínios relacionados.
      * Útil quando uma operação afeta vários bounded contexts.
      *
-     * @param  string[] $domains
+     * @param  string[]  $domains
      */
     protected function invalidateRelatedDomains(array $domains): void
     {

@@ -26,8 +26,6 @@ class PercentageCast implements CastsAttributes
 {
     /**
      * Converte o valor do banco de dados para o VO Percentage.
-     *
-     * @return ?Percentage
      */
     public function get(Model $model, string $key, mixed $value, array $attributes): ?Percentage
     {
@@ -40,8 +38,6 @@ class PercentageCast implements CastsAttributes
 
     /**
      * Converte o VO Percentage para string antes de persistir no banco.
-     *
-     * @return ?string
      */
     public function set(Model $model, string $key, mixed $value, array $attributes): ?string
     {

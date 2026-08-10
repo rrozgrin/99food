@@ -21,10 +21,10 @@ class CacheService
     /**
      * Retorna um valor do cache ou executa o callback e armazena o resultado.
      *
-     * @param  string   $key      Chave única dentro do domínio.
-     * @param  string   $domain   Domínio do ERP (ex: 'clientes', 'produtos').
-     * @param  Closure  $callback Função que retorna o valor a ser cacheado.
-     * @param  int|null $ttl      TTL em segundos; usa TTL padrão do domínio se null.
+     * @param  string  $key  Chave única dentro do domínio.
+     * @param  string  $domain  Domínio do ERP (ex: 'clientes', 'produtos').
+     * @param  Closure  $callback  Função que retorna o valor a ser cacheado.
+     * @param  int|null  $ttl  TTL em segundos; usa TTL padrão do domínio se null.
      */
     public function remember(string $key, string $domain, Closure $callback, ?int $ttl = null): mixed
     {
@@ -89,7 +89,7 @@ class CacheService
      * Útil em operações que afetam múltiplos bounded contexts
      * (ex: fechar venda → invalidar 'vendas', 'estoque', 'financeiro').
      *
-     * @param  string[] $domains
+     * @param  string[]  $domains
      */
     public function forgetDomains(array $domains): void
     {

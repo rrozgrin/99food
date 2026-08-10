@@ -56,4 +56,3 @@ class Food99PublishJob extends Model
         ];
     }
 }
-

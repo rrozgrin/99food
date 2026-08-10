@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Food99\Orders;
 
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Services\Auth\UsuarioLogadoService;
 use App\Services\Food99\Orders\Food99OrderErpSyncService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class Food99OrderSyncController extends Controller
 {
@@ -46,8 +46,7 @@ class Food99OrderSyncController extends Controller
         int $food99OrderId,
         Food99OrderErpSyncService $service,
         UsuarioLogadoService $usuarioLogado,
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $idCadastro = $usuarioLogado->getIdCadastroLogado();
         if (! is_numeric($idCadastro) || (int) $idCadastro <= 0) {
             return response()->json(
@@ -74,8 +73,7 @@ class Food99OrderSyncController extends Controller
         int $food99OrderId,
         Food99OrderErpSyncService $service,
         UsuarioLogadoService $usuarioLogado,
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $idCadastro = $usuarioLogado->getIdCadastroLogado();
         if (! is_numeric($idCadastro) || (int) $idCadastro <= 0) {
             return response()->json(

@@ -4,26 +4,26 @@ declare(strict_types=1);
 
 namespace App\Services\Food99\Orders;
 
-use Throwable;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Cache;
+use App\Exceptions\ApiException;
 use App\Jobs\Food99\SyncFood99OrderToErpJob;
 use App\Models\Food99\Orders\Food99Order;
 use App\Models\Food99\Orders\Food99OrderItem;
-use App\Exceptions\ApiException;
-use App\Services\Traits\WithTransaction;
-use App\Repository\Contracts\Models\Food99\Auth\Food99ShopRepositoryInterface;
-use App\Repository\Contracts\Models\Food99\Orders\Food99OrderRepositoryInterface;
-use App\Repository\Contracts\Models\Food99\Orders\Food99OrderItemRepositoryInterface;
-use App\Repository\Contracts\Models\Food99\Catalog\Food99ShopItemRepositoryInterface;
-use App\Repository\Contracts\Models\BaseErp\GradeRepositoryInterface;
-use App\Repository\Contracts\Models\BaseErp\VendaRepositoryInterface;
 use App\Repository\Contracts\Models\BaseErp\ClienteRepositoryInterface;
+use App\Repository\Contracts\Models\BaseErp\GradeRepositoryInterface;
 use App\Repository\Contracts\Models\BaseErp\ProdutoRepositoryInterface;
+use App\Repository\Contracts\Models\BaseErp\VendaInformacoesRepositoryInterface;
 use App\Repository\Contracts\Models\BaseErp\VendaItensRepositoryInterface;
 use App\Repository\Contracts\Models\BaseErp\VendaPagamentoRepositoryInterface;
-use App\Repository\Contracts\Models\BaseErp\VendaInformacoesRepositoryInterface;
+use App\Repository\Contracts\Models\BaseErp\VendaRepositoryInterface;
 use App\Repository\Contracts\Models\BaseErp\WebcUsuarioRepositoryInterface;
+use App\Repository\Contracts\Models\Food99\Auth\Food99ShopRepositoryInterface;
+use App\Repository\Contracts\Models\Food99\Catalog\Food99ShopItemRepositoryInterface;
+use App\Repository\Contracts\Models\Food99\Orders\Food99OrderItemRepositoryInterface;
+use App\Repository\Contracts\Models\Food99\Orders\Food99OrderRepositoryInterface;
+use App\Services\Traits\WithTransaction;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
+use Throwable;
 
 class Food99OrderErpSyncService
 {
@@ -217,7 +217,7 @@ class Food99OrderErpSyncService
                     return $collection->where('app_shop_id', trim((string) $appShopId));
                 })
                 ->pluck('id')
-                ->map(static fn($id): int => (int) $id)
+                ->map(static fn ($id): int => (int) $id)
                 ->all();
         }
 
@@ -508,7 +508,7 @@ class Food99OrderErpSyncService
             $appItemId = trim((string) ($item->app_external_id ?? ''));
         }
         if ($appItemId === '') {
-            $appItemId = 'webhook-item-' . (string) data_get($item, 'id');
+            $appItemId = 'webhook-item-'.(string) data_get($item, 'id');
         }
 
         $shopItem = $this->shopItemRepository->findByShopIdAndAppItemId(
@@ -604,7 +604,7 @@ class Food99OrderErpSyncService
             'codigo_barra' => $codigoBarra,
             'barra' => $codigoBarra,
             'ean' => $codigoBarra,
-            'identificacao_interna' => mb_substr('99F-' . ($appItemId !== '' ? $appItemId : uniqid()), 0, 60),
+            'identificacao_interna' => mb_substr('99F-'.($appItemId !== '' ? $appItemId : uniqid()), 0, 60),
             'custo' => max(0.01, $price),
             'custo_medio_venda' => max(0.01, $price),
             'custo_medio_venda_atacado' => max(0.01, $price),
@@ -678,7 +678,7 @@ class Food99OrderErpSyncService
     private function buildProductBarcode(int $idCadastro, string $appItemId): string
     {
         $seed = trim($appItemId) !== '' ? $appItemId : uniqid((string) $idCadastro, true);
-        $hash = preg_replace('/\D+/', '', (string) crc32($idCadastro . '|' . $seed));
+        $hash = preg_replace('/\D+/', '', (string) crc32($idCadastro.'|'.$seed));
         if (! is_string($hash)) {
             $hash = (string) random_int(1000000000, 9999999999);
         }

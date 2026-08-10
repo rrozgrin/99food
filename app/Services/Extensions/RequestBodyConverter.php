@@ -2,9 +2,9 @@
 
 namespace App\Services\Extensions;
 
+use Illuminate\Http\Request;
 use ReflectionClass;
 use ReflectionNamedType;
-use Illuminate\Http\Request;
 
 /**
  * Serviço de conversão de request body JSON para DTOs tipados.
@@ -51,7 +51,7 @@ use Illuminate\Http\Request;
 class RequestBodyConverter
 {
     /**
-     * @param Request $request Requisição HTTP injetada pelo container
+     * @param  Request  $request  Requisição HTTP injetada pelo container
      */
     public function __construct(
         private readonly Request $request,
@@ -66,13 +66,13 @@ class RequestBodyConverter
      *
      * @template T of RequestBodyConverterInterface
      *
-     * @param T $dto Instância do DTO (usado para determinar a classe)
-     *
+     * @param  T  $dto  Instância do DTO (usado para determinar a classe)
      * @return T Nova instância do DTO preenchida com os dados do request
      */
     public function deserialize(RequestBodyConverterInterface $dto): RequestBodyConverterInterface
     {
         $data = $this->request->json()->all();
+
         return $this->hydrate(className: $dto::class, data: $data);
     }
 
@@ -84,9 +84,8 @@ class RequestBodyConverter
      *
      * @template T of RequestBodyConverterInterface
      *
-     * @param T      $dto          Instância do DTO
-     * @param string $jsonConteudo String JSON a ser deserializada
-     *
+     * @param  T  $dto  Instância do DTO
+     * @param  string  $jsonConteudo  String JSON a ser deserializada
      * @return T Nova instância do DTO preenchida
      */
     public function deserializeConteudo(
@@ -94,14 +93,14 @@ class RequestBodyConverter
         string $jsonConteudo,
     ): RequestBodyConverterInterface {
         $data = json_decode($jsonConteudo, associative: true, flags: JSON_THROW_ON_ERROR);
+
         return $this->hydrate(className: $dto::class, data: $data);
     }
 
     /**
      * Serializa um objeto para string JSON.
      *
-     * @param object $object Objeto a ser serializado
-     *
+     * @param  object  $object  Objeto a ser serializado
      * @return string JSON do objeto
      */
     public function serialize(object $object): string
@@ -118,9 +117,8 @@ class RequestBodyConverter
      * Utiliza o construtor do DTO para criar a instância, mapeando
      * os parâmetros do construtor com as chaves do array de dados.
      *
-     * @param class-string $className FQCN da classe DTO
-     * @param array<string, mixed> $data Dados para hidratação
-     *
+     * @param  class-string  $className  FQCN da classe DTO
+     * @param  array<string, mixed>  $data  Dados para hidratação
      * @return RequestBodyConverterInterface Instância hidratada do DTO
      */
     private function hydrate(string $className, array $data): RequestBodyConverterInterface
@@ -141,6 +139,7 @@ class RequestBodyConverter
                     ));
                 }
             }
+
             return $instance;
         }
 
@@ -169,24 +168,23 @@ class RequestBodyConverter
     /**
      * Converte o valor para o tipo esperado pela propriedade/parâmetro.
      *
-     * @param mixed                    $value Valor a ser convertido
-     * @param ReflectionNamedType|null $type  Tipo esperado (via reflection)
-     *
+     * @param  mixed  $value  Valor a ser convertido
+     * @param  ReflectionNamedType|null  $type  Tipo esperado (via reflection)
      * @return mixed Valor convertido
      */
     private function castValue(mixed $value, ?\ReflectionType $type): mixed
     {
-        if ($value === null || $type === null || !($type instanceof ReflectionNamedType)) {
+        if ($value === null || $type === null || ! ($type instanceof ReflectionNamedType)) {
             return $value;
         }
 
         return match ($type->getName()) {
-            'int'    => (int) $value,
-            'float'  => (float) $value,
+            'int' => (int) $value,
+            'float' => (float) $value,
             'string' => (string) $value,
-            'bool'   => (bool) $value,
-            'array'  => (array) $value,
-            default  => $value,
+            'bool' => (bool) $value,
+            'array' => (array) $value,
+            default => $value,
         };
     }
 }

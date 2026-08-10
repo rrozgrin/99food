@@ -32,7 +32,7 @@ abstract class EloquentRepository extends AbstractEloquentRepository
     /**
      * Configura o model com a conexão apropriada ao ambiente.
      *
-     * @param Model $model Instância do Model Eloquent do domínio
+     * @param  Model  $model  Instância do Model Eloquent do domínio
      */
     public function __construct(Model $model)
     {

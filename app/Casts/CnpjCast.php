@@ -28,8 +28,6 @@ class CnpjCast implements CastsAttributes
     /**
      * Converte o valor do banco de dados para o VO Cnpj.
      * Retorna null se o valor for nulo ou inválido (sem lançar exceção).
-     *
-     * @return ?Cnpj
      */
     public function get(Model $model, string $key, mixed $value, array $attributes): ?Cnpj
     {
@@ -42,8 +40,6 @@ class CnpjCast implements CastsAttributes
 
     /**
      * Converte o VO Cnpj para string de 14 dígitos antes de persistir no banco.
-     *
-     * @return ?string
      */
     public function set(Model $model, string $key, mixed $value, array $attributes): ?string
     {

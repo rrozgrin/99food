@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Food99\Orders;
 
-use Mockery;
-use Tests\TestCase;
-use PHPUnit\Framework\Attributes\Test;
 use App\Http\Middleware\ApiJwtMiddleware;
 use App\Services\Auth\UsuarioLogadoService;
 use App\Services\Food99\Orders\Food99OrderErpSyncService;
+use Mockery;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
 
 class Food99OrderSyncControllerTest extends TestCase
 {

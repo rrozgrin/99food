@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace App\Services\Food99\Catalog;
 
 use App\Exceptions\ApiException;
-use App\Services\Auth\UsuarioLogadoService;
-use App\Services\Traits\WithTransaction;
 use App\Repository\Contracts\Models\BaseErp\GradeRepositoryInterface;
 use App\Repository\Contracts\Models\BaseErp\ProdutoRepositoryInterface;
-use App\Services\Food99\Traits\InteractsWithFood99Api;
 use App\Repository\Contracts\Models\Food99\Auth\Food99ShopRepositoryInterface;
 use App\Repository\Contracts\Models\Food99\Auth\Food99StoreTokenRepositoryInterface;
+use App\Repository\Contracts\Models\Food99\Catalog\Food99ShopCategoryItemRepositoryInterface;
+use App\Repository\Contracts\Models\Food99\Catalog\Food99ShopCategoryRepositoryInterface;
 use App\Repository\Contracts\Models\Food99\Catalog\Food99ShopItemRepositoryInterface;
 use App\Repository\Contracts\Models\Food99\Catalog\Food99ShopMenuRepositoryInterface;
-use App\Repository\Contracts\Models\Food99\Catalog\Food99ShopCategoryRepositoryInterface;
-use App\Repository\Contracts\Models\Food99\Catalog\Food99ShopCategoryItemRepositoryInterface;
+use App\Services\Auth\UsuarioLogadoService;
+use App\Services\Food99\Traits\InteractsWithFood99Api;
+use App\Services\Traits\WithTransaction;
 
 /**
  * Service de manipulacao de catalogo local da 99Food.
@@ -43,8 +43,7 @@ class Food99CatalogManagementService
     /**
      * Cadastra ou atualiza um menu da loja.
      *
-     * @param array<string, mixed> $input Dados do menu
-     *
+     * @param  array<string, mixed>  $input  Dados do menu
      * @return array<string, mixed> Menu salvo
      */
     public function upsertMenu(array $input): array
@@ -70,9 +69,8 @@ class Food99CatalogManagementService
     /**
      * Lista menus da loja por app_shop_id.
      *
-     * @param string $appShopId app_shop_id da loja
-     * @param string $view      Visao desejada: local|published
-     *
+     * @param  string  $appShopId  app_shop_id da loja
+     * @param  string  $view  Visao desejada: local|published
      * @return array<string, mixed> Menus encontrados
      */
     public function listMenus(string $appShopId, string $view = 'local'): array
@@ -107,8 +105,7 @@ class Food99CatalogManagementService
     /**
      * Cadastra ou atualiza uma categoria da loja.
      *
-     * @param array<string, mixed> $input Dados da categoria
-     *
+     * @param  array<string, mixed>  $input  Dados da categoria
      * @return array<string, mixed> Categoria salva
      */
     public function upsertCategory(array $input): array
@@ -142,9 +139,8 @@ class Food99CatalogManagementService
     /**
      * Lista categorias da loja por app_shop_id.
      *
-     * @param string $appShopId app_shop_id da loja
-     * @param string $view      Visao desejada: local|published
-     *
+     * @param  string  $appShopId  app_shop_id da loja
+     * @param  string  $view  Visao desejada: local|published
      * @return array<string, mixed> Categorias encontradas
      */
     public function listCategories(string $appShopId, string $view = 'local'): array
@@ -184,8 +180,7 @@ class Food99CatalogManagementService
     /**
      * Cadastra ou atualiza um item da loja.
      *
-     * @param array<string, mixed> $input Dados do item
-     *
+     * @param  array<string, mixed>  $input  Dados do item
      * @return array<string, mixed> Item salvo
      */
     public function upsertItem(array $input): array
@@ -257,8 +252,7 @@ class Food99CatalogManagementService
     /**
      * Configura item local previamente criado pelo ERP.
      *
-     * @param array<string, mixed> $input Dados parciais do item
-     *
+     * @param  array<string, mixed>  $input  Dados parciais do item
      * @return array<string, mixed> Item salvo
      */
     public function configureItem(array $input): array
@@ -362,9 +356,8 @@ class Food99CatalogManagementService
     /**
      * Lista itens da loja por app_shop_id.
      *
-     * @param string $appShopId app_shop_id da loja
-     * @param string $view      Visao desejada: local|published
-     *
+     * @param  string  $appShopId  app_shop_id da loja
+     * @param  string  $view  Visao desejada: local|published
      * @return array<string, mixed> Itens encontrados
      */
     public function listItems(string $appShopId, string $view = 'local'): array
@@ -410,8 +403,7 @@ class Food99CatalogManagementService
     /**
      * Sincroniza menus, categorias e itens do catalogo remoto da 99Food.
      *
-     * @param string $appShopId app_shop_id da loja
-     *
+     * @param  string  $appShopId  app_shop_id da loja
      * @return array<string, mixed>
      */
     public function syncRemoteCatalog(string $appShopId): array
@@ -513,12 +505,12 @@ class Food99CatalogManagementService
             }
 
             $appCategoryId = trim((string) data_get($itemPayload, 'app_category_id'));
-        $shopCategoryId = $appCategoryId !== '' && isset($categoryMap[$appCategoryId])
-                ? $categoryMap[$appCategoryId]
-                : $this->shopCategoryRepository->findIdByShopAndAppCategoryId(
-                    food99ShopId: $food99ShopId,
-                    appCategoryId: $appCategoryId,
-                );
+            $shopCategoryId = $appCategoryId !== '' && isset($categoryMap[$appCategoryId])
+                    ? $categoryMap[$appCategoryId]
+                    : $this->shopCategoryRepository->findIdByShopAndAppCategoryId(
+                        food99ShopId: $food99ShopId,
+                        appCategoryId: $appCategoryId,
+                    );
 
             $existingItem = $this->shopItemRepository->findByShopIdAndAppItemId(
                 food99ShopId: $food99ShopId,
@@ -611,9 +603,8 @@ class Food99CatalogManagementService
     /**
      * Consulta catalogo publicado diretamente na API da 99Food.
      *
-     * @param string $appShopId    app_shop_id da loja
-     * @param int    $food99ShopId ID interno da loja
-     *
+     * @param  string  $appShopId  app_shop_id da loja
+     * @param  int  $food99ShopId  ID interno da loja
      * @return array<string, mixed> [menus, categories, items]
      */
     private function fetchPublishedCatalogFromFood99(string $appShopId, int $food99ShopId): array
@@ -657,8 +648,7 @@ class Food99CatalogManagementService
     /**
      * Substitui o vinculo de itens de uma categoria.
      *
-     * @param array<string, mixed> $input Dados de vinculo
-     *
+     * @param  array<string, mixed>  $input  Dados de vinculo
      * @return array<string, mixed> Resultado da operacao
      */
     public function linkCategoryItems(array $input): array
@@ -696,7 +686,7 @@ class Food99CatalogManagementService
 
         if ($missingIds !== []) {
             throw new ApiException(
-                msg: 'Itens nao encontrados para vinculo: ' . implode(', ', $missingIds),
+                msg: 'Itens nao encontrados para vinculo: '.implode(', ', $missingIds),
                 code: 422,
             );
         }
@@ -726,8 +716,7 @@ class Food99CatalogManagementService
     /**
      * Resolve loja a partir do app_shop_id.
      *
-     * @param string $appShopId app_shop_id da loja
-     *
+     * @param  string  $appShopId  app_shop_id da loja
      * @return object Registro da loja
      */
     private function resolveShopByAppShopId(string $appShopId): object
@@ -752,9 +741,8 @@ class Food99CatalogManagementService
     /**
      * Resolve menu interno pelo app_menu_id.
      *
-     * @param int    $food99ShopId ID interno da loja
-     * @param string $appMenuId    app_menu_id do menu
-     *
+     * @param  int  $food99ShopId  ID interno da loja
+     * @param  string  $appMenuId  app_menu_id do menu
      * @return object Menu encontrado
      */
     private function resolveMenuByAppMenuId(int $food99ShopId, string $appMenuId): object
@@ -775,8 +763,7 @@ class Food99CatalogManagementService
     }
 
     /**
-     * @param array<string, mixed> $item
-     *
+     * @param  array<string, mixed>  $item
      * @return array<string, mixed>
      */
     private function sanitizeCatalogItem(array $item): array
@@ -787,9 +774,8 @@ class Food99CatalogManagementService
     }
 
     /**
-     * @param array<string, mixed> $category
-     * @param array<int|string, array<string, mixed>> $menuById
-     *
+     * @param  array<string, mixed>  $category
+     * @param  array<int|string, array<string, mixed>>  $menuById
      * @return array<string, mixed>
      */
     private function enrichCategoryForResponse(array $category, array $menuById): array
@@ -804,10 +790,9 @@ class Food99CatalogManagementService
     }
 
     /**
-     * @param array<string, mixed> $item
-     * @param array<int|string, array<string, mixed>> $categoryById
-     * @param array<int|string, array<string, mixed>> $menuById
-     *
+     * @param  array<string, mixed>  $item
+     * @param  array<int|string, array<string, mixed>>  $categoryById
+     * @param  array<int|string, array<string, mixed>>  $menuById
      * @return array<string, mixed>
      */
     private function enrichItemForResponse(array $item, array $categoryById, array $menuById): array
@@ -828,9 +813,8 @@ class Food99CatalogManagementService
     /**
      * Resolve categoria interna pelo app_category_id.
      *
-     * @param int    $food99ShopId  ID interno da loja
-     * @param string $appCategoryId app_category_id da categoria
-     *
+     * @param  int  $food99ShopId  ID interno da loja
+     * @param  string  $appCategoryId  app_category_id da categoria
      * @return Food99ShopCategory Categoria encontrada
      */
     private function resolveCategoryByAppCategoryId(int $food99ShopId, string $appCategoryId): object
@@ -853,8 +837,7 @@ class Food99CatalogManagementService
     /**
      * Resolve os valores de price_amount e price_cents a partir dos dados de entrada.
      *
-     * @param array<string, mixed> $input Dados recebidos
-     *
+     * @param  array<string, mixed>  $input  Dados recebidos
      * @return array{0: float|null, 1: int} [price_amount, price_cents]
      */
     private function resolvePriceValues(array $input): array
@@ -934,7 +917,7 @@ class Food99CatalogManagementService
             'codigo_barra' => $codigoBarra,
             'barra' => $codigoBarra,
             'ean' => $codigoBarra,
-            'identificacao_interna' => mb_substr('99F-' . ($appItemId !== '' ? $appItemId : uniqid()), 0, 60),
+            'identificacao_interna' => mb_substr('99F-'.($appItemId !== '' ? $appItemId : uniqid()), 0, 60),
             'custo' => max(0.01, $priceAmount),
             'custo_medio_venda' => max(0.01, $priceAmount),
             'custo_medio_venda_atacado' => max(0.01, $priceAmount),
@@ -979,7 +962,7 @@ class Food99CatalogManagementService
     private function buildProductBarcode(int $idCadastro, string $appItemId): string
     {
         $seed = trim($appItemId) !== '' ? $appItemId : uniqid((string) $idCadastro, true);
-        $hash = preg_replace('/\D+/', '', (string) crc32($idCadastro . '|' . $seed));
+        $hash = preg_replace('/\D+/', '', (string) crc32($idCadastro.'|'.$seed));
         if (! is_string($hash) || $hash === '') {
             $hash = (string) random_int(1000000000, 9999999999);
         }
@@ -1041,14 +1024,14 @@ class Food99CatalogManagementService
     private function generateUniqueAppItemId(int $food99ShopId, int $idProduto, ?int $idGrade): string
     {
         $gradeSuffix = $idGrade !== null ? (string) $idGrade : 'na';
-        $base = 'p' . $idProduto . '_g' . $gradeSuffix;
+        $base = 'p'.$idProduto.'_g'.$gradeSuffix;
         $candidate = mb_substr($base, 0, 120);
 
         $seq = 1;
         while (is_object($this->shopItemRepository->findByShopIdAndAppItemId($food99ShopId, $candidate))) {
-            $suffix = '_' . $seq;
+            $suffix = '_'.$seq;
             $maxBaseLength = 120 - mb_strlen($suffix);
-            $candidate = mb_substr($base, 0, max(1, $maxBaseLength)) . $suffix;
+            $candidate = mb_substr($base, 0, max(1, $maxBaseLength)).$suffix;
             $seq++;
         }
 

@@ -2,8 +2,9 @@
 
 namespace App\Repository\Traits;
 
-use Illuminate\Http\Request;
+use App\Repository\Contracts\DataTablesInterface;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 
 /**
  * Trait opt-in para suporte a jQuery DataTables server-side processing.
@@ -55,7 +56,7 @@ use Illuminate\Database\Eloquent\Builder;
  *         }
  *     }
  *
- * @see \App\Repository\Contracts\DataTablesInterface — Contrato
+ * @see DataTablesInterface — Contrato
  *
  * @author Rafael Rozgrin <rrozgrin@gmail.com>
  */
@@ -73,18 +74,17 @@ trait HasDataTables
      *  6. Transforma cada registro via transformForDataTables()
      *  7. Retorna no formato { draw, recordsTotal, recordsFiltered, data }
      *
-     * @param Request $request Requisição com parâmetros do DataTables
-     *
+     * @param  Request  $request  Requisição com parâmetros do DataTables
      * @return array{draw: int, recordsTotal: int, recordsFiltered: int, data: array}
      */
     public function dataTables(Request $request): array
     {
-        $draw       = (int) $request->input('draw', 1);
-        $start      = (int) $request->input('start', 0);
-        $length     = (int) $request->input('length', 10);
-        $search     = $request->input('search.value', '');
+        $draw = (int) $request->input('draw', 1);
+        $start = (int) $request->input('start', 0);
+        $length = (int) $request->input('length', 10);
+        $search = $request->input('search.value', '');
         $orderIndex = $request->input('order.0.column');
-        $orderDir   = $request->input('order.0.dir', $this->getDefaultOrderDirection());
+        $orderDir = $request->input('order.0.dir', $this->getDefaultOrderDirection());
 
         // Total geral de registros (sem filtro)
         $totalRecords = $this->model->newQuery()->count();
@@ -113,10 +113,10 @@ trait HasDataTables
             ->toArray();
 
         return [
-            'draw'            => $draw,
-            'recordsTotal'    => $totalRecords,
+            'draw' => $draw,
+            'recordsTotal' => $totalRecords,
             'recordsFiltered' => $filteredCount,
-            'data'            => $data,
+            'data' => $data,
         ];
     }
 
@@ -126,9 +126,8 @@ trait HasDataTables
      * Se o termo de busca estiver vazio ou não houver colunas pesquisáveis,
      * retorna a query sem modificação.
      *
-     * @param Builder $query  Query base do Eloquent
-     * @param string  $search Termo de busca do DataTables
-     *
+     * @param  Builder  $query  Query base do Eloquent
+     * @param  string  $search  Termo de busca do DataTables
      * @return Builder Query com filtro aplicado
      */
     protected function applyDataTablesSearch(Builder $query, string $search): Builder
@@ -152,8 +151,7 @@ trait HasDataTables
      * O DataTables envia o índice da coluna clicada (0, 1, 2...).
      * Este método mapeia o índice para o nome real da coluna no banco.
      *
-     * @param int|string|null $index Índice da coluna (vindo do DataTables)
-     *
+     * @param  int|string|null  $index  Índice da coluna (vindo do DataTables)
      * @return string Nome da coluna para ORDER BY
      */
     protected function resolveOrderableColumn(int|string|null $index): string
@@ -186,8 +184,7 @@ trait HasDataTables
      *         ];
      *     }
      *
-     * @param mixed $item Instância do Model Eloquent
-     *
+     * @param  mixed  $item  Instância do Model Eloquent
      * @return array<string, mixed> Dados formatados do registro
      */
     protected function transformForDataTables(mixed $item): array

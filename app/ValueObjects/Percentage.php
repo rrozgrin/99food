@@ -37,7 +37,7 @@ final readonly class Percentage
      */
     public static function of(string|int|float $value): static
     {
-        return new static(number_format((float) $value, self::PRECISION, '.', ''));
+        return new self(number_format((float) $value, self::PRECISION, '.', ''));
     }
 
     /**

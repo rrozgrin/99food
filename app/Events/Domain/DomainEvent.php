@@ -37,7 +37,7 @@ abstract class DomainEvent
 
     public function __construct(?int $userId = null)
     {
-        $this->occurredAt = new DateTimeImmutable();
+        $this->occurredAt = new DateTimeImmutable;
         $this->userId = $userId ?? $this->resolveUserId();
     }
 
@@ -56,9 +56,9 @@ abstract class DomainEvent
     public function toArray(): array
     {
         return [
-            'event'       => $this->eventName(),
+            'event' => $this->eventName(),
             'occurred_at' => $this->occurredAt->format('Y-m-d H:i:s.u'),
-            'user_id'     => $this->userId,
+            'user_id' => $this->userId,
         ];
     }
 

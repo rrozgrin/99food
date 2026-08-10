@@ -26,4 +26,3 @@ class VendaItens extends Model
         'id_cadastro',
     ];
 }
-

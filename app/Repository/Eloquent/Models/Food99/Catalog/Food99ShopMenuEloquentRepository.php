@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Repository\Eloquent\Models\Food99\Catalog;
 
 use App\Models\Food99\Catalog\Food99ShopMenu;
-use App\Repository\Eloquent\EloquentRepository;
 use App\Repository\Contracts\Models\Food99\Catalog\Food99ShopMenuRepositoryInterface;
+use App\Repository\Eloquent\EloquentRepository;
 
 /**
  * Repositorio Eloquent de menus de loja da 99Food.
@@ -19,7 +19,7 @@ class Food99ShopMenuEloquentRepository extends EloquentRepository implements Foo
     protected string $connection = 'mysql_marketplace';
 
     /**
-     * @param Food99ShopMenu $model Model de menu da 99Food
+     * @param  Food99ShopMenu  $model  Model de menu da 99Food
      */
     public function __construct(Food99ShopMenu $model)
     {

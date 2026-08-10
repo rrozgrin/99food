@@ -25,7 +25,7 @@ class FiscalCalculatorServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->calculator = new FiscalCalculatorService(new RoundingService());
+        $this->calculator = new FiscalCalculatorService(new RoundingService);
     }
 
     // -------------------------------------------------------------------------
@@ -35,7 +35,7 @@ class FiscalCalculatorServiceTest extends TestCase
     #[Test]
     public function deve_aplicar_desconto_percentual(): void
     {
-        $price    = Money::of('100.00000000');
+        $price = Money::of('100.00000000');
         $discount = Percentage::of('10');
 
         $result = $this->calculator->applyDiscount($price, $discount);
@@ -46,7 +46,7 @@ class FiscalCalculatorServiceTest extends TestCase
     #[Test]
     public function deve_calcular_valor_do_desconto(): void
     {
-        $price    = Money::of('200.00000000');
+        $price = Money::of('200.00000000');
         $discount = Percentage::of('15');
 
         $amount = $this->calculator->discountAmount($price, $discount);
@@ -72,7 +72,7 @@ class FiscalCalculatorServiceTest extends TestCase
     #[Test]
     public function deve_aplicar_acrescimo_percentual(): void
     {
-        $price     = Money::of('100.00000000');
+        $price = Money::of('100.00000000');
         $surcharge = Percentage::of('5');
 
         $result = $this->calculator->applySurcharge($price, $surcharge);
@@ -87,7 +87,7 @@ class FiscalCalculatorServiceTest extends TestCase
     #[Test]
     public function deve_calcular_total_quantidade_vezes_preco(): void
     {
-        $qty   = Quantity::of('3.0000');
+        $qty = Quantity::of('3.0000');
         $price = Money::of('25.50000000');
 
         $total = $this->calculator->calculateTotal($qty, $price);
@@ -178,7 +178,7 @@ class FiscalCalculatorServiceTest extends TestCase
     public function deve_aceitar_diferenca_dentro_da_tolerancia(): void
     {
         $calculated = Money::of('100.00000000');
-        $informed   = Money::of('100.00500000');
+        $informed = Money::of('100.00500000');
 
         $this->assertTrue($this->calculator->withinTolerance($calculated, $informed, '0.01'));
     }
@@ -187,7 +187,7 @@ class FiscalCalculatorServiceTest extends TestCase
     public function deve_rejeitar_diferenca_fora_da_tolerancia(): void
     {
         $calculated = Money::of('100.00000000');
-        $informed   = Money::of('100.02000000');
+        $informed = Money::of('100.02000000');
 
         $this->assertFalse($this->calculator->withinTolerance($calculated, $informed, '0.01'));
     }

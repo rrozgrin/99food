@@ -37,4 +37,3 @@ class Food99OrderItem extends Model
         ];
     }
 }
-

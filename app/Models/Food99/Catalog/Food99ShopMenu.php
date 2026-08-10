@@ -49,4 +49,3 @@ class Food99ShopMenu extends Model
         ];
     }
 }
-

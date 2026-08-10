@@ -28,8 +28,6 @@ class CpfCast implements CastsAttributes
     /**
      * Converte o valor do banco de dados para o VO Cpf.
      * Retorna null se o valor for nulo ou inválido (sem lançar exceção).
-     *
-     * @return ?Cpf
      */
     public function get(Model $model, string $key, mixed $value, array $attributes): ?Cpf
     {
@@ -42,8 +40,6 @@ class CpfCast implements CastsAttributes
 
     /**
      * Converte o VO Cpf para string de 11 dígitos antes de persistir no banco.
-     *
-     * @return ?string
      */
     public function set(Model $model, string $key, mixed $value, array $attributes): ?string
     {

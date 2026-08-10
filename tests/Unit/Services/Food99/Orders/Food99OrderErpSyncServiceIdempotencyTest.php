@@ -4,24 +4,24 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Services\Food99\Orders;
 
-use Carbon\Carbon;
-use Mockery;
-use Tests\TestCase;
-use PHPUnit\Framework\Attributes\Test;
 use App\Models\Food99\Orders\Food99Order;
-use App\Services\Food99\Orders\Food99OrderErpSyncService;
-use App\Repository\Contracts\Models\Food99\Auth\Food99ShopRepositoryInterface;
-use App\Repository\Contracts\Models\Food99\Orders\Food99OrderRepositoryInterface;
-use App\Repository\Contracts\Models\Food99\Orders\Food99OrderItemRepositoryInterface;
-use App\Repository\Contracts\Models\Food99\Catalog\Food99ShopItemRepositoryInterface;
-use App\Repository\Contracts\Models\BaseErp\GradeRepositoryInterface;
-use App\Repository\Contracts\Models\BaseErp\VendaRepositoryInterface;
 use App\Repository\Contracts\Models\BaseErp\ClienteRepositoryInterface;
+use App\Repository\Contracts\Models\BaseErp\GradeRepositoryInterface;
 use App\Repository\Contracts\Models\BaseErp\ProdutoRepositoryInterface;
+use App\Repository\Contracts\Models\BaseErp\VendaInformacoesRepositoryInterface;
 use App\Repository\Contracts\Models\BaseErp\VendaItensRepositoryInterface;
 use App\Repository\Contracts\Models\BaseErp\VendaPagamentoRepositoryInterface;
-use App\Repository\Contracts\Models\BaseErp\VendaInformacoesRepositoryInterface;
+use App\Repository\Contracts\Models\BaseErp\VendaRepositoryInterface;
 use App\Repository\Contracts\Models\BaseErp\WebcUsuarioRepositoryInterface;
+use App\Repository\Contracts\Models\Food99\Auth\Food99ShopRepositoryInterface;
+use App\Repository\Contracts\Models\Food99\Catalog\Food99ShopItemRepositoryInterface;
+use App\Repository\Contracts\Models\Food99\Orders\Food99OrderItemRepositoryInterface;
+use App\Repository\Contracts\Models\Food99\Orders\Food99OrderRepositoryInterface;
+use App\Services\Food99\Orders\Food99OrderErpSyncService;
+use Carbon\Carbon;
+use Mockery;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
 
 class Food99OrderErpSyncServiceIdempotencyTest extends TestCase
 {
@@ -187,7 +187,7 @@ class Food99OrderErpSyncServiceIdempotencyTest extends TestCase
         [, $deps] = $this->makeService();
 
         $service = Mockery::mock(
-            Food99OrderErpSyncService::class . '[syncOrderById]',
+            Food99OrderErpSyncService::class.'[syncOrderById]',
             [
                 $deps['shopRepository'],
                 $deps['orderRepository'],

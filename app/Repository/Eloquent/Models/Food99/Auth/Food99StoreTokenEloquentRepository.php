@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Repository\Eloquent\Models\Food99\Auth;
 
 use App\Models\Food99\Auth\Food99StoreToken;
-use App\Repository\Eloquent\EloquentRepository;
 use App\Repository\Contracts\Models\Food99\Auth\Food99StoreTokenRepositoryInterface;
+use App\Repository\Eloquent\EloquentRepository;
 
 /**
  * Repositorio Eloquent para token da 99Food por loja.
@@ -25,7 +25,7 @@ class Food99StoreTokenEloquentRepository extends EloquentRepository implements F
     /**
      * Inicializa o repositorio com o model de token da 99Food.
      *
-     * @param Food99StoreToken $model Model do token por loja
+     * @param  Food99StoreToken  $model  Model do token por loja
      */
     public function __construct(Food99StoreToken $model)
     {
@@ -35,8 +35,7 @@ class Food99StoreTokenEloquentRepository extends EloquentRepository implements F
     /**
      * Busca o token da 99Food por app_shop_id.
      *
-     * @param string $appShopId ID externo da loja
-     *
+     * @param  string  $appShopId  ID externo da loja
      * @return object|null Registro encontrado ou null
      */
     public function findByAppShopId(string $appShopId): ?object
@@ -66,9 +65,8 @@ class Food99StoreTokenEloquentRepository extends EloquentRepository implements F
     /**
      * Cria ou atualiza o token da loja da 99Food.
      *
-     * @param string              $appShopId ID externo da loja
-     * @param array<string, mixed> $payload   Dados para persistencia
-     *
+     * @param  string  $appShopId  ID externo da loja
+     * @param  array<string, mixed>  $payload  Dados para persistencia
      * @return object Registro criado ou atualizado
      */
     public function upsertByAppShopId(string $appShopId, array $payload): object

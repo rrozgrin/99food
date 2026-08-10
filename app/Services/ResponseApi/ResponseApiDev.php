@@ -2,9 +2,10 @@
 
 namespace App\Services\ResponseApi;
 
-use Throwable;
+use App\Services\Traits\SendResponse;
 use JsonSerializable;
 use Symfony\Component\HttpFoundation\Response;
+use Throwable;
 
 /**
  * Resposta da API para ambiente de desenvolvimento.
@@ -26,7 +27,7 @@ use Symfony\Component\HttpFoundation\Response;
  * Nunca deve expor informações internas em produção.
  *
  * @see ResponseApi
- * @see \App\Services\Traits\SendResponse
+ * @see SendResponse
  *
  * @author Rafael Rozgrin <rrozgrin@gmail.com>
  */
@@ -51,10 +52,10 @@ class ResponseApiDev extends ResponseApi implements JsonSerializable
      * 1. Com um Throwable — extrai automaticamente todos os dados de debug
      * 2. Sem Throwable — funciona como ResponseApi com campos extras vazios
      *
-     * @param Throwable|null $throwable Exceção para extrair dados de debug
-     * @param mixed          $conteudo  Dados da resposta
-     * @param string         $msg       Mensagem descritiva
-     * @param int            $code      Código HTTP
+     * @param  Throwable|null  $throwable  Exceção para extrair dados de debug
+     * @param  mixed  $conteudo  Dados da resposta
+     * @param  string  $msg  Mensagem descritiva
+     * @param  int  $code  Código HTTP
      */
     public function __construct(
         ?Throwable $throwable = null,
@@ -69,10 +70,10 @@ class ResponseApiDev extends ResponseApi implements JsonSerializable
                 code: is_int($throwable->getCode()) ? $throwable->getCode() : 0,
             );
 
-            $this->file      = $throwable->getFile();
-            $this->line       = $throwable->getLine();
-            $this->trace      = $throwable->getTraceAsString();
-            $this->exception  = $throwable::class;
+            $this->file = $throwable->getFile();
+            $this->line = $throwable->getLine();
+            $this->trace = $throwable->getTraceAsString();
+            $this->exception = $throwable::class;
 
             // Se a exceção tiver método getConteudo(), utiliza o conteúdo dela
             if (method_exists($throwable, 'getConteudo')) {
@@ -96,10 +97,10 @@ class ResponseApiDev extends ResponseApi implements JsonSerializable
     {
         return [
             ...parent::jsonSerialize(),
-            'file'      => $this->file,
-            'line'      => $this->line,
+            'file' => $this->file,
+            'line' => $this->line,
             'exception' => $this->exception,
-            'trace'     => $this->trace,
+            'trace' => $this->trace,
         ];
     }
 

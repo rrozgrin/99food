@@ -118,6 +118,7 @@ class MakeDomainCommand extends Command
 
         if ($this->files->exists($path)) {
             $this->components->warn("Model já existe: {$path}");
+
             return;
         }
 
@@ -151,10 +152,11 @@ class MakeDomainCommand extends Command
 
         if ($this->files->exists($path)) {
             $this->components->warn("Controller já existe: {$path}");
+
             return;
         }
 
-        $routePrefix = mb_strtolower($parsed->entityName) . 's';
+        $routePrefix = mb_strtolower($parsed->entityName).'s';
 
         $content = str_replace(
             ['{{ entityName }}', '{{ subNamespace }}', '{{ routePrefix }}'],
@@ -172,7 +174,7 @@ class MakeDomainCommand extends Command
      */
     private function showRouteSuggestion(object $parsed): void
     {
-        $routePrefix = mb_strtolower($parsed->entityName) . 's';
+        $routePrefix = mb_strtolower($parsed->entityName).'s';
         $controllerPath = str_replace('\\', '\\', $parsed->subNamespace);
 
         $this->components->warn('📋 Adicione as rotas em routes/api.php (dentro do grupo jwt.verify):');
@@ -185,7 +187,7 @@ class MakeDomainCommand extends Command
         $this->line("    <fg=gray>    Route::post('/', [{$parsed->entityName}Controller::class, 'store']);</>");
         $this->line("    <fg=gray>    Route::put('/{id}', [{$parsed->entityName}Controller::class, 'update']);</>");
         $this->line("    <fg=gray>    Route::delete('/{id}', [{$parsed->entityName}Controller::class, 'destroy']);</>");
-        $this->line("    <fg=gray>});</>");
+        $this->line('    <fg=gray>});</>');
         $this->newLine();
     }
 
@@ -201,6 +203,7 @@ class MakeDomainCommand extends Command
 
         if (! $this->files->exists($specPath)) {
             $this->components->warn('OpenApiSpec.php não encontrado — tag Swagger não registrada.');
+
             return;
         }
 
@@ -210,18 +213,19 @@ class MakeDomainCommand extends Command
         // Verifica se a tag já existe
         if (str_contains($content, "name: '{$tagName}'")) {
             $this->components->warn("Tag Swagger '{$tagName}' já registrada.");
+
             return;
         }
 
         $tag = "#[OA\\Tag(\n"
-            . "    name: '{$tagName}',\n"
-            . "    description: 'Operações de {$tagName}',\n"
-            . ")]\n";
+            ."    name: '{$tagName}',\n"
+            ."    description: 'Operações de {$tagName}',\n"
+            .")]\n";
 
         // Insere antes da linha "class OpenApiSpec"
         $content = str_replace(
             'class OpenApiSpec {}',
-            $tag . 'class OpenApiSpec {}',
+            $tag.'class OpenApiSpec {}',
             $content,
         );
 

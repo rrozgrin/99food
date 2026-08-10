@@ -7,11 +7,10 @@
  * Em servidores onde mbstring nao esta habilitado, esta funcao
  * evita fatal error mantendo comportamento equivalente com preg_split.
  *
- * @param string      $pattern  Padrao regex sem delimitador
- * @param string      $string   Texto de entrada
- * @param int         $limit    Limite de partes (padrao -1)
- * @param string|null $encoding Encoding (ignorado no fallback)
- *
+ * @param  string  $pattern  Padrao regex sem delimitador
+ * @param  string  $string  Texto de entrada
+ * @param  int  $limit  Limite de partes (padrao -1)
+ * @param  string|null  $encoding  Encoding (ignorado no fallback)
  * @return array<int, string>|false Partes do texto ou false em erro de regex
  */
 if (! function_exists('mb_split')) {
@@ -20,22 +19,27 @@ if (! function_exists('mb_split')) {
         unset($encoding);
 
         $delimiter = '/';
-        $escapedPattern = str_replace($delimiter, '\\' . $delimiter, $pattern);
+        $escapedPattern = str_replace($delimiter, '\\'.$delimiter, $pattern);
 
-        return preg_split($delimiter . $escapedPattern . $delimiter . 'u', $string, $limit);
+        return preg_split($delimiter.$escapedPattern.$delimiter.'u', $string, $limit);
     }
 }
 
+use App\Console\Kernel;
+use App\Console\TranslatingCommandLoader;
+use App\Exceptions\ApiException;
+use App\Http\Middleware\ApiJwtMiddleware;
+use App\Http\Middleware\CheckPermissionMiddleware;
+use App\Services\ResponseApi\ResponseApi;
+use App\Services\ResponseApi\ResponseApiDev;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use App\Services\ResponseApi\ResponseApi;
-use App\Services\ResponseApi\ResponseApiDev;
-use App\Exceptions\ApiException;
+use Illuminate\Routing\Middleware\ThrottleRequests;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Validation\ValidationException;
 
 /**
  * Registra o Kernel de Console customizado que traduz
@@ -44,8 +48,8 @@ use Illuminate\Validation\ValidationException;
  * O binding é feito APÓS create() para sobrescrever o
  * Kernel padrão registrado pelo ApplicationBuilder.
  *
- * @see \App\Console\Kernel
- * @see \App\Console\TranslatingCommandLoader
+ * @see Kernel
+ * @see TranslatingCommandLoader
  */
 $app = Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -57,12 +61,12 @@ $app = Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'jwt.verify'  => \App\Http\Middleware\ApiJwtMiddleware::class,
-            'permission'  => \App\Http\Middleware\CheckPermissionMiddleware::class,
+            'jwt.verify' => ApiJwtMiddleware::class,
+            'permission' => CheckPermissionMiddleware::class,
         ]);
 
         $middleware->api(prepend: [
-            \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
+            ThrottleRequests::class.':api',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
@@ -93,33 +97,29 @@ $app = Application::configure(basePath: dirname(__DIR__))
 
             if ($isProduction) {
                 $response = match (true) {
-                    $exception instanceof ApiException
-                        => new ResponseApi(
-                            conteudo: null,
-                            msg: $exception->getMessage(),
-                            code: $exception->getCode() ?: 400,
-                        ),
+                    $exception instanceof ApiException => new ResponseApi(
+                        conteudo: null,
+                        msg: $exception->getMessage(),
+                        code: $exception->getCode() ?: 400,
+                    ),
 
-                    $exception instanceof MethodNotAllowedHttpException
-                        => new ResponseApi(
-                            conteudo: null,
-                            msg: 'Verbo HTTP inválido. Utilize apenas GET, POST, PUT ou DELETE.',
-                            code: 405,
-                        ),
+                    $exception instanceof MethodNotAllowedHttpException => new ResponseApi(
+                        conteudo: null,
+                        msg: 'Verbo HTTP inválido. Utilize apenas GET, POST, PUT ou DELETE.',
+                        code: 405,
+                    ),
 
-                    $exception instanceof ModelNotFoundException
-                        => new ResponseApi(
-                            conteudo: null,
-                            msg: 'Item não encontrado.',
-                            code: 404,
-                        ),
+                    $exception instanceof ModelNotFoundException => new ResponseApi(
+                        conteudo: null,
+                        msg: 'Item não encontrado.',
+                        code: 404,
+                    ),
 
-                    $exception instanceof NotFoundHttpException
-                        => new ResponseApi(
-                            conteudo: null,
-                            msg: 'Rota não encontrada.',
-                            code: 404,
-                        ),
+                    $exception instanceof NotFoundHttpException => new ResponseApi(
+                        conteudo: null,
+                        msg: 'Rota não encontrada.',
+                        code: 404,
+                    ),
 
                     default => new ResponseApi(
                         conteudo: null,
@@ -132,8 +132,7 @@ $app = Application::configure(basePath: dirname(__DIR__))
             }
 
             $httpCode = match (true) {
-                is_int($response->getCode()) && $response->getCode() >= 100 && $response->getCode() < 600
-                    => $response->getCode(),
+                is_int($response->getCode()) && $response->getCode() >= 100 && $response->getCode() < 600 => $response->getCode(),
                 default => 500,
             };
 
@@ -142,8 +141,8 @@ $app = Application::configure(basePath: dirname(__DIR__))
     })->create();
 
 $app->singleton(
-    \Illuminate\Contracts\Console\Kernel::class,
-    \App\Console\Kernel::class,
+    Illuminate\Contracts\Console\Kernel::class,
+    Kernel::class,
 );
 
 return $app;

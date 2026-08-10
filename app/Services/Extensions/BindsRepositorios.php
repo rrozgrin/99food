@@ -2,6 +2,45 @@
 
 namespace App\Services\Extensions;
 
+use App\Providers\AppServiceProvider;
+use App\Repository\Contracts\Models\BaseErp\ClienteRepositoryInterface;
+use App\Repository\Contracts\Models\BaseErp\GradeRepositoryInterface;
+use App\Repository\Contracts\Models\BaseErp\ProdutoRepositoryInterface;
+use App\Repository\Contracts\Models\BaseErp\VendaInformacoesRepositoryInterface;
+use App\Repository\Contracts\Models\BaseErp\VendaItensRepositoryInterface;
+use App\Repository\Contracts\Models\BaseErp\VendaPagamentoRepositoryInterface;
+use App\Repository\Contracts\Models\BaseErp\VendaRepositoryInterface;
+use App\Repository\Contracts\Models\BaseErp\WebcUsuarioRepositoryInterface;
+use App\Repository\Contracts\Models\Food99\Auth\Food99AppCredentialRepositoryInterface;
+use App\Repository\Contracts\Models\Food99\Auth\Food99ShopRepositoryInterface;
+use App\Repository\Contracts\Models\Food99\Auth\Food99StoreTokenRepositoryInterface;
+use App\Repository\Contracts\Models\Food99\Catalog\Food99PublishJobRepositoryInterface;
+use App\Repository\Contracts\Models\Food99\Catalog\Food99ShopCategoryItemRepositoryInterface;
+use App\Repository\Contracts\Models\Food99\Catalog\Food99ShopCategoryRepositoryInterface;
+use App\Repository\Contracts\Models\Food99\Catalog\Food99ShopItemRepositoryInterface;
+use App\Repository\Contracts\Models\Food99\Catalog\Food99ShopMenuRepositoryInterface;
+use App\Repository\Contracts\Models\Food99\Orders\Food99OrderItemRepositoryInterface;
+use App\Repository\Contracts\Models\Food99\Orders\Food99OrderRepositoryInterface;
+use App\Repository\Contracts\Models\Food99\Webhook\Food99WebhookInboundLogRepositoryInterface;
+use App\Repository\Eloquent\Models\BaseErp\ClienteEloquentRepository;
+use App\Repository\Eloquent\Models\BaseErp\GradeEloquentRepository;
+use App\Repository\Eloquent\Models\BaseErp\ProdutoEloquentRepository;
+use App\Repository\Eloquent\Models\BaseErp\VendaEloquentRepository;
+use App\Repository\Eloquent\Models\BaseErp\VendaInformacoesEloquentRepository;
+use App\Repository\Eloquent\Models\BaseErp\VendaItensEloquentRepository;
+use App\Repository\Eloquent\Models\BaseErp\VendaPagamentoEloquentRepository;
+use App\Repository\Eloquent\Models\BaseErp\WebcUsuarioEloquentRepository;
+use App\Repository\Eloquent\Models\Food99\Auth\Food99AppCredentialEloquentRepository;
+use App\Repository\Eloquent\Models\Food99\Auth\Food99ShopEloquentRepository;
+use App\Repository\Eloquent\Models\Food99\Auth\Food99StoreTokenEloquentRepository;
+use App\Repository\Eloquent\Models\Food99\Catalog\Food99PublishJobEloquentRepository;
+use App\Repository\Eloquent\Models\Food99\Catalog\Food99ShopCategoryEloquentRepository;
+use App\Repository\Eloquent\Models\Food99\Catalog\Food99ShopCategoryItemEloquentRepository;
+use App\Repository\Eloquent\Models\Food99\Catalog\Food99ShopItemEloquentRepository;
+use App\Repository\Eloquent\Models\Food99\Catalog\Food99ShopMenuEloquentRepository;
+use App\Repository\Eloquent\Models\Food99\Orders\Food99OrderEloquentRepository;
+use App\Repository\Eloquent\Models\Food99\Orders\Food99OrderItemEloquentRepository;
+use App\Repository\Eloquent\Models\Food99\Webhook\Food99WebhookInboundLogEloquentRepository;
 use Illuminate\Contracts\Foundation\Application;
 
 /**
@@ -26,7 +65,7 @@ use Illuminate\Contracts\Foundation\Application;
  *         ProdutosEloquentRepository::class,
  *     );
  *
- * @see \App\Providers\AppServiceProvider — Onde esta classe é instanciada
+ * @see AppServiceProvider — Onde esta classe é instanciada
  *
  * @author Rafael Rozgrin <rrozgrin@gmail.com>
  */
@@ -35,7 +74,7 @@ class BindsRepositorios
     /**
      * Registra todos os bindings de repositórios no container.
      *
-     * @param Application $app Container de dependências do Laravel
+     * @param  Application  $app  Container de dependências do Laravel
      */
     public function __construct(
         protected readonly Application $app,
@@ -61,98 +100,98 @@ class BindsRepositorios
         |
         */
         $app->bind(
-            \App\Repository\Contracts\Models\Food99\Auth\Food99ShopRepositoryInterface::class,
-            \App\Repository\Eloquent\Models\Food99\Auth\Food99ShopEloquentRepository::class,
+            Food99ShopRepositoryInterface::class,
+            Food99ShopEloquentRepository::class,
         );
 
         $app->bind(
-            \App\Repository\Contracts\Models\Food99\Auth\Food99AppCredentialRepositoryInterface::class,
-            \App\Repository\Eloquent\Models\Food99\Auth\Food99AppCredentialEloquentRepository::class,
+            Food99AppCredentialRepositoryInterface::class,
+            Food99AppCredentialEloquentRepository::class,
         );
 
         $app->bind(
-            \App\Repository\Contracts\Models\Food99\Auth\Food99StoreTokenRepositoryInterface::class,
-            \App\Repository\Eloquent\Models\Food99\Auth\Food99StoreTokenEloquentRepository::class,
+            Food99StoreTokenRepositoryInterface::class,
+            Food99StoreTokenEloquentRepository::class,
         );
 
         $app->bind(
-            \App\Repository\Contracts\Models\Food99\Catalog\Food99ShopMenuRepositoryInterface::class,
-            \App\Repository\Eloquent\Models\Food99\Catalog\Food99ShopMenuEloquentRepository::class,
+            Food99ShopMenuRepositoryInterface::class,
+            Food99ShopMenuEloquentRepository::class,
         );
 
         $app->bind(
-            \App\Repository\Contracts\Models\Food99\Catalog\Food99ShopCategoryRepositoryInterface::class,
-            \App\Repository\Eloquent\Models\Food99\Catalog\Food99ShopCategoryEloquentRepository::class,
+            Food99ShopCategoryRepositoryInterface::class,
+            Food99ShopCategoryEloquentRepository::class,
         );
 
         $app->bind(
-            \App\Repository\Contracts\Models\Food99\Catalog\Food99ShopItemRepositoryInterface::class,
-            \App\Repository\Eloquent\Models\Food99\Catalog\Food99ShopItemEloquentRepository::class,
+            Food99ShopItemRepositoryInterface::class,
+            Food99ShopItemEloquentRepository::class,
         );
 
         $app->bind(
-            \App\Repository\Contracts\Models\Food99\Catalog\Food99ShopCategoryItemRepositoryInterface::class,
-            \App\Repository\Eloquent\Models\Food99\Catalog\Food99ShopCategoryItemEloquentRepository::class,
+            Food99ShopCategoryItemRepositoryInterface::class,
+            Food99ShopCategoryItemEloquentRepository::class,
         );
 
         $app->bind(
-            \App\Repository\Contracts\Models\Food99\Catalog\Food99PublishJobRepositoryInterface::class,
-            \App\Repository\Eloquent\Models\Food99\Catalog\Food99PublishJobEloquentRepository::class,
+            Food99PublishJobRepositoryInterface::class,
+            Food99PublishJobEloquentRepository::class,
         );
 
         $app->bind(
-            \App\Repository\Contracts\Models\Food99\Webhook\Food99WebhookInboundLogRepositoryInterface::class,
-            \App\Repository\Eloquent\Models\Food99\Webhook\Food99WebhookInboundLogEloquentRepository::class,
+            Food99WebhookInboundLogRepositoryInterface::class,
+            Food99WebhookInboundLogEloquentRepository::class,
         );
 
         $app->bind(
-            \App\Repository\Contracts\Models\Food99\Orders\Food99OrderRepositoryInterface::class,
-            \App\Repository\Eloquent\Models\Food99\Orders\Food99OrderEloquentRepository::class,
+            Food99OrderRepositoryInterface::class,
+            Food99OrderEloquentRepository::class,
         );
 
         $app->bind(
-            \App\Repository\Contracts\Models\Food99\Orders\Food99OrderItemRepositoryInterface::class,
-            \App\Repository\Eloquent\Models\Food99\Orders\Food99OrderItemEloquentRepository::class,
+            Food99OrderItemRepositoryInterface::class,
+            Food99OrderItemEloquentRepository::class,
         );
 
         $app->bind(
-            \App\Repository\Contracts\Models\BaseErp\ClienteRepositoryInterface::class,
-            \App\Repository\Eloquent\Models\BaseErp\ClienteEloquentRepository::class,
+            ClienteRepositoryInterface::class,
+            ClienteEloquentRepository::class,
         );
 
         $app->bind(
-            \App\Repository\Contracts\Models\BaseErp\ProdutoRepositoryInterface::class,
-            \App\Repository\Eloquent\Models\BaseErp\ProdutoEloquentRepository::class,
+            ProdutoRepositoryInterface::class,
+            ProdutoEloquentRepository::class,
         );
 
         $app->bind(
-            \App\Repository\Contracts\Models\BaseErp\GradeRepositoryInterface::class,
-            \App\Repository\Eloquent\Models\BaseErp\GradeEloquentRepository::class,
+            GradeRepositoryInterface::class,
+            GradeEloquentRepository::class,
         );
 
         $app->bind(
-            \App\Repository\Contracts\Models\BaseErp\VendaRepositoryInterface::class,
-            \App\Repository\Eloquent\Models\BaseErp\VendaEloquentRepository::class,
+            VendaRepositoryInterface::class,
+            VendaEloquentRepository::class,
         );
 
         $app->bind(
-            \App\Repository\Contracts\Models\BaseErp\VendaItensRepositoryInterface::class,
-            \App\Repository\Eloquent\Models\BaseErp\VendaItensEloquentRepository::class,
+            VendaItensRepositoryInterface::class,
+            VendaItensEloquentRepository::class,
         );
 
         $app->bind(
-            \App\Repository\Contracts\Models\BaseErp\VendaPagamentoRepositoryInterface::class,
-            \App\Repository\Eloquent\Models\BaseErp\VendaPagamentoEloquentRepository::class,
+            VendaPagamentoRepositoryInterface::class,
+            VendaPagamentoEloquentRepository::class,
         );
 
         $app->bind(
-            \App\Repository\Contracts\Models\BaseErp\VendaInformacoesRepositoryInterface::class,
-            \App\Repository\Eloquent\Models\BaseErp\VendaInformacoesEloquentRepository::class,
+            VendaInformacoesRepositoryInterface::class,
+            VendaInformacoesEloquentRepository::class,
         );
 
         $app->bind(
-            \App\Repository\Contracts\Models\BaseErp\WebcUsuarioRepositoryInterface::class,
-            \App\Repository\Eloquent\Models\BaseErp\WebcUsuarioEloquentRepository::class,
+            WebcUsuarioRepositoryInterface::class,
+            WebcUsuarioEloquentRepository::class,
         );
     }
 }

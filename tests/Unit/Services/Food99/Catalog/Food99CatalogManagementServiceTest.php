@@ -4,33 +4,41 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Services\Food99\Catalog;
 
-use Mockery;
-use Closure;
-use stdClass;
-use Tests\TestCase;
 use App\Exceptions\ApiException;
-use PHPUnit\Framework\Attributes\Test;
-use App\Services\Auth\UsuarioLogadoService;
-use App\Services\Food99\Catalog\Food99CatalogManagementService;
 use App\Repository\Contracts\Models\BaseErp\GradeRepositoryInterface;
 use App\Repository\Contracts\Models\BaseErp\ProdutoRepositoryInterface;
 use App\Repository\Contracts\Models\Food99\Auth\Food99ShopRepositoryInterface;
 use App\Repository\Contracts\Models\Food99\Auth\Food99StoreTokenRepositoryInterface;
+use App\Repository\Contracts\Models\Food99\Catalog\Food99ShopCategoryItemRepositoryInterface;
+use App\Repository\Contracts\Models\Food99\Catalog\Food99ShopCategoryRepositoryInterface;
 use App\Repository\Contracts\Models\Food99\Catalog\Food99ShopItemRepositoryInterface;
 use App\Repository\Contracts\Models\Food99\Catalog\Food99ShopMenuRepositoryInterface;
-use App\Repository\Contracts\Models\Food99\Catalog\Food99ShopCategoryRepositoryInterface;
-use App\Repository\Contracts\Models\Food99\Catalog\Food99ShopCategoryItemRepositoryInterface;
+use App\Services\Auth\UsuarioLogadoService;
+use App\Services\Food99\Catalog\Food99CatalogManagementService;
+use Closure;
+use Mockery;
+use PHPUnit\Framework\Attributes\Test;
+use stdClass;
+use Tests\TestCase;
 
 class Food99CatalogManagementServiceTest extends TestCase
 {
     private UsuarioLogadoService $usuarioLogado;
+
     private Food99ShopRepositoryInterface $shopRepository;
+
     private Food99StoreTokenRepositoryInterface $storeTokenRepository;
+
     private Food99ShopMenuRepositoryInterface $shopMenuRepository;
+
     private Food99ShopCategoryRepositoryInterface $shopCategoryRepository;
+
     private Food99ShopItemRepositoryInterface $shopItemRepository;
+
     private Food99ShopCategoryItemRepositoryInterface $shopCategoryItemRepository;
+
     private ProdutoRepositoryInterface $produtoRepository;
+
     private GradeRepositoryInterface $gradeRepository;
 
     protected function setUp(): void
@@ -307,17 +315,8 @@ class Food99CatalogManagementServiceTest extends TestCase
 
     private function makeService(): Food99CatalogManagementService
     {
-        return new class(
-            $this->usuarioLogado,
-            $this->shopRepository,
-            $this->storeTokenRepository,
-            $this->shopMenuRepository,
-            $this->shopCategoryRepository,
-            $this->shopItemRepository,
-            $this->shopCategoryItemRepository,
-            $this->produtoRepository,
-            $this->gradeRepository,
-        ) extends Food99CatalogManagementService {
+        return new class($this->usuarioLogado, $this->shopRepository, $this->storeTokenRepository, $this->shopMenuRepository, $this->shopCategoryRepository, $this->shopItemRepository, $this->shopCategoryItemRepository, $this->produtoRepository, $this->gradeRepository) extends Food99CatalogManagementService
+        {
             protected function transaction(Closure $callback, int $attempts = 1): mixed
             {
                 return $callback();
@@ -361,14 +360,14 @@ class Food99CatalogManagementServiceTest extends TestCase
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     private function makeObject(array $data): object
     {
         return new class($data) extends stdClass
         {
             /**
-             * @param array<string, mixed> $data
+             * @param  array<string, mixed>  $data
              */
             public function __construct(array $data)
             {

@@ -2,13 +2,13 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\Traits\SendResponse;
 use Closure;
 use Illuminate\Http\Request;
-use App\Services\Traits\SendResponse;
-use Symfony\Component\HttpFoundation\Response;
-use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
-use PHPOpenSourceSaver\JWTAuth\Exceptions\TokenInvalidException;
 use PHPOpenSourceSaver\JWTAuth\Exceptions\TokenExpiredException;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\TokenInvalidException;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Middleware de validação de token JWT para rotas protegidas da API.
@@ -28,7 +28,7 @@ use PHPOpenSourceSaver\JWTAuth\Exceptions\TokenExpiredException;
  *
  * O alias 'jwt.verify' é registrado em bootstrap/app.php.
  *
- * @see \App\Services\Traits\SendResponse — Trait de resposta padronizada
+ * @see SendResponse — Trait de resposta padronizada
  *
  * @author Rafael Rozgrin <rrozgrin@gmail.com>
  */
@@ -39,9 +39,8 @@ class ApiJwtMiddleware
     /**
      * Valida o token JWT da requisição.
      *
-     * @param Request $request Requisição HTTP
-     * @param Closure $next    Próximo middleware na pipeline
-     *
+     * @param  Request  $request  Requisição HTTP
+     * @param  Closure  $next  Próximo middleware na pipeline
      * @return Response Resposta HTTP (sucesso ou erro JSON)
      */
     public function handle(Request $request, Closure $next): Response

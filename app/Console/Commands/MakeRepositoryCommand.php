@@ -3,6 +3,9 @@
 namespace App\Console\Commands;
 
 use App\Console\Commands\Concerns\ParsesNameArgument;
+use App\Repository\Contracts\DataTablesInterface;
+use App\Repository\Contracts\RepositoryInterface;
+use App\Repository\Traits\HasDataTables;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 
@@ -19,9 +22,9 @@ use Illuminate\Filesystem\Filesystem;
  *     php artisan make:repository BaseErp\\Produtos\\Produto
  *     php artisan make:repository BaseErp\\Produtos\\Produto --datatables
  *
- * @see \App\Repository\Contracts\RepositoryInterface
- * @see \App\Repository\Contracts\DataTablesInterface
- * @see \App\Repository\Traits\HasDataTables
+ * @see RepositoryInterface
+ * @see DataTablesInterface
+ * @see HasDataTables
  *
  * @author Rafael Rozgrin <rrozgrin@gmail.com>
  */
@@ -69,6 +72,7 @@ class MakeRepositoryCommand extends Command
 
         if ($this->files->exists($path)) {
             $this->components->warn("Interface já existe: {$path}");
+
             return;
         }
 
@@ -93,6 +97,7 @@ class MakeRepositoryCommand extends Command
 
         if ($this->files->exists($path)) {
             $this->components->warn("Repository já existe: {$path}");
+
             return;
         }
 
@@ -123,6 +128,7 @@ class MakeRepositoryCommand extends Command
 
         if (! $this->files->exists($bindsPath)) {
             $this->components->error('BindsRepositorios.php não encontrado!');
+
             return;
         }
 
@@ -133,15 +139,16 @@ class MakeRepositoryCommand extends Command
         // Verifica se o binding já está registrado
         if (str_contains($content, $interfaceFqcn)) {
             $this->components->warn('Binding já registrado no BindsRepositorios.');
+
             return;
         }
 
         $eloquentFqcn = "App\\Repository\\Eloquent\\Models\\{$parsed->subNamespace}\\{$parsed->entityName}EloquentRepository";
 
         $binding = "\n        \$app->bind(\n"
-            . "            \\{$interfaceFqcn}::class,\n"
-            . "            \\{$eloquentFqcn}::class,\n"
-            . "        );\n";
+            ."            \\{$interfaceFqcn}::class,\n"
+            ."            \\{$eloquentFqcn}::class,\n"
+            ."        );\n";
 
         // Insere antes do fechamento do construtor (    }\n})
         $content = str_replace("    }\n}", "{$binding}    }\n}", $content);

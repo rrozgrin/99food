@@ -35,4 +35,3 @@ class Food99WebhookInboundLog extends Model
         ];
     }
 }
-

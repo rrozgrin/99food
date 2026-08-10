@@ -32,7 +32,7 @@ final readonly class Cpf
      */
     public static function of(string $cpf): static
     {
-        return new static($cpf);
+        return new self($cpf);
     }
 
     /**
@@ -60,10 +60,10 @@ final readonly class Cpf
      */
     public function formatted(): string
     {
-        return substr($this->digits, 0, 3) . '.'
-            . substr($this->digits, 3, 3) . '.'
-            . substr($this->digits, 6, 3) . '-'
-            . substr($this->digits, 9, 2);
+        return substr($this->digits, 0, 3).'.'
+            .substr($this->digits, 3, 3).'.'
+            .substr($this->digits, 6, 3).'-'
+            .substr($this->digits, 9, 2);
     }
 
     /**

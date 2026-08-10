@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Repository\Eloquent\Models\Food99\Orders;
 
 use App\Models\Food99\Orders\Food99OrderItem;
-use App\Repository\Eloquent\EloquentRepository;
 use App\Repository\Contracts\Models\Food99\Orders\Food99OrderItemRepositoryInterface;
+use App\Repository\Eloquent\EloquentRepository;
 
 class Food99OrderItemEloquentRepository extends EloquentRepository implements Food99OrderItemRepositoryInterface
 {

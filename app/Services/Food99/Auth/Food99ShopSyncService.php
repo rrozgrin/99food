@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services\Food99\Auth;
 
-use Throwable;
-use App\Services\Food99\Traits\InteractsWithFood99Api;
 use App\Repository\Contracts\Models\Food99\Auth\Food99ShopRepositoryInterface;
+use App\Services\Food99\Traits\InteractsWithFood99Api;
+use Throwable;
 
 /**
  * Serviço responsável por sincronizar dados da loja autorizada com a 99Food.

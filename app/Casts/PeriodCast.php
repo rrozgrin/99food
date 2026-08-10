@@ -41,8 +41,6 @@ class PeriodCast implements CastsAttributes
 {
     /**
      * Converte "Y-m-d/Y-m-d" do banco para o VO Period.
-     *
-     * @return ?Period
      */
     public function get(Model $model, string $key, mixed $value, array $attributes): ?Period
     {
@@ -65,8 +63,6 @@ class PeriodCast implements CastsAttributes
 
     /**
      * Converte o VO Period para "Y-m-d/Y-m-d" antes de persistir no banco.
-     *
-     * @return ?string
      */
     public function set(Model $model, string $key, mixed $value, array $attributes): ?string
     {
@@ -75,7 +71,7 @@ class PeriodCast implements CastsAttributes
         }
 
         if ($value instanceof Period) {
-            return $value->startDateToString() . '/' . $value->endDateToString();
+            return $value->startDateToString().'/'.$value->endDateToString();
         }
 
         return null;

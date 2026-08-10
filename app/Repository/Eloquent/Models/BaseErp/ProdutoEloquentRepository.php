@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Repository\Eloquent\Models\BaseErp;
 
 use App\Models\BaseErp\Produto;
-use App\Repository\Eloquent\EloquentRepository;
 use App\Repository\Contracts\Models\BaseErp\ProdutoRepositoryInterface;
+use App\Repository\Eloquent\EloquentRepository;
 
 class ProdutoEloquentRepository extends EloquentRepository implements ProdutoRepositoryInterface
 {

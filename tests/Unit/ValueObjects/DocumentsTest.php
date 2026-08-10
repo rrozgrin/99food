@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Unit\ValueObjects;
 
-use App\ValueObjects\Cpf;
 use App\ValueObjects\Cnpj;
+use App\ValueObjects\Cpf;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -46,15 +46,15 @@ class DocumentsTest extends TestCase
     public static function cpfInvalidoProvider(): array
     {
         return [
-            'sequência repetida'  => ['111.111.111-11'],
-            'dígitos incorretos'  => ['529.982.247-26'],
-            'muito curto'         => ['1234567890'],
-            'letras'              => ['abc.def.ghi-jk'],
+            'sequência repetida' => ['111.111.111-11'],
+            'dígitos incorretos' => ['529.982.247-26'],
+            'muito curto' => ['1234567890'],
+            'letras' => ['abc.def.ghi-jk'],
         ];
     }
 
     #[Test]
-    public function tryOf_deve_retornar_null_para_cpf_invalido(): void
+    public function try_of_deve_retornar_null_para_cpf_invalido(): void
     {
         $this->assertNull(Cpf::tryOf('000.000.000-00'));
     }
@@ -97,14 +97,14 @@ class DocumentsTest extends TestCase
     public static function cnpjInvalidoProvider(): array
     {
         return [
-            'sequência repetida'  => ['00.000.000/0000-00'],
-            'dígito incorreto'    => ['11.222.333/0001-82'],
-            'muito curto'         => ['1122233300018'],
+            'sequência repetida' => ['00.000.000/0000-00'],
+            'dígito incorreto' => ['11.222.333/0001-82'],
+            'muito curto' => ['1122233300018'],
         ];
     }
 
     #[Test]
-    public function tryOf_deve_retornar_null_para_cnpj_invalido(): void
+    public function try_of_deve_retornar_null_para_cnpj_invalido(): void
     {
         $this->assertNull(Cnpj::tryOf('11.111.111/1111-11'));
     }

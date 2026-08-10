@@ -35,7 +35,7 @@ final readonly class Quantity
      */
     public static function of(string|int|float $value, int $precision = self::DEFAULT_PRECISION): static
     {
-        return new static(number_format((float) $value, $precision, '.', ''), $precision);
+        return new self(number_format((float) $value, $precision, '.', ''), $precision);
     }
 
     /**

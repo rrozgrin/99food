@@ -31,4 +31,3 @@ class Produto extends Model
         'locacao_quantidade',
     ];
 }
-

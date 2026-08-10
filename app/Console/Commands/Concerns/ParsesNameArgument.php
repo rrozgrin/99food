@@ -35,8 +35,7 @@ trait ParsesNameArgument
     /**
      * Analisa o argumento 'name' e retorna um objeto com as partes separadas.
      *
-     * @param string $rawName Nome bruto recebido do argumento do comando
-     *
+     * @param  string  $rawName  Nome bruto recebido do argumento do comando
      * @return object{
      *     entityName: string,
      *     subDirectory: string,
@@ -70,17 +69,17 @@ trait ParsesNameArgument
         // Ex: BaseErp\Produtos → App\Models\BaseErp\Produtos
         // Ex: Produto (simples) → App\Models
         $modelNamespace = count($parts) > 0
-            ? 'App\\Models\\' . implode('\\', $parts)
+            ? 'App\\Models\\'.implode('\\', $parts)
             : 'App\\Models';
 
         // Use statement completo do Model
-        $modelUseStatement = $modelNamespace . '\\' . $entityName;
+        $modelUseStatement = $modelNamespace.'\\'.$entityName;
 
         return (object) [
-            'entityName'        => $entityName,
-            'subDirectory'      => $subDirectory,
-            'subNamespace'      => $subNamespace,
-            'modelNamespace'    => $modelNamespace,
+            'entityName' => $entityName,
+            'subDirectory' => $subDirectory,
+            'subNamespace' => $subNamespace,
+            'modelNamespace' => $modelNamespace,
             'modelUseStatement' => $modelUseStatement,
         ];
     }

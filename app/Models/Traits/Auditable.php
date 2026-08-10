@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models\Traits;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 
@@ -51,9 +51,9 @@ trait Auditable
     /**
      * Registra o evento de auditoria na tabela webc_auditoria.
      *
-     * @param  string  $action       Ação realizada: criado | alterado | excluido.
-     * @param  array   $before       Dados anteriores à operação.
-     * @param  array   $after        Dados posteriores à operação.
+     * @param  string  $action  Ação realizada: criado | alterado | excluido.
+     * @param  array  $before  Dados anteriores à operação.
+     * @param  array  $after  Dados posteriores à operação.
      */
     private function registerAudit(string $action, array $before, array $after): void
     {
@@ -61,23 +61,23 @@ trait Auditable
             $exclude = $this->auditExclude ?? [];
 
             DB::connection('mysql')->table('webc_auditoria')->insert([
-                'tabela'        => $this->getTable(),
-                'registro_id'   => (string) $this->getKey(),
-                'acao'          => $action,
+                'tabela' => $this->getTable(),
+                'registro_id' => (string) $this->getKey(),
+                'acao' => $action,
                 'payload_antes' => $this->sanitizePayload($before, $exclude),
                 'payload_depois' => $this->sanitizePayload($after, $exclude),
-                'usuario_id'    => $this->resolveAuditUserId(),
+                'usuario_id' => $this->resolveAuditUserId(),
                 'usuario_login' => $this->resolveAuditUserLogin(),
-                'ip_origem'     => Request::ip(),
-                'criado_em'     => now()->format('Y-m-d H:i:s'),
+                'ip_origem' => Request::ip(),
+                'criado_em' => now()->format('Y-m-d H:i:s'),
             ]);
         } catch (\Throwable) {
             // Falha na auditoria nunca deve interromper a operação principal.
             // O erro é apenas logado para investigação posterior.
             logger()->error('Falha ao registrar auditoria', [
-                'model'  => static::class,
+                'model' => static::class,
                 'action' => $action,
-                'key'    => $this->getKey(),
+                'key' => $this->getKey(),
             ]);
         }
     }
@@ -114,7 +114,7 @@ trait Auditable
     private function resolveAuditUserLogin(): ?string
     {
         try {
-            /** @var \App\Models\User|null $user */
+            /** @var User|null $user */
             $user = auth('api')->user();
 
             return $user?->login ?? $user?->email ?? null;

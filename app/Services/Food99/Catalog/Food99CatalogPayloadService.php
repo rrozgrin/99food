@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace App\Services\Food99\Catalog;
 
 use App\Exceptions\ApiException;
-use Illuminate\Support\Collection;
-use App\Services\Auth\UsuarioLogadoService;
 use App\Repository\Contracts\Models\Food99\Auth\Food99ShopRepositoryInterface;
 use App\Repository\Contracts\Models\Food99\Auth\Food99StoreTokenRepositoryInterface;
+use App\Repository\Contracts\Models\Food99\Catalog\Food99ShopCategoryItemRepositoryInterface;
+use App\Repository\Contracts\Models\Food99\Catalog\Food99ShopCategoryRepositoryInterface;
 use App\Repository\Contracts\Models\Food99\Catalog\Food99ShopItemRepositoryInterface;
 use App\Repository\Contracts\Models\Food99\Catalog\Food99ShopMenuRepositoryInterface;
-use App\Repository\Contracts\Models\Food99\Catalog\Food99ShopCategoryRepositoryInterface;
-use App\Repository\Contracts\Models\Food99\Catalog\Food99ShopCategoryItemRepositoryInterface;
+use App\Services\Auth\UsuarioLogadoService;
+use Illuminate\Support\Collection;
 
 /**
  * Montagem de payload de catalogo para publicacao na 99Food.
@@ -26,11 +26,11 @@ use App\Repository\Contracts\Models\Food99\Catalog\Food99ShopCategoryItemReposit
 class Food99CatalogPayloadService
 {
     /**
-     * @param Food99ShopMenuRepositoryInterface         $shopMenuRepository         Repositorio de menus
-     * @param Food99ShopCategoryRepositoryInterface     $shopCategoryRepository     Repositorio de categorias
-     * @param Food99ShopItemRepositoryInterface         $shopItemRepository         Repositorio de itens
-     * @param Food99ShopCategoryItemRepositoryInterface $shopCategoryItemRepository Repositorio da pivot categoria-item
-     * @param Food99StoreTokenRepositoryInterface       $storeTokenRepository       Repositorio de token por loja
+     * @param  Food99ShopMenuRepositoryInterface  $shopMenuRepository  Repositorio de menus
+     * @param  Food99ShopCategoryRepositoryInterface  $shopCategoryRepository  Repositorio de categorias
+     * @param  Food99ShopItemRepositoryInterface  $shopItemRepository  Repositorio de itens
+     * @param  Food99ShopCategoryItemRepositoryInterface  $shopCategoryItemRepository  Repositorio da pivot categoria-item
+     * @param  Food99StoreTokenRepositoryInterface  $storeTokenRepository  Repositorio de token por loja
      */
     public function __construct(
         private readonly Food99ShopMenuRepositoryInterface $shopMenuRepository,
@@ -45,9 +45,8 @@ class Food99CatalogPayloadService
     /**
      * Monta payload de upload de menu conforme contrato da 99Food.
      *
-     * @param string             $appShopId        app_shop_id da loja
-     * @param array<int, string> $appItemIdsFilter Filtro opcional de app_item_id para publicacao seletiva
-     *
+     * @param  string  $appShopId  app_shop_id da loja
+     * @param  array<int, string>  $appItemIdsFilter  Filtro opcional de app_item_id para publicacao seletiva
      * @return array<string, mixed> Estrutura de payload pronta para envio
      */
     public function buildUploadPayloadPreview(string $appShopId, array $appItemIdsFilter = []): array
@@ -280,8 +279,7 @@ class Food99CatalogPayloadService
     /**
      * Resolve loja interna a partir do app_shop_id.
      *
-     * @param string $appShopId app_shop_id da loja
-     *
+     * @param  string  $appShopId  app_shop_id da loja
      * @return object Registro da loja
      */
     private function resolveShopByAppShopId(string $appShopId): object
@@ -303,10 +301,9 @@ class Food99CatalogPayloadService
     /**
      * Agrupa IDs de itens por categoria combinando pivot e fallback direto.
      *
-     * @param Collection<int, object> $items             Colecao de itens da loja
-     * @param Collection<int, object> $categoryItemLinks Colecao pivot categoria-item
-     * @param Collection<int, object> $itemsById         Itens indexados por ID interno
-     *
+     * @param  Collection<int, object>  $items  Colecao de itens da loja
+     * @param  Collection<int, object>  $categoryItemLinks  Colecao pivot categoria-item
+     * @param  Collection<int, object>  $itemsById  Itens indexados por ID interno
      * @return array<int, array<int, int>> [category_id => [item_id, ...]]
      */
     private function groupItemIdsByCategory(
@@ -361,8 +358,7 @@ class Food99CatalogPayloadService
     /**
      * Mapeia item local para o contrato ItemStruct da 99Food.
      *
-     * @param object $item Item local
-     *
+     * @param  object  $item  Item local
      * @return array<string, mixed> Item no formato de upload
      */
     private function mapItemPayload(object $item): array
@@ -409,8 +405,7 @@ class Food99CatalogPayloadService
     /**
      * Resolve preco em cents para envio no contrato da 99Food.
      *
-     * @param object $item Item local
-     *
+     * @param  object  $item  Item local
      * @return int Valor em cents
      */
     private function resolvePriceCents(object $item): int

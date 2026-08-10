@@ -14,9 +14,8 @@ interface Food99ShopCategoryItemRepositoryInterface extends RepositoryInterface
     /**
      * Busca relacao categoria-item.
      *
-     * @param int $categoryId ID interno da categoria
-     * @param int $itemId     ID interno do item
-     *
+     * @param  int  $categoryId  ID interno da categoria
+     * @param  int  $itemId  ID interno do item
      * @return object|null Relacao encontrada
      */
     public function findByCategoryIdAndItemId(int $categoryId, int $itemId): ?object;
@@ -24,8 +23,7 @@ interface Food99ShopCategoryItemRepositoryInterface extends RepositoryInterface
     /**
      * Retorna relacoes de itens por categorias.
      *
-     * @param array<int, int> $categoryIds IDs internos de categoria
-     *
+     * @param  array<int, int>  $categoryIds  IDs internos de categoria
      * @return object|null Colecao da pivot
      */
     public function findByCategoryIds(array $categoryIds): ?object;
@@ -33,8 +31,7 @@ interface Food99ShopCategoryItemRepositoryInterface extends RepositoryInterface
     /**
      * Remove todas as relacoes de uma categoria.
      *
-     * @param int $categoryId ID interno da categoria
-     *
+     * @param  int  $categoryId  ID interno da categoria
      * @return int Quantidade removida
      */
     public function deleteByCategoryId(int $categoryId): int;

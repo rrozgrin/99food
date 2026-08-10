@@ -40,10 +40,9 @@ trait SendResponse
     /**
      * Monta a resposta padrão da API conforme o ambiente.
      *
-     * @param mixed  $conteudo Dados a serem retornados na resposta
-     * @param int    $code     Código HTTP (padrão: 200)
-     * @param string $msg      Mensagem descritiva (padrão: vazio)
-     *
+     * @param  mixed  $conteudo  Dados a serem retornados na resposta
+     * @param  int  $code  Código HTTP (padrão: 200)
+     * @param  string  $msg  Mensagem descritiva (padrão: vazio)
      * @return ResponseApi|ResponseApiDev Instância da resposta adequada ao ambiente
      */
     protected function send(

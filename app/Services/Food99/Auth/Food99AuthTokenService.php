@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services\Food99\Auth;
 
-use Carbon\Carbon;
 use App\Exceptions\ApiException;
-use App\Services\Food99\Traits\InteractsWithFood99Api;
 use App\Repository\Contracts\Models\Food99\Auth\Food99StoreTokenRepositoryInterface;
+use App\Services\Food99\Traits\InteractsWithFood99Api;
+use Carbon\Carbon;
 
 /**
  * Serviço responsável pelo ciclo de vida do token 99Food por loja.

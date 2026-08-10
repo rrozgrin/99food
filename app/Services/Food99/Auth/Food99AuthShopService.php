@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Services\Food99\Auth;
 
-use Throwable;
-use Illuminate\Support\Facades\Schema;
 use App\Exceptions\ApiException;
-use App\Services\Auth\UsuarioLogadoService;
-use App\Repository\Contracts\Models\Food99\Auth\Food99ShopRepositoryInterface;
 use App\Repository\Contracts\Models\Food99\Auth\Food99AppCredentialRepositoryInterface;
+use App\Repository\Contracts\Models\Food99\Auth\Food99ShopRepositoryInterface;
 use App\Repository\Contracts\Models\Food99\Auth\Food99StoreTokenRepositoryInterface;
+use App\Services\Auth\UsuarioLogadoService;
+use Illuminate\Support\Facades\Schema;
+use Throwable;
 
 /**
  * Serviço de domínio para ownership e metadados de lojas 99Food.
@@ -68,8 +68,8 @@ class Food99AuthShopService
     /**
      * Cria ou reaproveita mapeamento local antes da autorização externa.
      *
-     * @param array<string, mixed> $payload
-     * @param array{app_id:string,app_secret:string} $credentials
+     * @param  array<string, mixed>  $payload
+     * @param  array{app_id:string,app_secret:string}  $credentials
      */
     public function createOrReusePendingShop(array $payload, array $credentials): object
     {
@@ -156,7 +156,7 @@ class Food99AuthShopService
     /**
      * Filtra payload para colunas existentes da tabela de lojas.
      *
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      * @return array<string, mixed>
      */
     public function filterShopColumns(array $payload): array
@@ -165,7 +165,7 @@ class Food99AuthShopService
     }
 
     /**
-     * @param object $shops Coleção de lojas
+     * @param  object  $shops  Coleção de lojas
      * @return array<int, array<string, mixed>>
      */
     private function enrichShopsWithTokenMetadata(object $shops): array
@@ -199,7 +199,7 @@ class Food99AuthShopService
     }
 
     /**
-     * @param array{app_id:string,app_secret:string} $credentials
+     * @param  array{app_id:string,app_secret:string}  $credentials
      */
     private function resolveOrCreateConfiguredAppCredentialId(array $credentials): int
     {
@@ -222,6 +222,7 @@ class Food99AuthShopService
             if ($payload !== []) {
                 $this->appCredentialRepository->update($payload, $credentialId);
             }
+
             return $credentialId;
         }
 
@@ -245,7 +246,7 @@ class Food99AuthShopService
     {
         $raw = trim((string) ($appShopId ?? ''));
         if ($raw === '') {
-            $raw = 'wc-' . $idCadastro;
+            $raw = 'wc-'.$idCadastro;
         }
 
         $normalized = preg_replace('/[^A-Za-z0-9_-]+/', '-', $raw);
@@ -263,7 +264,7 @@ class Food99AuthShopService
     }
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     private function extractPreferredShopName(array $payload): ?string
     {
@@ -278,7 +279,7 @@ class Food99AuthShopService
     }
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      * @return array<string, mixed>
      */
     private function filterByExistingColumns(string $table, array $payload): array

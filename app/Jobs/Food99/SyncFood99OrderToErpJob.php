@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Jobs\Food99;
 
-use Throwable;
+use App\Services\Food99\Orders\Food99OrderErpSyncService;
 use Illuminate\Bus\Queueable;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use App\Services\Food99\Orders\Food99OrderErpSyncService;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class SyncFood99OrderToErpJob implements ShouldQueue
 {
@@ -20,10 +20,10 @@ class SyncFood99OrderToErpJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    //variável para controlar o número de tentativas em caso de falha
+    // variável para controlar o número de tentativas em caso de falha
     public int $tries = 3;
 
-    //variável para controlar o tempo máximo de execução do job
+    // variável para controlar o tempo máximo de execução do job
     public int $timeout = 120;
 
     public function __construct(
@@ -45,4 +45,3 @@ class SyncFood99OrderToErpJob implements ShouldQueue
         ]);
     }
 }
-

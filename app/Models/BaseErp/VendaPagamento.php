@@ -22,4 +22,3 @@ class VendaPagamento extends Model
         'id_cadastro',
     ];
 }
-

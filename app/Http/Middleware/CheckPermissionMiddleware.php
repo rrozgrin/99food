@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use App\Services\Traits\SendResponse;
 use Closure;
 use Illuminate\Http\Request;
@@ -36,11 +37,11 @@ class CheckPermissionMiddleware
     /**
      * Verifica se o usuário possui a permissão exigida pelo endpoint.
      *
-     * @param  string $permission  Permissão no formato 'modulo.acao'.
+     * @param  string  $permission  Permissão no formato 'modulo.acao'.
      */
     public function handle(Request $request, Closure $next, string $permission): Response
     {
-        /** @var \App\Models\User|null $user */
+        /** @var User|null $user */
         $user = auth('api')->user();
 
         if (! $user) {

@@ -7,7 +7,6 @@ namespace App\Services\Fiscal;
 use App\ValueObjects\Money;
 use App\ValueObjects\Percentage;
 use App\ValueObjects\Quantity;
-use App\ValueObjects\RoundingMode;
 use InvalidArgumentException;
 
 /**
@@ -112,7 +111,7 @@ class FiscalCalculatorService
     /**
      * Soma uma lista de valores Money com precisão total (sem perda por arredondamento intermediário).
      *
-     * @param  Money[] $items
+     * @param  Money[]  $items
      */
     public function sum(array $items): Money
     {
@@ -135,7 +134,7 @@ class FiscalCalculatorService
      * Impostos suportados: ICMS, ISS, PIS, COFINS, IPI, etc.
      * O tipo é informativo — a lógica de cálculo é idêntica (base × alíquota).
      *
-     * @param  string $taxType Tipo do imposto (apenas para rastreabilidade/log).
+     * @param  string  $taxType  Tipo do imposto (apenas para rastreabilidade/log).
      */
     public function calculateTax(Money $baseValue, Percentage $rate, string $taxType = ''): Money
     {
@@ -161,8 +160,8 @@ class FiscalCalculatorService
         $tax = $rate->applyTo($base);
 
         return [
-            'base'  => $base,
-            'icms'  => $tax,
+            'base' => $base,
+            'icms' => $tax,
         ];
     }
 
@@ -176,9 +175,9 @@ class FiscalCalculatorService
      * Garante que a soma dos rateios seja exatamente igual ao total,
      * atribuindo a diferença de arredondamento ao último item.
      *
-     * @param  Money    $total   Valor a ser distribuído.
-     * @param  Money[]  $weights Pesos proporcionais (ex: subtotais dos itens).
-     * @return Money[]           Array com o mesmo índice dos pesos.
+     * @param  Money  $total  Valor a ser distribuído.
+     * @param  Money[]  $weights  Pesos proporcionais (ex: subtotais dos itens).
+     * @return Money[] Array com o mesmo índice dos pesos.
      *
      * @throws InvalidArgumentException Se a soma dos pesos for zero.
      */
@@ -236,9 +235,9 @@ class FiscalCalculatorService
      * Verifica se um valor está dentro de uma faixa de tolerância aceitável.
      * Útil para comparar totais calculados pelo sistema vs. informados pelo usuário.
      *
-     * @param  Money  $calculated   Valor calculado pelo sistema.
-     * @param  Money  $informed     Valor informado pelo usuário/parceiro.
-     * @param  string $tolerance    Tolerância máxima em valor absoluto (ex: '0.01').
+     * @param  Money  $calculated  Valor calculado pelo sistema.
+     * @param  Money  $informed  Valor informado pelo usuário/parceiro.
+     * @param  string  $tolerance  Tolerância máxima em valor absoluto (ex: '0.01').
      */
     public function withinTolerance(Money $calculated, Money $informed, string $tolerance = '0.01'): bool
     {

@@ -139,8 +139,8 @@ class MoneyTest extends TestCase
         return [
             'arredonda para cima quando >= 5' => ['1.235', 2, '1.24'],
             'arredonda para baixo quando < 5' => ['1.234', 2, '1.23'],
-            'sem arredondamento necessário'   => ['1.230', 2, '1.23'],
-            'valor com 8 casas'               => ['10.123456785', 8, '10.12345679'],
+            'sem arredondamento necessário' => ['1.230', 2, '1.23'],
+            'valor com 8 casas' => ['10.123456785', 8, '10.12345679'],
         ];
     }
 

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Repository\Eloquent\Models\Food99\Catalog;
 
 use App\Models\Food99\Catalog\Food99PublishJob;
-use App\Repository\Eloquent\EloquentRepository;
 use App\Repository\Contracts\Models\Food99\Catalog\Food99PublishJobRepositoryInterface;
+use App\Repository\Eloquent\EloquentRepository;
 
 /**
  * Repositorio Eloquent de logs de publicacao 99Food.
@@ -19,7 +19,7 @@ class Food99PublishJobEloquentRepository extends EloquentRepository implements F
     protected string $connection = 'mysql_marketplace';
 
     /**
-     * @param Food99PublishJob $model Model de log de publicacao 99Food
+     * @param  Food99PublishJob  $model  Model de log de publicacao 99Food
      */
     public function __construct(Food99PublishJob $model)
     {

@@ -26,11 +26,10 @@ trait InteractsWithFood99Api
     /**
      * Executa chamada HTTP na API da 99Food.
      *
-     * @param string               $method Metodo HTTP (GET/POST)
-     * @param string               $path   Endpoint da API externa
-     * @param array<string, mixed> $query  Query string params
-     * @param array<string, mixed> $json   Body JSON
-     *
+     * @param  string  $method  Metodo HTTP (GET/POST)
+     * @param  string  $path  Endpoint da API externa
+     * @param  array<string, mixed>  $query  Query string params
+     * @param  array<string, mixed>  $json  Body JSON
      * @return array<string, mixed> Resposta decodificada em array
      */
     protected function food99Request(
@@ -51,12 +50,11 @@ trait InteractsWithFood99Api
     /**
      * Executa chamada HTTP com suporte opcional a retry apos refresh de autorizacao.
      *
-     * @param string               $method            Metodo HTTP (GET/POST)
-     * @param string               $path              Endpoint da API externa
-     * @param array<string, mixed> $query             Query string params
-     * @param array<string, mixed> $json              Body JSON
-     * @param bool                 $allowRefreshRetry Se true, tenta refresh automatico uma vez
-     *
+     * @param  string  $method  Metodo HTTP (GET/POST)
+     * @param  string  $path  Endpoint da API externa
+     * @param  array<string, mixed>  $query  Query string params
+     * @param  array<string, mixed>  $json  Body JSON
+     * @param  bool  $allowRefreshRetry  Se true, tenta refresh automatico uma vez
      * @return array<string, mixed> Resposta decodificada em array
      */
     private function food99RequestInternal(
@@ -158,9 +156,8 @@ trait InteractsWithFood99Api
     /**
      * Determina se o erro recebido indica autorizacao expirada para retry automatico.
      *
-     * @param string $path    Endpoint original chamado
-     * @param string $message Mensagem de erro retornada pela API
-     *
+     * @param  string  $path  Endpoint original chamado
+     * @param  string  $message  Mensagem de erro retornada pela API
      * @return bool True quando deve tentar refresh e retry
      */
     private function shouldRetryWithAuthorizationRefresh(string $path, string $message): bool
@@ -186,9 +183,8 @@ trait InteractsWithFood99Api
     /**
      * Resolve app_shop_id a partir do query/body da requisicao original.
      *
-     * @param array<string, mixed> $query Query string enviada
-     * @param array<string, mixed> $json  Body JSON enviado
-     *
+     * @param  array<string, mixed>  $query  Query string enviada
+     * @param  array<string, mixed>  $json  Body JSON enviado
      * @return string|null app_shop_id quando encontrado
      */
     private function resolveAppShopIdFromRequest(array $query, array $json): ?string
@@ -210,8 +206,7 @@ trait InteractsWithFood99Api
     /**
      * Executa refresh + get do token de autorizacao da loja.
      *
-     * @param string $appShopId app_shop_id da loja
-     *
+     * @param  string  $appShopId  app_shop_id da loja
      * @return string auth_token renovado
      */
     private function refreshAuthorizationAndGetToken(string $appShopId): string
@@ -261,9 +256,8 @@ trait InteractsWithFood99Api
     /**
      * Extrai a primeira string nao vazia de uma lista de caminhos no payload.
      *
-     * @param array<string, mixed> $payload    Payload completo
-     * @param array<int, string>   $candidates Lista de caminhos para tentativa
-     *
+     * @param  array<string, mixed>  $payload  Payload completo
+     * @param  array<int, string>  $candidates  Lista de caminhos para tentativa
      * @return string|null Valor encontrado ou null
      */
     private function extractFirstString(array $payload, array $candidates): ?string
@@ -309,7 +303,7 @@ trait InteractsWithFood99Api
     /**
      * Garante que a resposta HTTP da 99Food foi bem-sucedida (2xx).
      *
-     * @param Response $httpResponse Resposta HTTP da chamada externa
+     * @param  Response  $httpResponse  Resposta HTTP da chamada externa
      */
     private function ensureFood99HttpSuccess(Response $httpResponse): void
     {

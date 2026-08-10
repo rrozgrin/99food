@@ -3,9 +3,9 @@
 namespace App\Repository\Eloquent;
 
 use App\Exceptions\ApiException;
-use Illuminate\Database\Eloquent\Model;
-use App\Services\Auth\UsuarioLogadoService;
 use App\Repository\Contracts\RepositoryInterface;
+use App\Services\Auth\UsuarioLogadoService;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * Implementação base abstrata do padrão Repository usando Eloquent.
@@ -128,9 +128,8 @@ abstract class AbstractEloquentRepository implements RepositoryInterface
     /**
      * Cria ou atualiza uma entidade baseado nos atributos de busca.
      *
-     * @param array<string, mixed> $attributes Atributos para busca
-     * @param array<string, mixed> $values     Valores a serem atualizados/criados
-     *
+     * @param  array<string, mixed>  $attributes  Atributos para busca
+     * @param  array<string, mixed>  $values  Valores a serem atualizados/criados
      * @return object Entidade criada ou atualizada
      */
     public function updateOrCreate(array $attributes, array $values = []): object
@@ -141,9 +140,8 @@ abstract class AbstractEloquentRepository implements RepositoryInterface
     /**
      * Busca ou cria uma entidade baseado nos atributos informados.
      *
-     * @param array<string, mixed> $attributes Atributos para busca
-     * @param array<string, mixed> $values     Valores adicionais para criação
-     *
+     * @param  array<string, mixed>  $attributes  Atributos para busca
+     * @param  array<string, mixed>  $values  Valores adicionais para criação
      * @return object Entidade encontrada ou criada
      */
     public function firstOrCreate(array $attributes, array $values = []): object
@@ -162,8 +160,7 @@ abstract class AbstractEloquentRepository implements RepositoryInterface
     /**
      * Busca entidade por ID ou lança exceção de negócio quando não encontrada.
      *
-     * @param mixed $id Identificador da entidade
-     *
+     * @param  mixed  $id  Identificador da entidade
      * @return Model Entidade encontrada
      */
     protected function findOrFail(mixed $id): Model

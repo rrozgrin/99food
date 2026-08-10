@@ -14,8 +14,7 @@ interface Food99ShopCategoryRepositoryInterface extends RepositoryInterface
     /**
      * Retorna categorias da loja.
      *
-     * @param int $food99ShopId ID interno da loja em mysql_marketplace
-     *
+     * @param  int  $food99ShopId  ID interno da loja em mysql_marketplace
      * @return object|null Colecao de categorias
      */
     public function findByShopId(int $food99ShopId): ?object;
@@ -23,9 +22,8 @@ interface Food99ShopCategoryRepositoryInterface extends RepositoryInterface
     /**
      * Busca categoria por loja e app_category_id.
      *
-     * @param int    $food99ShopId  ID interno da loja
-     * @param string $appCategoryId ID externo da categoria
-     *
+     * @param  int  $food99ShopId  ID interno da loja
+     * @param  string  $appCategoryId  ID externo da categoria
      * @return object|null Categoria encontrada
      */
     public function findByShopIdAndAppCategoryId(int $food99ShopId, string $appCategoryId): ?object;
@@ -35,8 +33,7 @@ interface Food99ShopCategoryRepositoryInterface extends RepositoryInterface
     /**
      * Retorna categorias ativas por loja.
      *
-     * @param int $food99ShopId ID interno da loja em mysql_marketplace
-     *
+     * @param  int  $food99ShopId  ID interno da loja em mysql_marketplace
      * @return object|null Colecao de categorias
      */
     public function findActiveByShopId(int $food99ShopId): ?object;

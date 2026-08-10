@@ -24,4 +24,3 @@ class Cliente extends Model
         'ativo',
     ];
 }
-

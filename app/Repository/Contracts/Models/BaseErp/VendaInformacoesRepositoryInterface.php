@@ -6,6 +6,4 @@ namespace App\Repository\Contracts\Models\BaseErp;
 
 use App\Repository\Contracts\RepositoryInterface;
 
-interface VendaInformacoesRepositoryInterface extends RepositoryInterface
-{
-}
+interface VendaInformacoesRepositoryInterface extends RepositoryInterface {}

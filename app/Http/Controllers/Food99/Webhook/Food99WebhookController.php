@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Food99\Webhook;
 
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Services\Food99\Webhook\Food99WebhookService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class Food99WebhookController extends Controller
 {

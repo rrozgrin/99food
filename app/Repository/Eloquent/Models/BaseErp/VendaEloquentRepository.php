@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Repository\Eloquent\Models\BaseErp;
 
 use App\Models\BaseErp\Venda;
-use App\Repository\Eloquent\EloquentRepository;
 use App\Repository\Contracts\Models\BaseErp\VendaRepositoryInterface;
+use App\Repository\Eloquent\EloquentRepository;
 
 class VendaEloquentRepository extends EloquentRepository implements VendaRepositoryInterface
 {

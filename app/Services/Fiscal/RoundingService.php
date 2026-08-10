@@ -21,17 +21,17 @@ class RoundingService
     /**
      * Arredonda um valor string com BCMath usando o modo informado.
      *
-     * @param  string      $value     Valor a arredondar (string BCMath).
-     * @param  int         $scale     Número de casas decimais do resultado.
-     * @param  RoundingMode $mode     Modo de arredondamento.
+     * @param  string  $value  Valor a arredondar (string BCMath).
+     * @param  int  $scale  Número de casas decimais do resultado.
+     * @param  RoundingMode  $mode  Modo de arredondamento.
      */
     public function round(string $value, int $scale, RoundingMode $mode = RoundingMode::HALF_UP): string
     {
         return match ($mode) {
-            RoundingMode::HALF_UP   => $this->halfUp($value, $scale),
+            RoundingMode::HALF_UP => $this->halfUp($value, $scale),
             RoundingMode::HALF_DOWN => $this->halfDown($value, $scale),
             RoundingMode::HALF_EVEN => $this->halfEven($value, $scale),
-            RoundingMode::TRUNCATE  => bcadd($value, '0', $scale),
+            RoundingMode::TRUNCATE => bcadd($value, '0', $scale),
         };
     }
 

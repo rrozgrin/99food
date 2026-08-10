@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Services\Food99\Catalog;
 
-use Mockery;
-use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
-use Illuminate\Support\Facades\Http;
 use App\Exceptions\ApiException;
-use App\Services\Auth\UsuarioLogadoService;
-use App\Services\Food99\Catalog\Food99CatalogPayloadService;
-use App\Services\Food99\Catalog\Food99CatalogPublishService;
 use App\Repository\Contracts\Models\Food99\Auth\Food99ShopRepositoryInterface;
 use App\Repository\Contracts\Models\Food99\Catalog\Food99PublishJobRepositoryInterface;
 use App\Repository\Contracts\Models\Food99\Catalog\Food99ShopItemRepositoryInterface;
+use App\Services\Auth\UsuarioLogadoService;
+use App\Services\Food99\Catalog\Food99CatalogPayloadService;
+use App\Services\Food99\Catalog\Food99CatalogPublishService;
+use Illuminate\Support\Facades\Http;
+use Mockery;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
 
 class Food99CatalogPublishServiceTest extends TestCase
 {

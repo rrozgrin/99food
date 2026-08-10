@@ -2,6 +2,7 @@
 
 namespace App\Services\ResponseApi;
 
+use App\Services\Traits\SendResponse;
 use JsonSerializable;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -20,7 +21,7 @@ use Symfony\Component\HttpFoundation\Response;
  * campos de debug (file, line, trace, exception).
  *
  * @see ResponseApiDev
- * @see \App\Services\Traits\SendResponse
+ * @see SendResponse
  *
  * @author Rafael Rozgrin <rrozgrin@gmail.com>
  */
@@ -29,9 +30,9 @@ class ResponseApi implements JsonSerializable
     /**
      * Cria uma nova instância de resposta da API.
      *
-     * @param mixed  $conteudo Dados da resposta (objeto, array, string, null)
-     * @param string $msg      Mensagem descritiva para o consumidor da API
-     * @param int    $code     Código HTTP da resposta (padrão: 200)
+     * @param  mixed  $conteudo  Dados da resposta (objeto, array, string, null)
+     * @param  string  $msg  Mensagem descritiva para o consumidor da API
+     * @param  int  $code  Código HTTP da resposta (padrão: 200)
      */
     public function __construct(
         protected mixed $conteudo = null,
@@ -50,8 +51,8 @@ class ResponseApi implements JsonSerializable
     {
         return [
             'conteudo' => $this->conteudo,
-            'msg'      => $this->msg,
-            'code'     => $this->code,
+            'msg' => $this->msg,
+            'code' => $this->code,
         ];
     }
 
@@ -69,6 +70,7 @@ class ResponseApi implements JsonSerializable
     public function setMsg(string $msg): static
     {
         $this->msg = $msg;
+
         return $this;
     }
 
@@ -86,6 +88,7 @@ class ResponseApi implements JsonSerializable
     public function setCode(int $code): static
     {
         $this->code = $code;
+
         return $this;
     }
 
@@ -103,6 +106,7 @@ class ResponseApi implements JsonSerializable
     public function setConteudo(mixed $conteudo): static
     {
         $this->conteudo = $conteudo;
+
         return $this;
     }
 }

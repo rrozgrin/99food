@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Repository\Eloquent\Models\Food99\Orders;
 
-use Illuminate\Support\Facades\DB;
 use App\Models\Food99\Orders\Food99Order;
 use App\Models\Food99\Orders\Food99OrderItem;
-use App\Repository\Eloquent\EloquentRepository;
 use App\Repository\Contracts\Models\Food99\Orders\Food99OrderRepositoryInterface;
+use App\Repository\Eloquent\EloquentRepository;
+use Illuminate\Support\Facades\DB;
 
 class Food99OrderEloquentRepository extends EloquentRepository implements Food99OrderRepositoryInterface
 {

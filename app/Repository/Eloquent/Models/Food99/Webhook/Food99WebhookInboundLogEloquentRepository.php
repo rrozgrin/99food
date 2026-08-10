@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Repository\Eloquent\Models\Food99\Webhook;
 
 use App\Models\Food99\Webhook\Food99WebhookInboundLog;
-use App\Repository\Eloquent\EloquentRepository;
 use App\Repository\Contracts\Models\Food99\Webhook\Food99WebhookInboundLogRepositoryInterface;
+use App\Repository\Eloquent\EloquentRepository;
 
 class Food99WebhookInboundLogEloquentRepository extends EloquentRepository implements Food99WebhookInboundLogRepositoryInterface
 {
@@ -20,11 +20,10 @@ class Food99WebhookInboundLogEloquentRepository extends EloquentRepository imple
     /**
      * Lista logs de webhook filtrados por shops, event_name e status.
      *
-     * @param array<int, int>    $shopIds    IDs internos das lojas
-     * @param array<int, string> $eventNames Filtro de event_name (vazio = todos)
-     * @param array<int, string> $statuses   Filtro de status (vazio = todos)
-     * @param int                $limit      Maximo de registros
-     *
+     * @param  array<int, int>  $shopIds  IDs internos das lojas
+     * @param  array<int, string>  $eventNames  Filtro de event_name (vazio = todos)
+     * @param  array<int, string>  $statuses  Filtro de status (vazio = todos)
+     * @param  int  $limit  Maximo de registros
      * @return object Collection de logs
      */
     public function listByShopIdsAndFilters(
@@ -47,4 +46,3 @@ class Food99WebhookInboundLogEloquentRepository extends EloquentRepository imple
             ->get();
     }
 }
-

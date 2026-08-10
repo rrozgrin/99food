@@ -3,6 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Console\Commands\Concerns\ParsesNameArgument;
+use App\Services\Extensions\RequestBodyConverter;
+use App\Services\Extensions\RequestBodyConverterInterface;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 
@@ -16,8 +18,8 @@ use Illuminate\Filesystem\Filesystem;
  *     php artisan make:dto Produto
  *     php artisan make:dto BaseErp\\Produtos\\Produto
  *
- * @see \App\Services\Extensions\RequestBodyConverter
- * @see \App\Services\Extensions\RequestBodyConverterInterface
+ * @see RequestBodyConverter
+ * @see RequestBodyConverterInterface
  *
  * @author Rafael Rozgrin <rrozgrin@gmail.com>
  */
@@ -46,6 +48,7 @@ class MakeDtoCommand extends Command
 
         if ($this->files->exists($path)) {
             $this->components->error("DTO já existe: {$path}");
+
             return self::FAILURE;
         }
 

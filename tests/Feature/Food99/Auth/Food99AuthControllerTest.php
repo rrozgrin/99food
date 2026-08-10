@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Food99\Auth;
 
+use App\Http\Middleware\ApiJwtMiddleware;
+use App\Services\Food99\Auth\Food99AuthService;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
-use App\Http\Middleware\ApiJwtMiddleware;
-use App\Services\Food99\Auth\Food99AuthService;
 
 class Food99AuthControllerTest extends TestCase
 {

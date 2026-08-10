@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Food99\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Services\Food99\Auth\Food99AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use OpenApi\Attributes as OA;
-use App\Services\Food99\Auth\Food99AuthService;
 
 /**
  * Controller de autenticacao da 99Food.
@@ -26,9 +26,8 @@ class Food99AuthController extends Controller
     /**
      * Gera URL de vinculacao da loja na 99Food.
      *
-     * @param Request           $request Requisicao com payload opcional para 99Food
-     * @param Food99AuthService $service Servico de autenticacao 99Food
-     *
+     * @param  Request  $request  Requisicao com payload opcional para 99Food
+     * @param  Food99AuthService  $service  Servico de autenticacao 99Food
      * @return JsonResponse Resposta padrao com URL de autorizacao
      */
     #[OA\Post(
@@ -61,8 +60,7 @@ class Food99AuthController extends Controller
     /**
      * Lista as lojas 99Food do cliente logado.
      *
-     * @param Food99AuthService $service Servico de autenticacao 99Food
-     *
+     * @param  Food99AuthService  $service  Servico de autenticacao 99Food
      * @return JsonResponse Resposta padrao com lojas do usuario
      */
     public function shops(Food99AuthService $service): JsonResponse
@@ -77,9 +75,8 @@ class Food99AuthController extends Controller
     /**
      * Obtem e persiste auth_token de uma loja na 99Food.
      *
-     * @param Request           $request Requisicao contendo app_shop_id
-     * @param Food99AuthService $service Servico de autenticacao 99Food
-     *
+     * @param  Request  $request  Requisicao contendo app_shop_id
+     * @param  Food99AuthService  $service  Servico de autenticacao 99Food
      * @return JsonResponse Resposta padrao com token por loja
      */
     #[OA\Post(
@@ -122,9 +119,8 @@ class Food99AuthController extends Controller
     /**
      * Renova e persiste auth_token de uma loja na 99Food.
      *
-     * @param Request           $request Requisicao contendo app_shop_id
-     * @param Food99AuthService $service Servico de autenticacao 99Food
-     *
+     * @param  Request  $request  Requisicao contendo app_shop_id
+     * @param  Food99AuthService  $service  Servico de autenticacao 99Food
      * @return JsonResponse Resposta padrao com token renovado
      */
     #[OA\Post(
@@ -167,9 +163,8 @@ class Food99AuthController extends Controller
     /**
      * Retorna token armazenado localmente para uma loja.
      *
-     * @param string            $appShopId app_shop_id da loja
-     * @param Food99AuthService $service   Servico de autenticacao 99Food
-     *
+     * @param  string  $appShopId  app_shop_id da loja
+     * @param  Food99AuthService  $service  Servico de autenticacao 99Food
      * @return JsonResponse Resposta padrao com token local
      */
     #[OA\Get(

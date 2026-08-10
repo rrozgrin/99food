@@ -17,9 +17,8 @@ class Food99WebhookLogService
     /**
      * Lista logs de webhook recebidos, escopado pelo id_cadastro do usuario logado.
      *
-     * @param array<int, string> $eventNames Filtro de event_name (vazio = todos)
-     * @param array<int, string> $statuses   Filtro de status (vazio = todos)
-     *
+     * @param  array<int, string>  $eventNames  Filtro de event_name (vazio = todos)
+     * @param  array<int, string>  $statuses  Filtro de status (vazio = todos)
      * @return array<string, mixed>
      */
     public function listLogs(

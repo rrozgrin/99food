@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Services\Food99\Catalog;
 
-use Throwable;
 use App\Exceptions\ApiException;
-use App\Services\Food99\Traits\InteractsWithFood99Api;
-use App\Services\Auth\UsuarioLogadoService;
 use App\Repository\Contracts\Models\Food99\Auth\Food99ShopRepositoryInterface;
 use App\Repository\Contracts\Models\Food99\Catalog\Food99PublishJobRepositoryInterface;
 use App\Repository\Contracts\Models\Food99\Catalog\Food99ShopItemRepositoryInterface;
+use App\Services\Auth\UsuarioLogadoService;
+use App\Services\Food99\Traits\InteractsWithFood99Api;
+use Throwable;
 
 /**
  * Servico de publicacao de catalogo na 99Food.
@@ -77,10 +77,9 @@ class Food99CatalogPublishService
      * 5. Em sucesso: marca itens como published, finaliza job
      * 6. Em falha: marca itens como failed, finaliza job e relanca excecao
      *
-     * @param string             $appShopId          app_shop_id da loja
-     * @param int|null           $triggeredByUserId  ID do usuario ERP que disparou a publicacao
-     * @param array<int, string> $appItemIds         Filtro opcional de itens para publicar
-     *
+     * @param  string  $appShopId  app_shop_id da loja
+     * @param  int|null  $triggeredByUserId  ID do usuario ERP que disparou a publicacao
+     * @param  array<int, string>  $appItemIds  Filtro opcional de itens para publicar
      * @return array<string, mixed> Resultado da publicacao
      */
     public function publishCatalog(string $appShopId, ?int $triggeredByUserId, array $appItemIds = []): array
@@ -188,9 +187,8 @@ class Food99CatalogPublishService
     /**
      * Lista jobs de publicacao de uma loja.
      *
-     * @param string $appShopId app_shop_id da loja
-     * @param int    $limit     Numero maximo de jobs retornados
-     *
+     * @param  string  $appShopId  app_shop_id da loja
+     * @param  int  $limit  Numero maximo de jobs retornados
      * @return array<string, mixed> Historico de jobs da loja
      */
     public function listJobs(string $appShopId, int $limit = 20): array
@@ -230,9 +228,9 @@ class Food99CatalogPublishService
     /**
      * Atualiza publish_status para 'published' nos itens publicados com sucesso.
      *
-     * @param int                      $food99ShopId         ID interno da loja
-     * @param array<int, string>       $appItemIds           IDs externos dos itens publicados
-     * @param array<string, array>     $itemPayloadByAppItemId Payload efetivamente enviado por item
+     * @param  int  $food99ShopId  ID interno da loja
+     * @param  array<int, string>  $appItemIds  IDs externos dos itens publicados
+     * @param  array<string, array>  $itemPayloadByAppItemId  Payload efetivamente enviado por item
      */
     private function markItemsPublished(int $food99ShopId, array $appItemIds, array $itemPayloadByAppItemId = []): void
     {
@@ -246,8 +244,7 @@ class Food99CatalogPublishService
     /**
      * Indexa payload de itens por app_item_id para persistencia em payload_snapshot.
      *
-     * @param array<int, mixed> $itemsPayload Lista de itens enviada na publicacao
-     *
+     * @param  array<int, mixed>  $itemsPayload  Lista de itens enviada na publicacao
      * @return array<string, array> [app_item_id => payload_do_item]
      */
     private function mapPublishedItemPayloadByAppItemId(array $itemsPayload): array
@@ -273,9 +270,9 @@ class Food99CatalogPublishService
     /**
      * Atualiza publish_status para 'failed' nos itens que falharam na publicacao.
      *
-     * @param int             $food99ShopId ID interno da loja
-     * @param array<int, string> $appItemIds   IDs externos dos itens
-     * @param string          $errorMessage Mensagem de erro da falha
+     * @param  int  $food99ShopId  ID interno da loja
+     * @param  array<int, string>  $appItemIds  IDs externos dos itens
+     * @param  string  $errorMessage  Mensagem de erro da falha
      */
     private function markItemsFailed(int $food99ShopId, array $appItemIds, string $errorMessage): void
     {
@@ -289,8 +286,7 @@ class Food99CatalogPublishService
     /**
      * Resolve loja local do cliente autenticado.
      *
-     * @param string $appShopId app_shop_id informado
-     *
+     * @param  string  $appShopId  app_shop_id informado
      * @return object Registro da loja
      */
     private function resolveOwnedShopByAppShopId(string $appShopId): object

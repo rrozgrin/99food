@@ -38,7 +38,7 @@ final readonly class Money
         int $precision = self::DEFAULT_PRECISION,
         RoundingMode $roundingMode = RoundingMode::HALF_UP,
     ): static {
-        return new static((string) $amount, $precision, $roundingMode);
+        return new self((string) $amount, $precision, $roundingMode);
     }
 
     /**
@@ -130,10 +130,10 @@ final readonly class Money
     public function round(int $scale): static
     {
         $rounded = match ($this->roundingMode) {
-            RoundingMode::HALF_UP   => $this->roundHalfUp($this->amount, $scale),
+            RoundingMode::HALF_UP => $this->roundHalfUp($this->amount, $scale),
             RoundingMode::HALF_DOWN => $this->roundHalfDown($this->amount, $scale),
             RoundingMode::HALF_EVEN => $this->roundHalfEven($this->amount, $scale),
-            RoundingMode::TRUNCATE  => bcadd($this->amount, '0', $scale),
+            RoundingMode::TRUNCATE => bcadd($this->amount, '0', $scale),
         };
 
         return new static($rounded, $scale, $this->roundingMode);

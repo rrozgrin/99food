@@ -27,4 +27,3 @@ class Grade extends Model
         'ativo',
     ];
 }
-

@@ -20,4 +20,3 @@ class ApiJwtMiddlewareTest extends TestCase
         $response->assertJsonPath('msg', 'Token de autorização não encontrado.');
     }
 }
-

@@ -30,8 +30,6 @@ class QuantityCast implements CastsAttributes
 
     /**
      * Converte o valor do banco de dados para o VO Quantity.
-     *
-     * @return ?Quantity
      */
     public function get(Model $model, string $key, mixed $value, array $attributes): ?Quantity
     {
@@ -44,8 +42,6 @@ class QuantityCast implements CastsAttributes
 
     /**
      * Converte o VO Quantity para string antes de persistir no banco.
-     *
-     * @return ?string
      */
     public function set(Model $model, string $key, mixed $value, array $attributes): ?string
     {

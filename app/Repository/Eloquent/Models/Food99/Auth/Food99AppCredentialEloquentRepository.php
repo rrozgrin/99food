@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Repository\Eloquent\Models\Food99\Auth;
 
 use App\Models\Food99\Auth\Food99AppCredential;
-use App\Repository\Eloquent\EloquentRepository;
 use App\Repository\Contracts\Models\Food99\Auth\Food99AppCredentialRepositoryInterface;
+use App\Repository\Eloquent\EloquentRepository;
 
 /**
  * Repositorio Eloquent de credenciais configuradas da 99Food.
@@ -19,7 +19,7 @@ class Food99AppCredentialEloquentRepository extends EloquentRepository implement
     protected string $connection = 'mysql_marketplace';
 
     /**
-     * @param Food99AppCredential $model Model de credencial da 99Food
+     * @param  Food99AppCredential  $model  Model de credencial da 99Food
      */
     public function __construct(Food99AppCredential $model)
     {

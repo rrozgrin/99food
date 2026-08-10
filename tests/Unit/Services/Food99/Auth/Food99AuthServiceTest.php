@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Services\Food99\Auth;
 
+use App\Repository\Contracts\Models\Food99\Auth\Food99AppCredentialRepositoryInterface;
+use App\Repository\Contracts\Models\Food99\Auth\Food99ShopRepositoryInterface;
+use App\Repository\Contracts\Models\Food99\Auth\Food99StoreTokenRepositoryInterface;
+use App\Services\Auth\UsuarioLogadoService;
+use App\Services\Food99\Auth\Food99AuthService;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Schema;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Schema;
-use App\Services\Auth\UsuarioLogadoService;
-use App\Repository\Contracts\Models\Food99\Auth\Food99ShopRepositoryInterface;
-use App\Repository\Contracts\Models\Food99\Auth\Food99AppCredentialRepositoryInterface;
-use App\Repository\Contracts\Models\Food99\Auth\Food99StoreTokenRepositoryInterface;
-use App\Services\Food99\Auth\Food99AuthService;
 
 class Food99AuthServiceTest extends TestCase
 {

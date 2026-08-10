@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Repository\Eloquent\Models\Food99\Catalog;
 
-use Illuminate\Support\Facades\DB;
-use App\Models\Food99\Catalog\Food99ShopItem;
 use App\Models\Food99\Catalog\Food99ShopCategoryItem;
-use App\Repository\Eloquent\EloquentRepository;
+use App\Models\Food99\Catalog\Food99ShopItem;
 use App\Repository\Contracts\Models\Food99\Catalog\Food99ShopCategoryItemRepositoryInterface;
+use App\Repository\Eloquent\EloquentRepository;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Repositorio Eloquent da pivot categoria-item da 99Food.
@@ -21,7 +21,7 @@ class Food99ShopCategoryItemEloquentRepository extends EloquentRepository implem
     protected string $connection = 'mysql_marketplace';
 
     /**
-     * @param Food99ShopCategoryItem $model Model da pivot categoria-item
+     * @param  Food99ShopCategoryItem  $model  Model da pivot categoria-item
      */
     public function __construct(Food99ShopCategoryItem $model)
     {

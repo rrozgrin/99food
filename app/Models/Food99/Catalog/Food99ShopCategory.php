@@ -50,4 +50,3 @@ class Food99ShopCategory extends Model
         ];
     }
 }
-

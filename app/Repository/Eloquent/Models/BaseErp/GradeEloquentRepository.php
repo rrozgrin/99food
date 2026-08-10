@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Repository\Eloquent\Models\BaseErp;
 
 use App\Models\BaseErp\Grade;
-use App\Repository\Eloquent\EloquentRepository;
 use App\Repository\Contracts\Models\BaseErp\GradeRepositoryInterface;
+use App\Repository\Eloquent\EloquentRepository;
 
 class GradeEloquentRepository extends EloquentRepository implements GradeRepositoryInterface
 {

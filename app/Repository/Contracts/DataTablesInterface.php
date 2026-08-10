@@ -2,6 +2,7 @@
 
 namespace App\Repository\Contracts;
 
+use App\Repository\Traits\HasDataTables;
 use Illuminate\Http\Request;
 
 /**
@@ -25,7 +26,7 @@ use Illuminate\Http\Request;
  *         protected array $orderableColumns  = ['id', 'nome', 'preco', 'data_criacao'];
  *     }
  *
- * @see \App\Repository\Traits\HasDataTables — Trait com a implementação
+ * @see HasDataTables — Trait com a implementação
  * @see RepositoryInterface — Contrato base CRUD (separado)
  *
  * @author Rafael Rozgrin <rrozgrin@gmail.com>
@@ -43,8 +44,7 @@ interface DataTablesInterface
      *  - order.0.column: int — Índice da coluna para ordenação
      *  - order.0.dir: string — Direção (asc/desc)
      *
-     * @param Request $request Requisição HTTP com parâmetros do DataTables
-     *
+     * @param  Request  $request  Requisição HTTP com parâmetros do DataTables
      * @return array{draw: int, recordsTotal: int, recordsFiltered: int, data: array}
      */
     public function dataTables(Request $request): array;

@@ -22,15 +22,15 @@ use Exception;
  *         );
  *     }
  *
- * @see \App\Exceptions\Handler — Trata esta exceção e retorna JSON padronizado
+ * @see Handler — Trata esta exceção e retorna JSON padronizado
  *
  * @author Rafael Rozgrin <rrozgrin@gmail.com>
  */
 class ApiException extends Exception
 {
     /**
-     * @param string $msg  Mensagem descritiva do erro de negócio
-     * @param int    $code Código HTTP apropriado (padrão: 400 Bad Request)
+     * @param  string  $msg  Mensagem descritiva do erro de negócio
+     * @param  int  $code  Código HTTP apropriado (padrão: 400 Bad Request)
      */
     public function __construct(
         protected string $msg,

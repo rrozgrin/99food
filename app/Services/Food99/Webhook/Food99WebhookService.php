@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Services\Food99\Webhook;
 
-use Throwable;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
 use App\Exceptions\ApiException;
-use App\Services\Traits\WithTransaction;
-use App\Services\Food99\Orders\Food99OrderErpSyncService;
+use App\Repository\Contracts\Models\Food99\Auth\Food99AppCredentialRepositoryInterface;
 use App\Repository\Contracts\Models\Food99\Auth\Food99ShopRepositoryInterface;
 use App\Repository\Contracts\Models\Food99\Orders\Food99OrderRepositoryInterface;
-use App\Repository\Contracts\Models\Food99\Auth\Food99AppCredentialRepositoryInterface;
 use App\Repository\Contracts\Models\Food99\Webhook\Food99WebhookInboundLogRepositoryInterface;
+use App\Services\Food99\Orders\Food99OrderErpSyncService;
+use App\Services\Traits\WithTransaction;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class Food99WebhookService
 {
@@ -30,8 +30,8 @@ class Food99WebhookService
     /**
      * Processa callback da 99Food e persiste o log de entrada.
      *
-     * @param array<string, mixed> $payload
-     * @param array<string, array<int, string>> $headers
+     * @param  array<string, mixed>  $payload
+     * @param  array<string, array<int, string>>  $headers
      */
     public function handle(
         array $payload,
@@ -159,8 +159,8 @@ class Food99WebhookService
     }
 
     /**
-     * @param array<string, mixed> $payload
-     * @param array<string, array<int, string>> $headers
+     * @param  array<string, mixed>  $payload
+     * @param  array<string, array<int, string>>  $headers
      */
     private function resolveRequestId(array $payload, array $headers): ?string
     {
@@ -188,7 +188,7 @@ class Food99WebhookService
     }
 
     /**
-     * @param array<string, array<int, string>> $headers
+     * @param  array<string, array<int, string>>  $headers
      * @return array<string, mixed>
      */
     private function normalizeHeaders(array $headers): array
@@ -220,14 +220,14 @@ class Food99WebhookService
             throw new ApiException(msg: 'FOOD99_APP_SECRET nao configurado.', code: 500);
         }
 
-        $expectedSign = md5($rawBody . $secret);
+        $expectedSign = md5($rawBody.$secret);
         if (! hash_equals($expectedSign, $receivedSign)) {
             throw new ApiException(msg: 'Assinatura didi-header-sign invalida.', code: 401);
         }
     }
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     private function persistEventByType(
         string $eventType,
@@ -299,7 +299,7 @@ class Food99WebhookService
     }
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     private function persistOrderNew(
         array $payload,
@@ -365,7 +365,7 @@ class Food99WebhookService
     }
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     private function persistOrderStatusEvent(
         array $payload,
@@ -408,7 +408,7 @@ class Food99WebhookService
     }
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     private function extractOrderId(array $payload): string
     {
@@ -449,7 +449,7 @@ class Food99WebhookService
     }
 
     /**
-     * @param array<int, mixed> $items
+     * @param  array<int, mixed>  $items
      * @return array<int, array<string, mixed>>
      */
     private function normalizeOrderItems(array $items): array

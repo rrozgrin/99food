@@ -2,6 +2,7 @@
 
 namespace App\Services\Auth;
 
+use App\Http\Middleware\ApiJwtMiddleware;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -28,7 +29,7 @@ use Illuminate\Support\Facades\Auth;
  *         }
  *     }
  *
- * @see \App\Http\Middleware\ApiJwtMiddleware — Middleware que autentica o JWT antes
+ * @see ApiJwtMiddleware — Middleware que autentica o JWT antes
  *
  * @author Rafael Rozgrin <rrozgrin@gmail.com>
  */
@@ -104,7 +105,7 @@ class UsuarioLogadoService
         $senha = $this->usuario['senha'] ?? null;
 
         return ($login !== null && $senha !== null)
-            ? $login . 'S' . $senha
+            ? $login.'S'.$senha
             : null;
     }
 

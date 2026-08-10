@@ -32,7 +32,7 @@ final readonly class Cnpj
      */
     public static function of(string $cnpj): static
     {
-        return new static($cnpj);
+        return new self($cnpj);
     }
 
     /**
@@ -60,11 +60,11 @@ final readonly class Cnpj
      */
     public function formatted(): string
     {
-        return substr($this->digits, 0, 2) . '.'
-            . substr($this->digits, 2, 3) . '.'
-            . substr($this->digits, 5, 3) . '/'
-            . substr($this->digits, 8, 4) . '-'
-            . substr($this->digits, 12, 2);
+        return substr($this->digits, 0, 2).'.'
+            .substr($this->digits, 2, 3).'.'
+            .substr($this->digits, 5, 3).'/'
+            .substr($this->digits, 8, 4).'-'
+            .substr($this->digits, 12, 2);
     }
 
     /**

@@ -33,7 +33,7 @@ final readonly class Period
      */
     public static function of(DateTimeInterface $startDate, DateTimeInterface $endDate): static
     {
-        return new static(
+        return new self(
             DateTimeImmutable::createFromInterface($startDate),
             DateTimeImmutable::createFromInterface($endDate),
         );
@@ -66,7 +66,7 @@ final readonly class Period
      */
     public static function currentMonth(): static
     {
-        $now = new DateTimeImmutable();
+        $now = new DateTimeImmutable;
 
         return new static(
             $now->modify('first day of this month')->setTime(0, 0, 0),
@@ -79,7 +79,7 @@ final readonly class Period
      */
     public static function currentYear(): static
     {
-        $year = (int) (new DateTimeImmutable())->format('Y');
+        $year = (int) (new DateTimeImmutable)->format('Y');
 
         return new static(
             new DateTimeImmutable("{$year}-01-01 00:00:00"),

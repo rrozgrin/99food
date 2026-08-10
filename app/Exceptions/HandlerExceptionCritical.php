@@ -40,24 +40,25 @@ trait HandlerExceptionCritical
      *  - QueryException com SQLSTATE[HY000] (falha de conexão com o banco)
      *  - AlertaException (alertas explícitos do sistema)
      *
-     * @param Throwable $throwable Exceção a ser verificada
-     *
+     * @param  Throwable  $throwable  Exceção a ser verificada
      * @return bool True se a exceção foi tratada como crítica
      */
     public function isCritical(Throwable $throwable): bool
     {
         if ($throwable instanceof QueryException) {
             if (preg_match('/SQLSTATE\[HY000\]/', $throwable->getMessage())) {
-                $this->notificar(message: 'ERRO DATABASE ' . $throwable->getMessage());
+                $this->notificar(message: 'ERRO DATABASE '.$throwable->getMessage());
+
                 return true;
             }
         }
 
         if ($throwable instanceof AlertaException) {
             $this->notificar(
-                message: 'ATENÇÃO ' . $throwable->getMessage(),
+                message: 'ATENÇÃO '.$throwable->getMessage(),
                 nivel: $throwable->getNivel(),
             );
+
             return true;
         }
 
@@ -67,8 +68,8 @@ trait HandlerExceptionCritical
     /**
      * Envia notificação com throttle para evitar flood de alertas.
      *
-     * @param string $message Mensagem de notificação
-     * @param string $nivel   Nível de log PSR-3 (padrão: 'emergency')
+     * @param  string  $message  Mensagem de notificação
+     * @param  string  $nivel  Nível de log PSR-3 (padrão: 'emergency')
      */
     private function notificar(string $message, string $nivel = 'emergency'): void
     {
@@ -94,8 +95,8 @@ trait HandlerExceptionCritical
      * Usa o driver de cache em arquivo para manter o throttle
      * e registra o erro adicional do Redis no log.
      *
-     * @param string $message Mensagem de notificação
-     * @param string $nivel   Nível de log PSR-3
+     * @param  string  $message  Mensagem de notificação
+     * @param  string  $nivel  Nível de log PSR-3
      */
     private function tratarCacheSemRedis(string $message, string $nivel = 'emergency'): void
     {
@@ -106,6 +107,6 @@ trait HandlerExceptionCritical
         }
 
         Cache::store('file')->put($cacheKey, $message, self::TIMEEXPIRED);
-        Log::$nivel('ERRO REDIS ' . $message);
+        Log::$nivel('ERRO REDIS '.$message);
     }
 }

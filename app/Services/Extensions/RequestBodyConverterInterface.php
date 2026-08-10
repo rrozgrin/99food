@@ -23,6 +23,4 @@ namespace App\Services\Extensions;
  *
  * @author Rafael Rozgrin <rrozgrin@gmail.com>
  */
-interface RequestBodyConverterInterface
-{
-}
+interface RequestBodyConverterInterface {}

@@ -3,6 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Console\Commands\Concerns\ParsesNameArgument;
+use App\Services\Auth\UsuarioLogadoService;
+use App\Services\Extensions\RequestBodyConverter;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 
@@ -16,8 +18,8 @@ use Illuminate\Filesystem\Filesystem;
  *     php artisan make:service Produto
  *     php artisan make:service BaseErp\\Produtos\\Produto
  *
- * @see \App\Services\Auth\UsuarioLogadoService
- * @see \App\Services\Extensions\RequestBodyConverter
+ * @see UsuarioLogadoService
+ * @see RequestBodyConverter
  *
  * @author Rafael Rozgrin <rrozgrin@gmail.com>
  */
@@ -46,6 +48,7 @@ class MakeServiceCommand extends Command
 
         if ($this->files->exists($path)) {
             $this->components->error("Service já existe: {$path}");
+
             return self::FAILURE;
         }
 

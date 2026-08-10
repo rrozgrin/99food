@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Food99\Catalog;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-use OpenApi\Attributes as OA;
 use App\Services\Food99\Catalog\Food99CatalogManagementService;
 use App\Services\Food99\Catalog\Food99CatalogPayloadService;
 use App\Services\Food99\Catalog\Food99CatalogPublishService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use OpenApi\Attributes as OA;
 
 /**
  * Controller de catalogo da 99Food.
@@ -214,9 +214,8 @@ class Food99CatalogController extends Controller
     /**
      * Monta e retorna o payload de upload de menu da 99Food.
      *
-     * @param Request                   $request Requisicao com app_shop_id
-     * @param Food99CatalogPayloadService $service Servico de montagem de payload
-     *
+     * @param  Request  $request  Requisicao com app_shop_id
+     * @param  Food99CatalogPayloadService  $service  Servico de montagem de payload
      * @return JsonResponse Payload montado no padrao ResponseApi
      */
     #[OA\Post(
@@ -263,9 +262,8 @@ class Food99CatalogController extends Controller
     /**
      * Publica o catalogo da loja na API da 99Food.
      *
-     * @param Request                      $request Requisicao com app_shop_id e, opcionalmente, app_item_ids
-     * @param Food99CatalogPublishService   $service Servico de publicacao de catalogo
-     *
+     * @param  Request  $request  Requisicao com app_shop_id e, opcionalmente, app_item_ids
+     * @param  Food99CatalogPublishService  $service  Servico de publicacao de catalogo
      * @return JsonResponse Resultado da publicacao
      */
     #[OA\Post(
@@ -324,9 +322,8 @@ class Food99CatalogController extends Controller
     /**
      * Lista historico de jobs de publicacao de uma loja.
      *
-     * @param string                     $appShopId ID da loja
-     * @param Food99CatalogPublishService $service   Servico de publicacao
-     *
+     * @param  string  $appShopId  ID da loja
+     * @param  Food99CatalogPublishService  $service  Servico de publicacao
      * @return JsonResponse Historico de jobs
      */
     public function publishJobs(string $appShopId, Food99CatalogPublishService $service): JsonResponse

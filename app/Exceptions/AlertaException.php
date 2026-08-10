@@ -34,8 +34,8 @@ use Exception;
 class AlertaException extends Exception
 {
     /**
-     * @param string $msg   Mensagem descritiva do alerta
-     * @param string $nivel Nível de severidade (PSR-3 LogLevel)
+     * @param  string  $msg  Mensagem descritiva do alerta
+     * @param  string  $nivel  Nível de severidade (PSR-3 LogLevel)
      */
     public function __construct(
         string $msg,

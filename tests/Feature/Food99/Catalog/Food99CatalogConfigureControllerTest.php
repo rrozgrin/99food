@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Food99\Catalog;
 
-use Mockery;
-use Tests\TestCase;
-use PHPUnit\Framework\Attributes\Test;
 use App\Http\Middleware\ApiJwtMiddleware;
 use App\Services\Food99\Catalog\Food99CatalogManagementService;
+use Mockery;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
 
 class Food99CatalogConfigureControllerTest extends TestCase
 {

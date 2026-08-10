@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Services\Food99\Auth;
 
+use App\Repository\Contracts\Models\Food99\Auth\Food99AppCredentialRepositoryInterface;
+use App\Repository\Contracts\Models\Food99\Auth\Food99ShopRepositoryInterface;
+use App\Repository\Contracts\Models\Food99\Auth\Food99StoreTokenRepositoryInterface;
 use App\Services\Auth\UsuarioLogadoService;
 use App\Services\Food99\Traits\InteractsWithFood99Api;
-use App\Repository\Contracts\Models\Food99\Auth\Food99ShopRepositoryInterface;
-use App\Repository\Contracts\Models\Food99\Auth\Food99AppCredentialRepositoryInterface;
-use App\Repository\Contracts\Models\Food99\Auth\Food99StoreTokenRepositoryInterface;
 
 /**
  * Servico de autenticacao da 99Food.
@@ -26,13 +26,15 @@ class Food99AuthService
     use InteractsWithFood99Api;
 
     private ?Food99AuthShopService $shopService = null;
+
     private ?Food99AuthTokenService $tokenService = null;
+
     private ?Food99ShopSyncService $shopSyncService = null;
 
     /**
      * Inicializa o servico com o repositorio de tokens por loja.
      *
-     * @param Food99StoreTokenRepositoryInterface $storeTokenRepository Repositorio de token por loja
+     * @param  Food99StoreTokenRepositoryInterface  $storeTokenRepository  Repositorio de token por loja
      */
     public function __construct(
         private readonly Food99StoreTokenRepositoryInterface $storeTokenRepository,
@@ -44,8 +46,7 @@ class Food99AuthService
     /**
      * Obtem a URL da pagina de autorizacao da 99Food para vincular loja.
      *
-     * @param array<string, mixed> $payload Payload complementar exigido pela 99Food
-     *
+     * @param  array<string, mixed>  $payload  Payload complementar exigido pela 99Food
      * @return array<string, mixed> URL resolvida e resposta bruta da API externa
      */
     public function getAuthorizationUrl(array $payload = []): array
@@ -91,8 +92,7 @@ class Food99AuthService
     /**
      * Obtem e persiste o auth_token da 99Food para uma loja.
      *
-     * @param string $appShopId ID externo da loja na 99Food
-     *
+     * @param  string  $appShopId  ID externo da loja na 99Food
      * @return array<string, mixed> Metadados do token sem expor auth_token
      */
     public function getTokenByStore(string $appShopId): array
@@ -108,8 +108,7 @@ class Food99AuthService
     /**
      * Renova e persiste o auth_token da 99Food para uma loja.
      *
-     * @param string $appShopId ID externo da loja na 99Food
-     *
+     * @param  string  $appShopId  ID externo da loja na 99Food
      * @return array<string, mixed> Metadados do token renovado sem expor auth_token
      */
     public function refreshTokenByStore(string $appShopId): array
@@ -125,8 +124,7 @@ class Food99AuthService
     /**
      * Retorna token armazenado localmente para uma loja.
      *
-     * @param string $appShopId ID externo da loja na 99Food
-     *
+     * @param  string  $appShopId  ID externo da loja na 99Food
      * @return array<string, mixed>|null Metadados do token local
      */
     public function getStoredTokenByStore(string $appShopId): ?array
@@ -140,9 +138,8 @@ class Food99AuthService
     /**
      * Anexa dados de sincronização da loja ao retorno de token.
      *
-     * @param object               $shop      Loja local
-     * @param array<string, mixed> $tokenData Resposta de token
-     *
+     * @param  object  $shop  Loja local
+     * @param  array<string, mixed>  $tokenData  Resposta de token
      * @return array<string, mixed> Resposta final com dados da loja
      */
     private function attachShopSyncData(object $shop, array $tokenData): array
@@ -156,8 +153,7 @@ class Food99AuthService
     }
 
     /**
-     * @param array<string, mixed> $tokenData
-     *
+     * @param  array<string, mixed>  $tokenData
      * @return array<string, mixed>
      */
     private function sanitizeTokenResponse(array $tokenData): array

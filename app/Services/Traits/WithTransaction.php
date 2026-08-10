@@ -40,12 +40,13 @@ trait WithTransaction
      * Em caso de qualquer outra exceção, faz rollback, loga e relança.
      *
      * @template T
+     *
      * @param  Closure(): T  $callback  Operação a executar dentro da transação.
-     * @param  int           $attempts  Número de tentativas em caso de deadlock (padrão: 1).
+     * @param  int  $attempts  Número de tentativas em caso de deadlock (padrão: 1).
      * @return T
      *
      * @throws ApiException Em caso de erro de regra de negócio.
-     * @throws Throwable              Em caso de erro inesperado.
+     * @throws Throwable Em caso de erro inesperado.
      */
     protected function transaction(Closure $callback, int $attempts = 1): mixed
     {
@@ -56,10 +57,10 @@ trait WithTransaction
             throw $e;
         } catch (Throwable $e) {
             logger()->error('Falha na transação de banco de dados', [
-                'service'   => static::class,
+                'service' => static::class,
                 'exception' => $e->getMessage(),
-                'file'      => $e->getFile(),
-                'line'      => $e->getLine(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
             ]);
 
             throw $e;
@@ -72,8 +73,9 @@ trait WithTransaction
      * Útil em operações de alta concorrência (ex: atualização de estoque, fechamento de caixa).
      *
      * @template T
+     *
      * @param  Closure(): T  $callback  Operação a executar.
-     * @param  int           $attempts  Número máximo de tentativas (padrão: 3).
+     * @param  int  $attempts  Número máximo de tentativas (padrão: 3).
      * @return T
      */
     protected function transactionWithRetry(Closure $callback, int $attempts = 3): mixed

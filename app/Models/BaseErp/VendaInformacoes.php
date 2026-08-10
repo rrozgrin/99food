@@ -22,4 +22,3 @@ class VendaInformacoes extends Model
         'info_adicional',
     ];
 }
-

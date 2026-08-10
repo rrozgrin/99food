@@ -2,6 +2,9 @@
 
 namespace App\Repository\Contracts;
 
+use App\Repository\Traits\HasDataTables;
+use App\Services\Extensions\BindsRepositorios;
+
 /**
  * Interface base do padrão Repository — contrato CRUD puro.
  *
@@ -47,8 +50,8 @@ namespace App\Repository\Contracts;
  *
  * @see AbstractEloquentRepository — Implementação base
  * @see DataTablesInterface — Contrato opt-in para DataTables
- * @see \App\Repository\Traits\HasDataTables — Trait com implementação DataTables
- * @see \App\Services\Extensions\BindsRepositorios — Registro de bindings
+ * @see HasDataTables — Trait com implementação DataTables
+ * @see BindsRepositorios — Registro de bindings
  *
  * @author Rafael Rozgrin <rrozgrin@gmail.com>
  */
@@ -57,8 +60,7 @@ interface RepositoryInterface
     /**
      * Encontra uma entidade pelo seu ID.
      *
-     * @param mixed $id Identificador da entidade
-     *
+     * @param  mixed  $id  Identificador da entidade
      * @return object|null A entidade encontrada ou null
      */
     public function find(mixed $id): ?object;
@@ -82,11 +84,10 @@ interface RepositoryInterface
      *         limit: 10,
      *     );
      *
-     * @param array    $criteria Critérios no formato [[coluna, operador, valor], ...]
-     * @param array    $orderBy  Ordenação no formato [[coluna, direção], ...]
-     * @param int|null $limit    Limite de resultados
-     * @param int|null $offset   Posição inicial
-     *
+     * @param  array  $criteria  Critérios no formato [[coluna, operador, valor], ...]
+     * @param  array  $orderBy  Ordenação no formato [[coluna, direção], ...]
+     * @param  int|null  $limit  Limite de resultados
+     * @param  int|null  $offset  Posição inicial
      * @return object|null Coleção de entidades encontradas
      */
     public function findBy(
@@ -99,8 +100,7 @@ interface RepositoryInterface
     /**
      * Encontra uma única entidade pelo critério informado.
      *
-     * @param array $criteria Critérios no formato [[coluna, operador, valor], ...]
-     *
+     * @param  array  $criteria  Critérios no formato [[coluna, operador, valor], ...]
      * @return object|null A entidade encontrada ou null
      */
     public function findOneBy(array $criteria): ?object;
@@ -108,8 +108,7 @@ interface RepositoryInterface
     /**
      * Pagina os resultados do repositório.
      *
-     * @param int $perPage Itens por página
-     *
+     * @param  int  $perPage  Itens por página
      * @return mixed Instância de LengthAwarePaginator ou similar
      */
     public function paginate(int $perPage): mixed;
@@ -117,8 +116,7 @@ interface RepositoryInterface
     /**
      * Cria uma nova entidade no repositório.
      *
-     * @param array<string, mixed> $data Dados da entidade
-     *
+     * @param  array<string, mixed>  $data  Dados da entidade
      * @return object Entidade criada
      */
     public function create(array $data): object;
@@ -126,9 +124,8 @@ interface RepositoryInterface
     /**
      * Atualiza uma entidade existente pelo seu ID.
      *
-     * @param array<string, mixed> $data Dados a atualizar
-     * @param mixed                $id   Identificador da entidade
-     *
+     * @param  array<string, mixed>  $data  Dados a atualizar
+     * @param  mixed  $id  Identificador da entidade
      * @return bool True se atualizado com sucesso
      */
     public function update(array $data, mixed $id): bool;
@@ -136,9 +133,8 @@ interface RepositoryInterface
     /**
      * Cria ou atualiza uma entidade com base nos atributos de busca.
      *
-     * @param array<string, mixed> $attributes Atributos para busca
-     * @param array<string, mixed> $values     Valores para atualizar/criar
-     *
+     * @param  array<string, mixed>  $attributes  Atributos para busca
+     * @param  array<string, mixed>  $values  Valores para atualizar/criar
      * @return object Entidade criada ou atualizada
      */
     public function updateOrCreate(array $attributes, array $values = []): object;
@@ -146,9 +142,8 @@ interface RepositoryInterface
     /**
      * Busca ou cria uma entidade com base nos atributos informados.
      *
-     * @param array<string, mixed> $attributes Atributos para busca
-     * @param array<string, mixed> $values     Valores adicionais para criacao
-     *
+     * @param  array<string, mixed>  $attributes  Atributos para busca
+     * @param  array<string, mixed>  $values  Valores adicionais para criacao
      * @return object Entidade encontrada ou criada
      */
     public function firstOrCreate(array $attributes, array $values = []): object;
@@ -156,8 +151,7 @@ interface RepositoryInterface
     /**
      * Remove uma entidade pelo seu ID.
      *
-     * @param mixed $id Identificador da entidade
-     *
+     * @param  mixed  $id  Identificador da entidade
      * @return bool True se removido com sucesso
      */
     public function delete(mixed $id): bool;

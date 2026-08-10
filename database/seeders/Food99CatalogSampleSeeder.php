@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use RuntimeException;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use RuntimeException;
 
 /**
  * Seed de exemplo para catalogo 99Food.
@@ -363,7 +363,7 @@ class Food99CatalogSampleSeeder extends Seeder
             ];
 
             throw new RuntimeException(
-                'Nao foi possivel resolver IDs de food99_shop_items para o seed. debug=' .
+                'Nao foi possivel resolver IDs de food99_shop_items para o seed. debug='.
                 json_encode($debug, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
             );
         }
@@ -374,7 +374,7 @@ class Food99CatalogSampleSeeder extends Seeder
     /**
      * Sincroniza vinculacao categoria-itens.
      *
-     * @param array<int, int> $itemIds IDs internos dos itens
+     * @param  array<int, int>  $itemIds  IDs internos dos itens
      */
     private function syncCategoryItems(string $connection, int $categoryId, array $itemIds): void
     {
@@ -406,9 +406,8 @@ class Food99CatalogSampleSeeder extends Seeder
     /**
      * Mantem apenas campos existentes no schema da tabela.
      *
-     * @param array<string, mixed>      $payload   Payload original
-     * @param array<string, int|string> $columnSet Colunas indexadas por nome
-     *
+     * @param  array<string, mixed>  $payload  Payload original
+     * @param  array<string, int|string>  $columnSet  Colunas indexadas por nome
      * @return array<string, mixed> Payload filtrado
      */
     private function filterByExistingColumns(array $payload, array $columnSet): array
@@ -427,8 +426,7 @@ class Food99CatalogSampleSeeder extends Seeder
     /**
      * Resolve ID numerico de um registro independente do nome da coluna PK.
      *
-     * @param object|null $row Registro retornado pelo query builder
-     *
+     * @param  object|null  $row  Registro retornado pelo query builder
      * @return int|null ID resolvido ou null
      */
     private function resolveRowId(?object $row): ?int

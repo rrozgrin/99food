@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Services\Food99\Webhook;
 
-use Mockery;
-use Tests\TestCase;
 use App\Exceptions\ApiException;
-use PHPUnit\Framework\Attributes\Test;
-use App\Services\Food99\Webhook\Food99WebhookService;
-use App\Services\Food99\Orders\Food99OrderErpSyncService;
+use App\Repository\Contracts\Models\Food99\Auth\Food99AppCredentialRepositoryInterface;
 use App\Repository\Contracts\Models\Food99\Auth\Food99ShopRepositoryInterface;
 use App\Repository\Contracts\Models\Food99\Orders\Food99OrderRepositoryInterface;
-use App\Repository\Contracts\Models\Food99\Auth\Food99AppCredentialRepositoryInterface;
 use App\Repository\Contracts\Models\Food99\Webhook\Food99WebhookInboundLogRepositoryInterface;
+use App\Services\Food99\Orders\Food99OrderErpSyncService;
+use App\Services\Food99\Webhook\Food99WebhookService;
+use Mockery;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
 
 class Food99WebhookServiceIdempotencyTest extends TestCase
 {
@@ -170,7 +170,7 @@ class Food99WebhookServiceIdempotencyTest extends TestCase
         ];
 
         $rawBody = json_encode($payload, JSON_UNESCAPED_UNICODE) ?: '{}';
-        $signature = md5($rawBody . 'test-secret');
+        $signature = md5($rawBody.'test-secret');
 
         $service->handle($payload, $rawBody, $signature);
         $service->handle($payload, $rawBody, $signature);
@@ -248,7 +248,7 @@ class Food99WebhookServiceIdempotencyTest extends TestCase
         ];
 
         $rawBody = json_encode($payload, JSON_UNESCAPED_UNICODE) ?: '{}';
-        $signature = md5($rawBody . 'test-secret');
+        $signature = md5($rawBody.'test-secret');
 
         $service->handle($payload, $rawBody, $signature);
         $service->handle($payload, $rawBody, $signature);
