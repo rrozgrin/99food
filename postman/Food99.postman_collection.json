@@ -1,0 +1,944 @@
+{
+  "info": {
+    "_postman_id": "b9f4a7d5-3fd5-4217-8d61-cf6cf78c68f0",
+    "name": "99Food Portfolio - API Local",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Collection para testar todas as rotas /api/v1 do projeto 99Food Portfolio. As rotas protegidas usam Bearer {{access_token}} e o token JWT e renovado automaticamente pelo pre-request da collection."
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "const skipAutoAuth = pm.variables.get('skip_auto_auth') === true || pm.variables.get('skip_auto_auth') === 'true';",
+          "",
+          "if (!skipAutoAuth) {",
+          "  const baseUrl = pm.collectionVariables.get('base_url') || 'http://127.0.0.1:8000';",
+          "  const token = pm.collectionVariables.get('access_token');",
+          "  const expiresAt = Number(pm.collectionVariables.get('token_expires_at') || 0);",
+          "  const skewMs = 30000;",
+          "",
+          "  if (!token || Date.now() + skewMs >= expiresAt) {",
+          "    pm.sendRequest({",
+          "      url: `${baseUrl}/api/v1/login`,",
+          "      method: 'POST',",
+          "      header: {",
+          "        'Content-Type': 'application/json',",
+          "        'Accept': 'application/json'",
+          "      },",
+          "      body: {",
+          "        mode: 'raw',",
+          "        raw: JSON.stringify({",
+          "          login: pm.collectionVariables.get('login') || 'admin',",
+          "          senha: pm.collectionVariables.get('senha') || 'senha-segura'",
+          "        })",
+          "      }",
+          "    }, function (err, response) {",
+          "      if (err) {",
+          "        console.error('Erro login:', err);",
+          "        return;",
+          "      }",
+          "",
+          "      let json = {};",
+          "      try {",
+          "        json = response.json();",
+          "      } catch (e) {",
+          "        console.error('Login retornou resposta nao JSON:', response.text());",
+          "        return;",
+          "      }",
+          "",
+          "      if (!json.access_token) {",
+          "        console.error('Login sem token:', json);",
+          "        return;",
+          "      }",
+          "",
+          "      pm.collectionVariables.set('access_token', json.access_token);",
+          "      pm.collectionVariables.set('token_expires_at', String(Date.now() + ((json.expires_in || 3600) * 1000)));",
+          "      console.log('Token atualizado');",
+          "    });",
+          "  }",
+          "}"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000"
+    },
+    {
+      "key": "login",
+      "value": "admin"
+    },
+    {
+      "key": "senha",
+      "value": "senha-segura"
+    },
+    {
+      "key": "access_token",
+      "value": ""
+    },
+    {
+      "key": "token_expires_at",
+      "value": "0"
+    },
+    {
+      "key": "app_shop_id",
+      "value": "wc-sandbox-002"
+    },
+    {
+      "key": "food99_app_id",
+      "value": "5764607788456609652"
+    },
+    {
+      "key": "food99_app_secret",
+      "value": "sample-app-secret"
+    },
+    {
+      "key": "app_menu_id",
+      "value": "menu_principal"
+    },
+    {
+      "key": "app_category_id",
+      "value": "burgers"
+    },
+    {
+      "key": "app_item_id",
+      "value": "burger_classico"
+    },
+    {
+      "key": "food99_order_id",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login e salvar token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login retornou token', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.access_token).to.be.a('string');",
+                  "  pm.collectionVariables.set('access_token', json.access_token);",
+                  "  pm.collectionVariables.set('token_expires_at', String(Date.now() + ((json.expires_in || 3600) * 1000)));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"login\": \"{{login}}\",\n  \"senha\": \"{{senha}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "login"
+              ]
+            }
+          },
+          "variable": [
+            {
+              "key": "skip_auto_auth",
+              "value": "true"
+            }
+          ]
+        },
+        {
+          "name": "Usuario autenticado",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/me"
+          }
+        },
+        {
+          "name": "Refresh JWT",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const json = pm.response.json();",
+                  "  if (json.access_token) {",
+                  "    pm.collectionVariables.set('access_token', json.access_token);",
+                  "    pm.collectionVariables.set('token_expires_at', String(Date.now() + ((json.expires_in || 3600) * 1000)));",
+                  "  }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/refresh"
+          }
+        },
+        {
+          "name": "Logout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code >= 200 && pm.response.code < 300) {",
+                  "  pm.collectionVariables.unset('access_token');",
+                  "  pm.collectionVariables.set('token_expires_at', '0');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/logout"
+          }
+        }
+      ]
+    },
+    {
+      "name": "99Food Auth",
+      "item": [
+        {
+          "name": "Listar lojas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/food99/auth/shops"
+          }
+        },
+        {
+          "name": "Gerar URL de autorizacao",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"app_shop_id\": \"{{app_shop_id}}\",\n  \"shop_name\": \"Loja Sandbox 002\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/v1/food99/auth/authorization-url"
+          }
+        },
+        {
+          "name": "Obter token 99Food da loja",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"app_shop_id\": \"{{app_shop_id}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/v1/food99/auth/token/get"
+          }
+        },
+        {
+          "name": "Refresh token 99Food da loja",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"app_shop_id\": \"{{app_shop_id}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/v1/food99/auth/token/refresh"
+          }
+        },
+        {
+          "name": "Consultar token local",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/food99/auth/token/local/{{app_shop_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "99Food Catalogo",
+      "item": [
+        {
+          "name": "Upsert menu",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"app_shop_id\": \"{{app_shop_id}}\",\n  \"app_menu_id\": \"{{app_menu_id}}\",\n  \"menu_name\": \"Menu Principal\",\n  \"sort_order\": 1,\n  \"is_active\": true,\n  \"metadata\": {\n    \"origin\": \"postman\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/v1/food99/catalog/menus/upsert"
+          }
+        },
+        {
+          "name": "Listar menus locais",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/food99/catalog/menus/{{app_shop_id}}?view=local"
+          }
+        },
+        {
+          "name": "Listar menus publicados",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/food99/catalog/menus/{{app_shop_id}}?view=published"
+          }
+        },
+        {
+          "name": "Upsert categoria",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"app_shop_id\": \"{{app_shop_id}}\",\n  \"app_menu_id\": \"{{app_menu_id}}\",\n  \"app_category_id\": \"{{app_category_id}}\",\n  \"category_name\": \"Hamburgueres\",\n  \"sort_order\": 1,\n  \"is_active\": true,\n  \"metadata\": {\n    \"origin\": \"postman\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/v1/food99/catalog/categories/upsert"
+          }
+        },
+        {
+          "name": "Listar categorias locais",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/food99/catalog/categories/{{app_shop_id}}?view=local"
+          }
+        },
+        {
+          "name": "Listar categorias publicadas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/food99/catalog/categories/{{app_shop_id}}?view=published"
+          }
+        },
+        {
+          "name": "Upsert item",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"app_shop_id\": \"{{app_shop_id}}\",\n  \"app_category_id\": \"{{app_category_id}}\",\n  \"app_item_id\": \"{{app_item_id}}\",\n  \"id_cadastro\": 1,\n  \"id_produto\": 1001,\n  \"id_grade\": 1001,\n  \"item_name\": \"Hamburguer Classico\",\n  \"short_desc\": \"Pao, carne e queijo\",\n  \"price_source\": \"override\",\n  \"price_cents\": 2990,\n  \"tax_rate\": 0,\n  \"is_active\": true,\n  \"publish_status\": \"draft\",\n  \"sort_order\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/v1/food99/catalog/items/upsert"
+          }
+        },
+        {
+          "name": "Configurar item local",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"app_shop_id\": \"{{app_shop_id}}\",\n  \"app_item_id\": \"{{app_item_id}}\",\n  \"app_menu_id\": \"{{app_menu_id}}\",\n  \"app_category_id\": \"{{app_category_id}}\",\n  \"item_name\": \"Hamburguer Classico\",\n  \"short_desc\": \"Pao, carne e queijo\",\n  \"price_cents\": 2990,\n  \"is_active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/v1/food99/catalog/items/configure"
+          }
+        },
+        {
+          "name": "Listar itens locais",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/food99/catalog/items/{{app_shop_id}}?view=local"
+          }
+        },
+        {
+          "name": "Listar itens publicados",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/food99/catalog/items/{{app_shop_id}}?view=published"
+          }
+        },
+        {
+          "name": "Vincular itens na categoria",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"app_shop_id\": \"{{app_shop_id}}\",\n  \"app_category_id\": \"{{app_category_id}}\",\n  \"app_item_ids\": [\n    \"burger_classico\",\n    \"burger_bacon\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/v1/food99/catalog/categories/link-items"
+          }
+        },
+        {
+          "name": "Preview payload de publicacao",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"app_shop_id\": \"{{app_shop_id}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/v1/food99/catalog/payload/preview"
+          }
+        },
+        {
+          "name": "Publicar catalogo completo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"app_shop_id\": \"{{app_shop_id}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/v1/food99/catalog/publish"
+          }
+        },
+        {
+          "name": "Publicar catalogo por itens",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"app_shop_id\": \"{{app_shop_id}}\",\n  \"app_item_ids\": [\n    \"{{app_item_id}}\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/v1/food99/catalog/publish"
+          }
+        },
+        {
+          "name": "Sincronizar catalogo remoto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"app_shop_id\": \"{{app_shop_id}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/v1/food99/catalog/sync-remote"
+          }
+        },
+        {
+          "name": "Listar jobs de publicacao",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/food99/catalog/publish/jobs/{{app_shop_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "99Food Pedidos",
+      "item": [
+        {
+          "name": "Fila de sincronizacao",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/food99/orders/sync-queue?app_shop_id={{app_shop_id}}&limit=50"
+          }
+        },
+        {
+          "name": "Detalhe do pedido",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/food99/orders/{{food99_order_id}}"
+          }
+        },
+        {
+          "name": "Reprocessar pedido no ERP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/food99/orders/{{food99_order_id}}/sync-erp"
+          }
+        }
+      ]
+    },
+    {
+      "name": "99Food Webhooks",
+      "item": [
+        {
+          "name": "Receber webhook orderNew",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const raw = pm.request.body.raw;",
+                  "const secret = pm.collectionVariables.get('food99_app_secret') || 'sample-app-secret';",
+                  "pm.request.headers.upsert({",
+                  "  key: 'didi-header-sign',",
+                  "  value: CryptoJS.MD5(raw + secret).toString()",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "didi-header-sign",
+                "value": ""
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"app_id\": {{food99_app_id}},\n  \"app_shop_id\": \"{{app_shop_id}}\",\n  \"type\": \"orderNew\",\n  \"timestamp\": 1786373203,\n  \"request_id\": \"postman-order-new-001\",\n  \"data\": {\n    \"order_id\": \"990000000001\",\n    \"order_info\": {\n      \"order_id\": \"990000000001\",\n      \"status\": 100,\n      \"order_index\": 1,\n      \"country\": \"BR\",\n      \"timezone\": \"America/Sao_Paulo\",\n      \"pay_type\": 1,\n      \"delivery_type\": 1,\n      \"create_time\": 1786373203,\n      \"pay_time\": 1786373203,\n      \"price\": {\n        \"order_price\": 2990,\n        \"real_price\": 2990,\n        \"real_pay_price\": 2990,\n        \"refund_price\": 0\n      },\n      \"receive_address\": {\n        \"name\": \"Cliente Postman\",\n        \"phone\": \"11999999999\"\n      },\n      \"order_items\": [\n        {\n          \"app_item_id\": \"burger_classico\",\n          \"name\": \"Hamburguer Classico\",\n          \"amount\": 1,\n          \"sku_price\": 2990,\n          \"total_price\": 2990,\n          \"real_price\": 2990\n        }\n      ]\n    }\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/v1/99food/webhook"
+          },
+          "variable": [
+            {
+              "key": "skip_auto_auth",
+              "value": "true"
+            }
+          ]
+        },
+        {
+          "name": "Receber webhook orderFinish",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const raw = pm.request.body.raw;",
+                  "const secret = pm.collectionVariables.get('food99_app_secret') || 'sample-app-secret';",
+                  "pm.request.headers.upsert({",
+                  "  key: 'didi-header-sign',",
+                  "  value: CryptoJS.MD5(raw + secret).toString()",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "didi-header-sign",
+                "value": ""
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"app_id\": {{food99_app_id}},\n  \"app_shop_id\": \"{{app_shop_id}}\",\n  \"type\": \"orderFinish\",\n  \"timestamp\": 1786373303,\n  \"request_id\": \"postman-order-finish-001\",\n  \"data\": {\n    \"order_id\": \"990000000001\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/v1/99food/webhook"
+          },
+          "variable": [
+            {
+              "key": "skip_auto_auth",
+              "value": "true"
+            }
+          ]
+        },
+        {
+          "name": "Receber webhook orderCancel",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const raw = pm.request.body.raw;",
+                  "const secret = pm.collectionVariables.get('food99_app_secret') || 'sample-app-secret';",
+                  "pm.request.headers.upsert({",
+                  "  key: 'didi-header-sign',",
+                  "  value: CryptoJS.MD5(raw + secret).toString()",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "didi-header-sign",
+                "value": ""
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"app_id\": {{food99_app_id}},\n  \"app_shop_id\": \"{{app_shop_id}}\",\n  \"type\": \"orderCancel\",\n  \"timestamp\": 1786373403,\n  \"request_id\": \"postman-order-cancel-001\",\n  \"data\": {\n    \"order_id\": \"990000000001\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/v1/99food/webhook"
+          },
+          "variable": [
+            {
+              "key": "skip_auto_auth",
+              "value": "true"
+            }
+          ]
+        },
+        {
+          "name": "Listar logs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/food99/webhooks/logs?app_shop_id={{app_shop_id}}&limit=50"
+          }
+        },
+        {
+          "name": "Listar logs filtrados",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/food99/webhooks/logs?app_shop_id={{app_shop_id}}&limit=50&event_names[]=orderNew&statuses[]=processed"
+          }
+        }
+      ]
+    }
+  ]
+}
