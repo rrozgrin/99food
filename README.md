@@ -54,6 +54,12 @@ Referencia:
 
 ### 3.2 Protegidas (JWT)
 
+#### Autenticacao da API
+
+- `GET /api/v1/me`
+- `POST /api/v1/refresh`
+- `POST /api/v1/logout`
+
 #### Auth 99Food
 
 - `GET /api/v1/food99/auth/shops`
@@ -83,7 +89,35 @@ Referencia:
 
 ---
 
-## 4. Fluxo de catalogo (simples)
+## 4. Autenticacao da API
+
+### Login
+
+`POST /api/v1/login` recebe `login` e `senha`.
+
+- ambos os campos sao obrigatorios; payload invalido retorna `422`;
+- somente usuarios ERP com `ativo = A` podem autenticar;
+- credenciais invalidas, usuario inativo, inexistente ou hash de senha incompativel retornam o mesmo `401` (`Login invalido`);
+- a senha e verificada por `Hash::check()` e nunca e retornada pela API;
+- o endpoint aceita no maximo 5 tentativas por minuto para a combinacao de IP e login.
+
+O ERP deve armazenar hashes compativeis com o driver de hash do Laravel (como bcrypt ou Argon2) em uma coluna com tamanho suficiente. Senhas legadas em texto puro ou hashes nao reconhecidos sao rejeitados.
+
+Uma resposta de sucesso contem `access_token`, `token_type` (`bearer`) e `expires_in` em segundos. Com o TTL padrao de 60 minutos, `expires_in` e `3600`.
+
+### Uso e ciclo de vida do JWT
+
+Envie o token nas rotas protegidas:
+
+```http
+Authorization: Bearer <access_token>
+```
+
+- `GET /api/v1/me` retorna o usuario autenticado sem o campo `senha`;
+- `POST /api/v1/refresh` exige token ainda valido, gera outro token e revoga o anterior;
+- `POST /api/v1/logout` revoga o token atual e retorna `204`.
+
+## 5. Fluxo de catalogo (simples)
 
 1. `menus/upsert`
 2. `categories/upsert`
@@ -106,7 +140,7 @@ Implementacao:
 
 ---
 
-## 5. Fluxo de pedidos (webhook -> ERP)
+## 6. Fluxo de pedidos (webhook -> ERP)
 
 ### Eventos suportados
 
@@ -116,7 +150,7 @@ Implementacao:
 
 ### Pipeline
 
-1. 99Food chama `POST /api/v1/99food/webhook`
+1. 99Food chama `POST /api/v1/99food/webhook` com a assinatura valida
 2. payload e headers sao gravados em `food99_webhook_inbound_logs`
 3. pedido e itens sao persistidos em `food99_orders` e `food99_order_items`
 4. `orderNew` persiste o pedido sem criar venda no ERP
@@ -139,7 +173,7 @@ Implementacao:
 
 ---
 
-## 6. Sync remoto do catalogo
+## 7. Sync remoto do catalogo
 
 Endpoint interno:
 
@@ -158,9 +192,9 @@ Comportamento:
 
 ---
 
-## 7. Banco de dados
+## 8. Banco de dados
 
-### 7.1 `mysql_marketplace`
+### 8.1 `mysql_marketplace`
 
 - `food99_app_credentials`
 - `food99_shops`
@@ -174,7 +208,7 @@ Comportamento:
 - `food99_orders`
 - `food99_order_items`
 
-### 7.2 `base_erp`
+### 8.2 `base_erp`
 
 Usado na sincronizacao de venda/pedido:
 
@@ -189,7 +223,7 @@ Usado na sincronizacao de venda/pedido:
 
 ---
 
-## 8. Timezone
+## 9. Timezone
 
 Aplicacao configurada para:
 
@@ -201,7 +235,7 @@ No webhook, timestamps unix sao convertidos de UTC para timezone da app:
 
 ---
 
-## 9. Configuracao 99Food
+## 10. Configuracao 99Food
 
 Arquivo:
 
@@ -216,11 +250,31 @@ FOOD99_APP_SECRET=...
 FOOD99_TIMEOUT=20
 ```
 
-O webhook exige `didi-header-sign`, calculada como `md5(raw_body + FOOD99_APP_SECRET)`.
+O webhook exige o header `didi-header-sign`, calculado como `md5(raw_body + FOOD99_APP_SECRET)`. Assinatura ausente ou invalida retorna `401`; sem `FOOD99_APP_SECRET`, a aplicacao retorna erro de configuracao.
 
 ---
 
-## 10. Pendencias tecnicas mapeadas
+## 11. Ambiente local e verificacao
+
+O ambiente Docker inclui aplicacao, worker de fila, MySQL 8.4 e Redis:
+
+```bash
+docker compose up -d
+```
+
+Configure as conexoes `mysql` (`base_erp`) e `mysql_marketplace` (`marketplace`) no `.env` antes de executar migrations. O schema do ERP e uma dependencia externa; em ambiente local, forneca uma estrutura minima compativel, incluindo `webc_usuario`.
+
+Testes disponiveis incluem o fluxo de login, validacao JWT, catalogo, pedidos, webhook e services:
+
+```bash
+php artisan test
+```
+
+O workflow de CI valida Composer, Pint, testes, geracao OpenAPI e build do frontend.
+
+---
+
+## 12. Pendencias tecnicas mapeadas
 
 1. adicionar `origem_venda = 99FOOD` no enum da tabela `venda` e remover workaround `B2W`
 2. decidir estrategia final de `app_item_id` para longo prazo (sem quebrar IDs ja publicados)
