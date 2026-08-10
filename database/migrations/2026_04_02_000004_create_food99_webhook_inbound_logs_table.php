@@ -18,6 +18,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::connection('mysql_marketplace')->hasTable('food99_webhook_inbound_logs')) {
+            return;
+        }
+
         Schema::connection('mysql_marketplace')->create('food99_webhook_inbound_logs', function (Blueprint $table): void {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('food99_app_credential_id')->nullable();

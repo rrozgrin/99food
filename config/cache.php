@@ -49,9 +49,9 @@ return [
 
         'database' => [
             'driver' => 'database',
-            'connection' => env('DB_CACHE_CONNECTION'),
+            'connection' => env('DB_CACHE_CONNECTION', 'mysql_marketplace'),
             'table' => env('DB_CACHE_TABLE', 'cache'),
-            'lock_connection' => env('DB_CACHE_LOCK_CONNECTION'),
+            'lock_connection' => env('DB_CACHE_LOCK_CONNECTION', 'mysql_marketplace'),
             'lock_table' => env('DB_CACHE_LOCK_TABLE'),
         ],
 
@@ -134,19 +134,19 @@ return [
     */
     'ttl' => [
         'configuracoes' => 86400,  // 24 horas  — dados raramente alterados
-        'produtos'      => 3600,   // 1 hora    — catálogo e preços
-        'clientes'      => 1800,   // 30 minutos
-        'fornecedores'  => 1800,   // 30 minutos
-        'funcionarios'  => 3600,   // 1 hora
-        'categorias'    => 7200,   // 2 horas
+        'produtos' => 3600,   // 1 hora    — catálogo e preços
+        'clientes' => 1800,   // 30 minutos
+        'fornecedores' => 1800,   // 30 minutos
+        'funcionarios' => 3600,   // 1 hora
+        'categorias' => 7200,   // 2 horas
         'formas_pagamento' => 3600, // 1 hora
-        'vendas'        => 300,    // 5 minutos — alta volatilidade
-        'pedidos'       => 300,    // 5 minutos
-        'caixa'         => 60,     // 1 minuto  — dados em tempo real
-        'financeiro'    => 300,    // 5 minutos
-        'estoque'       => 120,    // 2 minutos — crítico para consistência
-        'relatorios'    => 300,    // 5 minutos — relatórios são pesados
-        'default'       => 600,    // 10 minutos — fallback genérico
+        'vendas' => 300,    // 5 minutos — alta volatilidade
+        'pedidos' => 300,    // 5 minutos
+        'caixa' => 60,     // 1 minuto  — dados em tempo real
+        'financeiro' => 300,    // 5 minutos
+        'estoque' => 120,    // 2 minutos — crítico para consistência
+        'relatorios' => 300,    // 5 minutos — relatórios são pesados
+        'default' => 600,    // 10 minutos — fallback genérico
     ],
 
     /*

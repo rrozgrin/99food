@@ -66,6 +66,9 @@ Route::group(['prefix' => 'v1'], function (): void {
         Route::post('/refresh', [AuthController::class, 'refresh'])
             ->name('api.v1.refresh');
 
+        Route::post('/logout', [AuthController::class, 'logout'])
+            ->name('api.v1.logout');
+
         // Integracao 99Food - autenticacao por loja
         Route::group(['prefix' => 'food99/auth'], function (): void {
             // Lista as lojas 99Food do cliente logado

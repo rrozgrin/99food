@@ -107,6 +107,31 @@ class LoginTest extends TestCase
     }
 
     #[Test]
+    public function refresh_exige_token_valido_e_revoga_o_token_anterior(): void
+    {
+        $this->createErpUser(login: 'admin', senha: Hash::make('senha-segura'));
+
+        $token = $this->loginToken();
+        $novoToken = $this->withToken($token)
+            ->postJson('/api/v1/refresh')
+            ->assertOk()
+            ->json('access_token');
+
+        $this->withToken($token)->getJson('/api/v1/me')->assertUnauthorized();
+        $this->withToken($novoToken)->getJson('/api/v1/me')->assertOk();
+    }
+
+    #[Test]
+    public function logout_revoga_o_token_atual(): void
+    {
+        $this->createErpUser(login: 'admin', senha: Hash::make('senha-segura'));
+        $token = $this->loginToken();
+
+        $this->withToken($token)->postJson('/api/v1/logout')->assertNoContent();
+        $this->withToken($token)->getJson('/api/v1/me')->assertUnauthorized();
+    }
+
+    #[Test]
     public function limita_tentativas_de_login_por_ip_e_login(): void
     {
         foreach (range(1, 5) as $attempt) {
@@ -130,5 +155,13 @@ class LoginTest extends TestCase
             'senha' => $senha,
             'ativo' => $ativo,
         ]);
+    }
+
+    private function loginToken(): string
+    {
+        return $this->postJson('/api/v1/login', [
+            'login' => 'admin',
+            'senha' => 'senha-segura',
+        ])->json('access_token');
     }
 }

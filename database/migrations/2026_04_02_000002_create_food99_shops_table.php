@@ -18,6 +18,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::connection('mysql_marketplace')->hasTable('food99_shops')) {
+            return;
+        }
+
         Schema::connection('mysql_marketplace')->create('food99_shops', function (Blueprint $table): void {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('food99_app_credential_id');

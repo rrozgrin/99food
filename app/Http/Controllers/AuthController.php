@@ -24,7 +24,8 @@ use PHPOpenSourceSaver\JWTAuth\JWTGuard;
  * Endpoints:
  *  - POST   /api/v1/login   — Autentica o usuário e retorna o token JWT
  *  - GET    /api/v1/me      — Retorna os dados do usuário autenticado
- *  - POST   /api/v1/refresh — Renova o token JWT antes de expirar
+ *  - POST   /api/v1/refresh — Renova um token JWT ainda válido
+ *  - POST   /api/v1/logout  — Revoga o token JWT atual
  *
  * As senhas do ERP legado são armazenadas como hashes e verificadas pelo
  * hasher configurado na aplicação.
@@ -171,6 +172,28 @@ class AuthController extends Controller
                 code: 400,
             );
         }
+    }
+
+    #[OA\Post(
+        path: '/logout',
+        summary: 'Encerrar sessão',
+        description: 'Revoga o token JWT atual. O token não poderá mais acessar rotas protegidas.',
+        tags: ['Autenticação'],
+        security: [['bearerAuth' => []]],
+        responses: [
+            new OA\Response(response: 204, description: 'Sessão encerrada'),
+            new OA\Response(response: 401, description: 'Token inválido ou expirado'),
+        ],
+    )]
+    public function logout(): JsonResponse
+    {
+        try {
+            $this->guard()->invalidate();
+        } catch (JWTException) {
+            throw new ApiException(msg: 'Token de acesso inválido.', code: 401);
+        }
+
+        return response()->json(status: 204);
     }
 
     /**
