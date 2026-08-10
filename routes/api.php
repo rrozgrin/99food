@@ -16,17 +16,18 @@
  *  2. Aponte para o Controller do domínio
  *  3. Mantenha os controllers enxutos — a lógica fica nos Services
  *
- * @see App\Http\Middleware\ApiJwtMiddleware — Middleware de validação JWT
- * @see App\Http\Controllers\AuthController — Controller de autenticação
+ * @see ApiJwtMiddleware — Middleware de validação JWT
+ * @see AuthController — Controller de autenticação
  */
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Food99\Auth\Food99AuthController;
 use App\Http\Controllers\Food99\Catalog\Food99CatalogController;
 use App\Http\Controllers\Food99\Orders\Food99OrderSyncController;
 use App\Http\Controllers\Food99\Webhook\Food99WebhookController;
 use App\Http\Controllers\Food99\Webhook\Food99WebhookLogController;
+use App\Http\Middleware\ApiJwtMiddleware;
+use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'v1'], function (): void {
 
@@ -38,6 +39,7 @@ Route::group(['prefix' => 'v1'], function (): void {
 
     // Autenticação — Login do usuário
     Route::post('/login', [AuthController::class, 'login'])
+        ->middleware('throttle:login')
         ->name('api.v1.login');
 
     // Callback da 99Food (eventos de pedido)

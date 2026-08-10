@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\ApiException;
+use App\Http\Middleware\ApiJwtMiddleware;
+use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
+use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Exceptions\ApiException;
-use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
+use Illuminate\Support\Facades\Log;
 use OpenApi\Attributes as OA;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
+use PHPOpenSourceSaver\JWTAuth\JWTGuard;
 
 /**
  * Controller de autenticação via JWT.
@@ -25,7 +29,7 @@ use OpenApi\Attributes as OA;
  * As senhas do ERP legado são armazenadas como hashes e verificadas pelo
  * hasher configurado na aplicação.
  *
- * @see \App\Http\Middleware\ApiJwtMiddleware — Middleware que valida JWT nas rotas protegidas
+ * @see ApiJwtMiddleware — Middleware que valida JWT nas rotas protegidas
  *
  * @author Rafael Rozgrin <rrozgrin@gmail.com>
  */
@@ -34,8 +38,7 @@ class AuthController extends Controller
     /**
      * Autentica o usuário e retorna o token JWT.
      *
-     * @param Request $request Requisição com 'login' e 'senha'
-     *
+     * @param  LoginRequest  $request  Requisição com 'login' e 'senha'
      * @return JsonResponse Token JWT ou erro 401
      */
     #[OA\Post(
@@ -81,12 +84,9 @@ class AuthController extends Controller
             ),
         ],
     )]
-    public function login(Request $request): JsonResponse
+    public function login(LoginRequest $request): JsonResponse
     {
-        $credenciais = $request->validate([
-            'login' => ['required', 'string'],
-            'senha' => ['required', 'string'],
-        ]);
+        $credenciais = $request->validated();
         $token = $this->attempt(credentials: $credenciais);
 
         if ($token) {
@@ -176,9 +176,8 @@ class AuthController extends Controller
     /**
      * Tenta autenticar o usuário com as credenciais informadas.
      *
-     * @param array{login: string, senha: string} $credentials Credenciais do usuário
-     * @param bool                                 $login       Se true, gera o token JWT
-     *
+     * @param  array{login: string, senha: string}  $credentials  Credenciais do usuário
+     * @param  bool  $login  Se true, gera o token JWT
      * @return string|bool Token JWT (se login=true) ou bool
      *
      * @throws ApiException Se credenciais não forem informadas
@@ -196,7 +195,7 @@ class AuthController extends Controller
             ->where('ativo', 'A')
             ->first();
 
-        if ($user && Hash::check($credentials['senha'], $user->senha)) {
+        if ($user && $this->passwordMatches($credentials['senha'], $user->senha)) {
             return $login ? $this->guard()->login($user) : true;
         }
 
@@ -206,25 +205,50 @@ class AuthController extends Controller
     /**
      * Monta a resposta padrão com o token JWT.
      *
-     * @param string $token Token JWT gerado
-     *
+     * @param  string  $token  Token JWT gerado
      * @return JsonResponse Resposta com access_token, token_type e expires_in
      */
     protected function respondWithToken(string $token): JsonResponse
     {
         return response()->json([
             'access_token' => $token,
-            'token_type'   => 'bearer',
-            'expires_in'   => $this->guard()->factory()->getTTL() * 120,
+            'token_type' => 'bearer',
+            'expires_in' => $this->guard()->factory()->getTTL() * 60,
         ]);
+    }
+
+    /**
+     * Verifica apenas hashes reconhecidos pelo driver de hashing configurado.
+     *
+     * O ERP deve armazenar bcrypt ou Argon2 em uma coluna que comporte o hash.
+     */
+    private function passwordMatches(string $password, ?string $hash): bool
+    {
+        if (! is_string($hash) || password_get_info($hash)['algo'] === null) {
+            Log::warning('Tentativa de login com hash de senha ERP incompatível.', [
+                'login' => request()->input('login'),
+            ]);
+
+            return false;
+        }
+
+        try {
+            return Hash::check($password, $hash);
+        } catch (\RuntimeException) {
+            Log::warning('Tentativa de login com hash de senha ERP não suportado pelo hasher configurado.', [
+                'login' => request()->input('login'),
+            ]);
+
+            return false;
+        }
     }
 
     /**
      * Obtém o guard de autenticação da API (JWT).
      *
-     * @return \Illuminate\Contracts\Auth\Guard|\PHPOpenSourceSaver\JWTAuth\JWTGuard
+     * @return Guard|JWTGuard
      */
-    protected function guard(): \Illuminate\Contracts\Auth\Guard
+    protected function guard(): Guard
     {
         return Auth::guard('api');
     }

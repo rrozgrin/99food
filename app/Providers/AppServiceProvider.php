@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Console\Kernel;
+use App\Services\Extensions\BindsRepositorios;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
-use App\Services\Extensions\BindsRepositorios;
 
 /**
  * Service Provider principal da aplicação.
@@ -23,7 +24,7 @@ use App\Services\Extensions\BindsRepositorios;
  * TranslatingCommandLoader como decorator do command loader.
  *
  * @see BindsRepositorios — Classe que centraliza os bindings de repositórios
- * @see \App\Console\Kernel — Kernel que traduz descrições dos comandos
+ * @see Kernel — Kernel que traduz descrições dos comandos
  */
 class AppServiceProvider extends ServiceProvider
 {
@@ -55,6 +56,12 @@ class AppServiceProvider extends ServiceProvider
     {
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+        });
+
+        RateLimiter::for('login', function (Request $request): Limit {
+            return Limit::perMinute(5)->by(
+                $request->ip().'|'.mb_strtolower((string) $request->input('login')),
+            );
         });
 
         $this->configureRateLimiting();

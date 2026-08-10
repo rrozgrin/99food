@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Http\Controllers\AuthController;
 use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -26,10 +26,9 @@ use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
  *
  * A coluna 'senha' armazena o hash da senha gerado pelo ERP legado.
  *
- * @see \App\Http\Controllers\AuthController — Controller de autenticação
+ * @see AuthController — Controller de autenticação
  */
-#[Fillable(['name', 'email', 'password'])]
-#[Hidden(['password', 'remember_token', 'api_key', 'senha'])]
+#[Hidden(['senha', 'api_key', 'token', 'token_appplus'])]
 class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<UserFactory> */
@@ -41,7 +40,11 @@ class User extends Authenticatable implements JWTSubject
     /**
      * Nome da tabela no banco de dados.
      */
-    protected $table = 'base_erp.webc_usuario';
+    protected $connection = 'mysql';
+
+    protected $table = 'webc_usuario';
+
+    protected $guarded = ['*'];
 
     /**
      * Nome da coluna de criação (CREATED_AT).
@@ -112,7 +115,7 @@ class User extends Authenticatable implements JWTSubject
      * Verifica se o usuário possui uma permissão específica.
      * As permissões são cacheadas por 15 minutos para evitar queries por request.
      *
-     * @param  string $permission  Permissão no formato 'modulo.acao' (ex: 'clientes.editar').
+     * @param  string  $permission  Permissão no formato 'modulo.acao' (ex: 'clientes.editar').
      */
     public function hasPermission(string $permission): bool
     {
