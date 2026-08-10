@@ -18,6 +18,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 class Permission extends Model
 {
+    protected $connection = 'mysql';
+
     protected $table = 'webc_permissoes';
 
     protected $fillable = [

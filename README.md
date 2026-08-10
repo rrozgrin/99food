@@ -262,13 +262,15 @@ O ambiente Docker inclui aplicacao, worker de fila, MySQL 8.4 e Redis:
 docker compose up -d
 ```
 
-Configure as conexoes `mysql` (`base_erp`) e `mysql_marketplace` (`marketplace`) no `.env` antes de executar migrations. O schema do ERP e uma dependencia externa; em ambiente local, forneca uma estrutura minima compativel, incluindo `webc_usuario`.
+Configure as conexoes `mysql` (`base_erp`) e `mysql_marketplace` (`marketplace`) no `.env` antes de executar migrations. As migrations criam `webc_usuario`, RBAC e auditoria no ERP; as tabelas `food99_*`, cache, sessoes e filas ficam no marketplace. As demais tabelas de negocio do ERP continuam sendo uma dependencia externa.
 
 Testes disponiveis incluem o fluxo de login, validacao JWT, catalogo, pedidos, webhook e services:
 
 ```bash
 php artisan test
 ```
+
+Para popular o ambiente local, execute `php artisan db:seed`. Ele cria os usuarios ERP `admin` (`senha-segura`) e `gerente` (`senha-gerente`), vincula o perfil administrador e popula o catalogo sandbox.
 
 O workflow de CI valida Composer, Pint, testes, geracao OpenAPI e build do frontend.
 

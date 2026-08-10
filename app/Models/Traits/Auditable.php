@@ -60,7 +60,7 @@ trait Auditable
         try {
             $exclude = $this->auditExclude ?? [];
 
-            DB::table('webc_auditoria')->insert([
+            DB::connection('mysql')->table('webc_auditoria')->insert([
                 'tabela'        => $this->getTable(),
                 'registro_id'   => (string) $this->getKey(),
                 'acao'          => $action,

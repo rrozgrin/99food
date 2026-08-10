@@ -23,6 +23,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 class Role extends Model
 {
+    protected $connection = 'mysql';
+
     protected $table = 'webc_roles';
 
     protected $fillable = [

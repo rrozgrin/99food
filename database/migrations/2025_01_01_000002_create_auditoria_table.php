@@ -19,7 +19,13 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('webc_auditoria', function (Blueprint $table): void {
+        $schema = Schema::connection('mysql');
+
+        if ($schema->hasTable('webc_auditoria')) {
+            return;
+        }
+
+        $schema->create('webc_auditoria', function (Blueprint $table): void {
             $table->bigIncrements('id');
             $table->string('tabela', 100)->comment('Nome da tabela auditada');
             $table->string('registro_id', 50)->comment('ID (PK) do registro alterado');
@@ -41,6 +47,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('webc_auditoria');
+        Schema::connection('mysql')->dropIfExists('webc_auditoria');
     }
 };
