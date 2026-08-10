@@ -80,7 +80,7 @@ class Food99WebhookService
                 throw new ApiException(msg: 'Webhook 99Food sem timestamp valido.', code: 422);
             }
 
-            $this->validateSignatureIfEnabled(
+            $this->validateSignature(
                 rawBody: $rawBody,
                 didiHeaderSign: $didiHeaderSign,
             );
@@ -208,13 +208,8 @@ class Food99WebhookService
         return $normalized;
     }
 
-    private function validateSignatureIfEnabled(string $rawBody, ?string $didiHeaderSign): void
+    private function validateSignature(string $rawBody, ?string $didiHeaderSign): void
     {
-        $enabled = (bool) config('services.food99.webhook_verify_signature', false);
-        if (! $enabled) {
-            return;
-        }
-
         $receivedSign = mb_strtolower(trim((string) $didiHeaderSign));
         if ($receivedSign === '') {
             throw new ApiException(msg: 'Assinatura didi-header-sign ausente.', code: 401);
@@ -225,20 +220,10 @@ class Food99WebhookService
             throw new ApiException(msg: 'FOOD99_APP_SECRET nao configurado.', code: 500);
         }
 
-        $candidates = [
-            md5($rawBody . $secret),
-            md5($secret . $rawBody),
-            hash_hmac('sha256', $rawBody, $secret),
-            hash_hmac('md5', $rawBody, $secret),
-        ];
-
-        foreach ($candidates as $candidate) {
-            if (hash_equals($candidate, $receivedSign)) {
-                return;
-            }
+        $expectedSign = md5($rawBody . $secret);
+        if (! hash_equals($expectedSign, $receivedSign)) {
+            throw new ApiException(msg: 'Assinatura didi-header-sign invalida.', code: 401);
         }
-
-        throw new ApiException(msg: 'Assinatura didi-header-sign invalida.', code: 401);
     }
 
     /**

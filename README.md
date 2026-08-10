@@ -214,8 +214,9 @@ FOOD99_BASE_URL=https://openapi.99food.com
 FOOD99_APP_ID=...
 FOOD99_APP_SECRET=...
 FOOD99_TIMEOUT=20
-FOOD99_WEBHOOK_VERIFY_SIGNATURE=false
 ```
+
+O webhook exige `didi-header-sign`, calculada como `md5(raw_body + FOOD99_APP_SECRET)`.
 
 ---
 

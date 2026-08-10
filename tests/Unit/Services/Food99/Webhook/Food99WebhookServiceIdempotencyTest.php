@@ -6,6 +6,7 @@ namespace Tests\Unit\Services\Food99\Webhook;
 
 use Mockery;
 use Tests\TestCase;
+use App\Exceptions\ApiException;
 use PHPUnit\Framework\Attributes\Test;
 use App\Services\Food99\Webhook\Food99WebhookService;
 use App\Services\Food99\Orders\Food99OrderErpSyncService;
@@ -17,10 +18,61 @@ use App\Repository\Contracts\Models\Food99\Webhook\Food99WebhookInboundLogReposi
 class Food99WebhookServiceIdempotencyTest extends TestCase
 {
     #[Test]
+    public function assinatura_ausente_e_rejeitada(): void
+    {
+        config(['services.food99.app_secret' => 'test-secret']);
+
+        $appCredentialRepository = Mockery::mock(Food99AppCredentialRepositoryInterface::class);
+        $shopRepository = Mockery::mock(Food99ShopRepositoryInterface::class);
+        $webhookLogRepository = Mockery::mock(Food99WebhookInboundLogRepositoryInterface::class);
+
+        $appCredentialRepository
+            ->shouldReceive('findLatestByAppId')
+            ->twice()
+            ->with('123')
+            ->andReturn((object) ['id' => 2]);
+
+        $shopRepository
+            ->shouldReceive('findByCredentialAndAppShopId')
+            ->once()
+            ->with(2, 'shop-1')
+            ->andReturn((object) ['id' => 1]);
+
+        $webhookLogRepository
+            ->shouldReceive('create')
+            ->once()
+            ->andReturn((object) ['id' => 10]);
+
+        $webhookLogRepository
+            ->shouldReceive('update')
+            ->once()
+            ->with(Mockery::on(static fn (array $attributes): bool => $attributes['status'] === 'failed'), 10)
+            ->andReturnTrue();
+
+        $service = new Food99WebhookService(
+            $appCredentialRepository,
+            $shopRepository,
+            $webhookLogRepository,
+            Mockery::mock(Food99OrderRepositoryInterface::class),
+            Mockery::mock(Food99OrderErpSyncService::class),
+        );
+
+        $this->expectException(ApiException::class);
+        $this->expectExceptionCode(401);
+
+        $service->handle([
+            'app_id' => 123,
+            'app_shop_id' => 'shop-1',
+            'type' => 'orderNew',
+            'timestamp' => 1776185616,
+        ], '{}');
+    }
+
+    #[Test]
     public function replay_de_order_new_deve_ser_tolerado_sem_quebrar_fluxo(): void
     {
         config([
-            'services.food99.webhook_verify_signature' => false,
+            'services.food99.app_secret' => 'test-secret',
             'services.food99.order_new_sync_mode' => 'sync',
         ]);
 
@@ -117,8 +169,11 @@ class Food99WebhookServiceIdempotencyTest extends TestCase
             ],
         ];
 
-        $service->handle($payload, json_encode($payload, JSON_UNESCAPED_UNICODE) ?: '{}');
-        $service->handle($payload, json_encode($payload, JSON_UNESCAPED_UNICODE) ?: '{}');
+        $rawBody = json_encode($payload, JSON_UNESCAPED_UNICODE) ?: '{}';
+        $signature = md5($rawBody . 'test-secret');
+
+        $service->handle($payload, $rawBody, $signature);
+        $service->handle($payload, $rawBody, $signature);
 
         $this->assertTrue(true);
     }
@@ -127,7 +182,7 @@ class Food99WebhookServiceIdempotencyTest extends TestCase
     public function replay_de_order_finish_deve_ser_idempotente_no_update_de_status(): void
     {
         config([
-            'services.food99.webhook_verify_signature' => false,
+            'services.food99.app_secret' => 'test-secret',
         ]);
 
         $appCredentialRepository = Mockery::mock(Food99AppCredentialRepositoryInterface::class);
@@ -192,8 +247,11 @@ class Food99WebhookServiceIdempotencyTest extends TestCase
             ],
         ];
 
-        $service->handle($payload, json_encode($payload, JSON_UNESCAPED_UNICODE) ?: '{}');
-        $service->handle($payload, json_encode($payload, JSON_UNESCAPED_UNICODE) ?: '{}');
+        $rawBody = json_encode($payload, JSON_UNESCAPED_UNICODE) ?: '{}';
+        $signature = md5($rawBody . 'test-secret');
+
+        $service->handle($payload, $rawBody, $signature);
+        $service->handle($payload, $rawBody, $signature);
 
         $this->assertTrue(true);
     }

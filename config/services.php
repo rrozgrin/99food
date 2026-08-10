@@ -41,10 +41,6 @@ return [
         'app_secret' => env('FOOD99_APP_SECRET'),
         'timeout' => (int) env('FOOD99_TIMEOUT', 20),
         'order_new_sync_mode' => env('FOOD99_ORDER_NEW_SYNC_MODE', 'sync'),
-        'webhook_verify_signature' => filter_var(
-            env('FOOD99_WEBHOOK_VERIFY_SIGNATURE', false),
-            FILTER_VALIDATE_BOOLEAN,
-        ),
     ],
 
 ];
