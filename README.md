@@ -39,6 +39,26 @@ Observacao:
 
 - o reprocessamento manual de pedido roda via `Service`, com validacao de ownership por `id_cadastro`
 
+### 2.1 Fluxos principais
+
+#### Autenticacao
+
+`ERP user -> POST /login -> JWT -> rotas protegidas -> escopo por id_cadastro`
+
+#### Catalogo
+
+`ERP/catalogo local -> menus/categorias/itens -> preview -> publish -> API 99Food`
+
+#### Webhook de pedidos
+
+`99Food -> webhook assinado -> log inbound -> food99_orders -> food99_order_items`
+
+#### Sync ERP
+
+`orderFinish -> localiza/cria venda ERP -> vincula id_venda -> synced`
+
+Falhas de sincronizacao ficam como `pending_sync` e podem ser reprocessadas por endpoint protegido.
+
 ---
 
 ## 3. Rotas
@@ -168,8 +188,15 @@ Implementacao:
 
 ### Observacao operacional
 
-- `origem_venda` esta temporariamente como `B2W` (enum legado da tabela `venda`)
-- ao adicionar `99FOOD` no enum, trocar no service de sync
+O ERP legado ainda nao possui `99FOOD` como valor aceito no enum `venda.origem_venda`.
+Por compatibilidade, as vendas criadas por esta integracao usam temporariamente `B2W`.
+
+Esta e uma limitacao do schema legado, nao uma regra de negocio da integracao. A rastreabilidade
+do pedido 99Food fica preservada em `venda.descricao_venda` e `venda_informacoes.info_adicional`
+com o marcador `FOOD99_ORDER:{order_id}|SHOP:{food99_shop_id}`.
+
+Quando o ERP passar a aceitar `99FOOD` em `venda.origem_venda`, substituir o fallback `B2W`
+no servico de sincronizacao e nos testes de idempotencia.
 
 ---
 
@@ -278,7 +305,7 @@ O workflow de CI valida Composer, Pint, testes, geracao OpenAPI e build do front
 
 ## 12. Pendencias tecnicas mapeadas
 
-1. adicionar `origem_venda = 99FOOD` no enum da tabela `venda` e remover workaround `B2W`
+1. adicionar `origem_venda = 99FOOD` no enum da tabela `venda` e remover o fallback legado `B2W`
 2. decidir estrategia final de `app_item_id` para longo prazo (sem quebrar IDs ja publicados)
 
 ---
