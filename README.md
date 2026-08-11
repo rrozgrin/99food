@@ -3,6 +3,26 @@
 > Stack: Laravel 13 · PHP 8.5+ · MySQL 8.4 · Redis
 > API interna: `/api/v1/...`
 
+API de portfólio para demonstrar uma integração real entre ERP legado e a API da 99Food.
+O projeto cobre autenticação por loja, catálogo, publicação, webhooks assinados,
+persistência de pedidos, fila de sincronização e criação de venda no ERP.
+
+O problema resolvido é manter um ERP legado sincronizado com um marketplace externo sem
+acoplar regra de negócio aos controllers, preservando rastreabilidade, idempotência e
+reprocessamento operacional.
+
+Diferenciais técnicos:
+
+- JWT com refresh/logout e escopo por `id_cadastro`
+- integração HTTP centralizada com tratamento de erro da 99Food
+- webhooks assinados com persistência de logs inbound
+- catálogo local com preview antes da publicação
+- sincronização de pedido para ERP com idempotência
+- modo demo com dados fake, sem depender do ERP real
+- Postman, OpenAPI, Docker, testes automatizados e CI
+
+Para testar em poucos minutos, use a seção [Demo rapida](#12-demo-rapida).
+
 ---
 
 ## 1. Objetivo
@@ -20,6 +40,12 @@ Este projeto integra o ERP com a 99Food, cobrindo:
 Escopo ainda nao implementado:
 
 - catalogo v3 com `modifier_groups` (variacoes complexas)
+
+### Convencao de nomenclatura
+
+O produto integrado e a API externa sao da **99Food**. No codigo, pastas, namespaces,
+classes e tabelas usam **Food99/food99**, porque identificadores tecnicos nao devem
+comecar com numero.
 
 ---
 
@@ -66,6 +92,7 @@ Falhas de sincronizacao ficam como `pending_sync` e podem ser reprocessadas por 
 Referencia:
 
 - [routes/api.php](routes/api.php)
+- [postman/Food99.postman_collection.json](postman/Food99.postman_collection.json)
 
 ### 3.1 Publicas
 
@@ -331,6 +358,43 @@ Dados fake criados para demonstracao:
 
 Esse pedido pode ser usado para demonstrar a fila de sincronizacao e o reprocessamento manual sem acesso ao ERP real.
 
+## 12. Demo rapida
+
+1. Suba o ambiente:
+
+```bash
+docker compose up -d
+```
+
+2. Configure o `.env` a partir do `.env.example` e mantenha `FOOD99_DEMO_MODE=true`.
+
+3. Rode migrations e seeders:
+
+```bash
+php artisan migrate --force
+php artisan db:seed
+```
+
+4. Faça login:
+
+```http
+POST /api/v1/login
+{
+  "login": "admin",
+  "senha": "senha-segura"
+}
+```
+
+5. Consulte a fila de pedidos pendentes:
+
+```http
+GET /api/v1/food99/orders/sync-queue
+Authorization: Bearer <access_token>
+```
+
+O seed cria o pedido `DEMO-ORDER-001`, que pode ser usado para demonstrar o reprocessamento manual.
+Para executar os exemplos prontos, importe a collection [Food99.postman_collection.json](postman/Food99.postman_collection.json).
+
 Testes disponiveis incluem o fluxo de login, validacao JWT, catalogo, pedidos, webhook e services:
 
 ```bash
@@ -343,7 +407,7 @@ O workflow de CI valida Composer, Pint, testes, geracao OpenAPI e build do front
 
 ---
 
-## 12. Pendencias tecnicas mapeadas
+## 13. Pendencias tecnicas mapeadas
 
 1. adicionar `origem_venda = 99FOOD` no enum da tabela `venda` e remover o fallback legado `B2W`
 2. decidir estrategia final de `app_item_id` para longo prazo (sem quebrar IDs ja publicados)
