@@ -8,13 +8,13 @@ return [
     'documentations' => [
         'default' => [
             'api' => [
-                'title' => 'API Generica — Documentação OpenAPI',
+                'title' => 'Food99 Integration Hub — Documentação OpenAPI',
             ],
 
             'routes' => [
                 /*
                  * Rota para acessar a interface Swagger UI.
-                 * Acesse: https://api-generica.test/api/documentation
+                 * Acesse: https://food99-integration-hub.test/api/documentation
                  */
                 'api' => 'api/documentation',
             ],
@@ -153,7 +153,7 @@ return [
             'securitySchemes' => [
                 /*
                 |--------------------------------------------------------------
-                | JWT Bearer Token — Autenticação padrão da API Generica
+                | JWT Bearer Token — Autenticação padrão do Food99 Integration Hub
                 |--------------------------------------------------------------
                 |
                 | Após fazer login em POST /api/v1/login, copie o access_token

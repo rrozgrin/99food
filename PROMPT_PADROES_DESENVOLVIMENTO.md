@@ -1,4 +1,4 @@
-# 📋 PROMPT — Padrões de Desenvolvimento da API Generica
+# 📋 PROMPT — Padrões de Desenvolvimento do Food99 Integration Hub
 
 > **Versão:** 3.1
 > **Autor:** Rafael Rozgrin <rrozgrin@gmail.com>
@@ -17,7 +17,7 @@
 ## Sumário
 
 1. [Arquitetura em Camadas](#1-arquitetura-em-camadas)
-2. [Comparativo apidefault vs api-generica](#2-comparativo-apidefault-vs-api-generica)
+2. [Comparativo apidefault vs Food99 Integration Hub](#2-comparativo-apidefault-vs-food99-integration-hub)
 3. [Estrutura de Diretórios](#3-estrutura-de-diretrios)
 4. [Value Objects — Precisão Fiscal](#4-value-objects--preciso-fiscal)
 5. [Eloquent Casts para Value Objects](#5-eloquent-casts-para-value-objects)
@@ -72,7 +72,7 @@ Request HTTP → Route → Controller → Service → Repository → Model → M
 
 ---
 
-## 2. Comparativo apidefault vs api-generica
+## 2. Comparativo apidefault vs Food99 Integration Hub
 
 | Comando                          | Gera                                                       |
 |----------------------------------|-------------------------------------------------------------|
@@ -217,7 +217,7 @@ app/Http/Controllers/BaseErp/Cadastros/ClienteController.php
 
 ---
 
-> **API Generica v3** — Laravel 13 / PHP 8.5+
+> **Food99 Integration Hub v3** — Laravel 13 / PHP 8.5+
 > Arquitetura idealizada por **Rafael Rozgrin** <rrozgrin@gmail.com>
 ## 6. Model
 
@@ -565,7 +565,7 @@ $produto->save();                       // salva '59.90000000' no banco
 
 ## 11. DTO — Data Transfer Object
 
-| Aspecto               | apidefault (Laravel 8)              | api-generica (Laravel 13)                     |
+| Aspecto               | apidefault (Laravel 8)              | Food99 Integration Hub (Laravel 13)           |
 |------------------------|--------------------------------------|------------------------------------------------|
 | PHP                    | 7.3 / 8.0                           | 8.5+                                            |
 | CORS                   | `fruitcake/laravel-cors` (abandonado)| Nativo em `bootstrap/app.php`                   |
@@ -1407,7 +1407,7 @@ As tags são registradas automaticamente pelo `make:domain` em `OpenApiSpec.php`
 ---
 
 
-> **API Generica v3** — Laravel 13 / PHP 8.5+
+> **Food99 Integration Hub v3** — Laravel 13 / PHP 8.5+
 > Arquitetura idealizada por **Rafael Rozgrin** <rrozgrin@gmail.com>
 ## 21. Audit Trail
 
@@ -1535,7 +1535,7 @@ Trait que detecta exceções críticas e envia notificações com **throttle de 
 ---
 
 
-> **API Generica v3** — Laravel 13 / PHP 8.5+
+> **Food99 Integration Hub v3** — Laravel 13 / PHP 8.5+
 > Arquitetura idealizada por **Rafael Rozgrin** <rrozgrin@gmail.com>
 ## 24. Comandos Artisan Customizados
 
@@ -1882,5 +1882,5 @@ class ProdutoService
 ---
 
 
-> **API Generica v3** — Laravel 13 / PHP 8.5+
+> **Food99 Integration Hub v3** — Laravel 13 / PHP 8.5+
 > Arquitetura idealizada por **Rafael Rozgrin** <rrozgrin@gmail.com>

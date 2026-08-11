@@ -1,4 +1,4 @@
-# food99 — Hub de Integracao 99Food (ERP)
+# Food99 Integration Hub
 
 > Stack: Laravel 13 · PHP 8.5+ · MySQL 8.4 · Redis
 > API interna: `/api/v1/...`
@@ -283,4 +283,4 @@ O workflow de CI valida Composer, Pint, testes, geracao OpenAPI e build do front
 
 ---
 
-API Generica — Integracao 99Food
+Food99 Integration Hub — Integracao ERP e 99Food

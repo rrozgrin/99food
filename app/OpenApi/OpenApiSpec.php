@@ -5,7 +5,7 @@ namespace App\OpenApi;
 use OpenApi\Attributes as OA;
 
 /**
- * Especificação OpenAPI principal da API Generica.
+ * Especificação OpenAPI principal do Food99 Integration Hub.
  *
  * Este arquivo define os metadados globais da documentação Swagger:
  * - Informações do projeto (título, versão, contato)
@@ -14,15 +14,15 @@ use OpenApi\Attributes as OA;
  * - Schemas reutilizáveis de resposta padrão
  *
  * 📌 Acesse a documentação interativa em:
- *    https://api-generica.test/api/documentation
+ *    https://food99-integration-hub.test/api/documentation
  *
  * @author Rafael Rozgrin <rrozgrin@gmail.com>
  */
 #[OA\Info(
     version: '1.0.0',
-    title: 'API Generica',
+    title: 'Food99 Integration Hub',
     description: <<<'DESC'
-    API RESTful do sistema ERP.
+    API RESTful de integracao entre ERP e 99Food.
 
     ## Autenticação
     A API utiliza **JWT Bearer Token**. Para autenticar:
@@ -59,7 +59,7 @@ use OpenApi\Attributes as OA;
 )]
 #[OA\Server(
     url: '/api/v1',
-    description: 'API Generica v1',
+    description: 'Food99 Integration Hub v1',
 )]
 
 // =========================================================================
@@ -84,7 +84,7 @@ use OpenApi\Attributes as OA;
 #[OA\Schema(
     schema: 'RespostaPadrao',
     title: 'Resposta Padrão',
-    description: 'Formato padrão de todas as respostas da API Generica.',
+    description: 'Formato padrão de todas as respostas do Food99 Integration Hub.',
     required: ['conteudo', 'msg', 'code'],
     properties: [
         new OA\Property(

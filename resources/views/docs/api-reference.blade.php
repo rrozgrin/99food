@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API Generica — Documentação</title>
-    <meta name="description" content="Documentação interativa da API Generica com layout moderno de 3 colunas.">
+    <title>Food99 Integration Hub — Documentação</title>
+    <meta name="description" content="Documentação interativa do Food99 Integration Hub com layout moderno de 3 colunas.">
 
     <style>
         /* Customizações de branding ERP */
@@ -43,8 +43,8 @@
             },
             "hiddenClients": ["c", "clojure", "ocaml", "powershell", "objc", "r"],
             "metaData": {
-                "title": "API Generica — Documentação",
-                "description": "Documentação interativa da API RESTful ERP"
+                "title": "Food99 Integration Hub — Documentação",
+                "description": "Documentação interativa da API de integração ERP e 99Food"
             },
             "authentication": {
                 "preferredSecurityScheme": "bearerAuth"

@@ -1,8 +1,8 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "rafaelrozgrin/integration-hub-api",
+    "name": "rafaelrozgrin/food99-integration-hub",
     "type": "project",
-    "description": "API de integracao entre ERP legado e marketplace, com JWT, webhooks, filas e documentacao OpenAPI.",
+    "description": "Food99 Integration Hub: API de integracao entre ERP legado e marketplace, com JWT, webhooks, filas e documentacao OpenAPI.",
     "keywords": ["laravel", "api", "integration", "erp", "marketplace", "webhook", "jwt"],
     "license": "MIT",
     "require": {
