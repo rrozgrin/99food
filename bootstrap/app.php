@@ -38,6 +38,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -92,8 +93,15 @@ $app = Application::configure(basePath: dirname(__DIR__))
                         code: 422,
                     );
 
-                return response()->json($response, 422);
+                return response()->json([
+                    ...$response->jsonSerialize(),
+                    'errors' => $exception->errors(),
+                ], 422);
             }
+
+            $exceptionCode = $exception instanceof HttpExceptionInterface
+                ? $exception->getStatusCode()
+                : $exception->getCode();
 
             if ($isProduction) {
                 $response = match (true) {
@@ -121,6 +129,12 @@ $app = Application::configure(basePath: dirname(__DIR__))
                         code: 404,
                     ),
 
+                    $exception instanceof HttpExceptionInterface => new ResponseApi(
+                        conteudo: null,
+                        msg: $exception->getMessage(),
+                        code: $exception->getStatusCode(),
+                    ),
+
                     default => new ResponseApi(
                         conteudo: null,
                         msg: 'Ocorreu um erro inesperado. Nossa equipe já foi notificada.',
@@ -129,6 +143,7 @@ $app = Application::configure(basePath: dirname(__DIR__))
                 };
             } else {
                 $response = new ResponseApiDev(throwable: $exception);
+                $response->setCode($exceptionCode);
             }
 
             $httpCode = match (true) {
