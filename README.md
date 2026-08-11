@@ -291,6 +291,46 @@ docker compose up -d
 
 Configure as conexoes `mysql` (`base_erp`) e `mysql_marketplace` (`marketplace`) no `.env` antes de executar migrations. As migrations criam `webc_usuario`, RBAC e auditoria no ERP; as tabelas `food99_*`, cache, sessoes e filas ficam no marketplace. As demais tabelas de negocio do ERP continuam sendo uma dependencia externa.
 
+### Modo demo sem ERP real
+
+Para executar o portfolio sem depender de um ERP externo, mantenha no `.env`:
+
+```env
+FOOD99_DEMO_MODE=true
+DB_HOST_WEB=mysql
+DB_PORT_WEB=3306
+DB_DATABASE_WEB=base_erp
+DB_USERNAME_WEB=food99
+DB_PASSWORD_WEB=food99
+```
+
+Com o modo demo ativo, a migration `2026_08_11_000013_create_demo_erp_tables.php`
+cria tabelas ERP minimas no banco local `base_erp`:
+
+- `cliente`
+- `produto`
+- `grade`
+- `venda`
+- `venda_itens`
+- `venda_informacoes`
+- `venda_pagamento`
+
+Depois execute:
+
+```bash
+php artisan migrate --force
+php artisan db:seed
+```
+
+Dados fake criados para demonstracao:
+
+- usuario: `admin` / `senha-segura`
+- loja: `wc-sandbox-002`
+- itens: `burger_classico`, `burger_bacon`
+- pedido pendente de sync: `DEMO-ORDER-001`
+
+Esse pedido pode ser usado para demonstrar a fila de sincronizacao e o reprocessamento manual sem acesso ao ERP real.
+
 Testes disponiveis incluem o fluxo de login, validacao JWT, catalogo, pedidos, webhook e services:
 
 ```bash

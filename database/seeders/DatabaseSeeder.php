@@ -52,5 +52,9 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->call(Food99CatalogSampleSeeder::class);
+
+        if ((bool) config('services.food99.demo_mode', false)) {
+            $this->call(Food99DemoSeeder::class);
+        }
     }
 }

@@ -36,6 +36,7 @@ return [
     ],
 
     'food99' => [
+        'demo_mode' => (bool) env('FOOD99_DEMO_MODE', false),
         'base_url' => env('FOOD99_BASE_URL', 'https://openapi.99food.com'),
         'app_id' => env('FOOD99_APP_ID'),
         'app_secret' => env('FOOD99_APP_SECRET'),
